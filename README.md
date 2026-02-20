@@ -6,6 +6,8 @@ A full-stack decentralized tipping and creator monetization platform built on So
 
 > **Version Matrix**: See [VERSIONS.md](./VERSIONS.md) for all pinned toolchain and dependency versions.
 
+> **Security Audit**: See [SECURITY-AUDIT.md](./SECURITY-AUDIT.md) for the full security audit report with findings and remediation plan.
+
 ---
 
 ## Table of Contents
