@@ -1,10 +1,11 @@
 // ==========================================================
-// TipProfile – creator account  (v2)
-// Additions:
-//  • reentrancy_guard – boolean flag set at instruction start,
-//    cleared at end; prevents cross-instruction reentrancy.
-//  • total_amount_received_spl – SPL-token tip tracking.
-//  • on-chain leaderboard (Vec<LeaderboardEntry>, max 10).
+// TipProfile – creator account  (v3)
+// Additions v3:
+//  • preset_amounts – creator-configurable tip presets (max 5)
+//  • social_links – JSON string of social media URLs
+//  • webhook_url – webhook endpoint for tip notifications
+//  • active_polls_count – track active polls per profile
+//  • active_gates_count – track active content gates per profile
 // ==========================================================
 
 use anchor_lang::prelude::*;
@@ -34,7 +35,6 @@ pub struct TipProfile {
     pub is_verified: bool,
 
     // ---- Security ----
-    /// Reentrancy guard: true = instruction in-flight, reject new calls
     pub reentrancy_guard: bool,
 
     // ---- Timestamps ----
@@ -45,6 +45,21 @@ pub struct TipProfile {
 
     // ---- On-chain leaderboard ----
     pub top_tippers: Vec<LeaderboardEntry>,
+
+    // ---- v3: Preset tip amounts (creator configurable) ----
+    pub preset_amounts: Vec<u64>,
+
+    // ---- v3: Social links (JSON string) ----
+    pub social_links: String,
+
+    // ---- v3: Webhook URL for tip notifications ----
+    pub webhook_url: String,
+
+    // ---- v3: Active polls count ----
+    pub active_polls_count: u8,
+
+    // ---- v3: Active content gates count ----
+    pub active_gates_count: u8,
 }
 
 impl TipProfile {
@@ -86,6 +101,11 @@ impl TipProfile {
         self.updated_at                     = timestamp;
         self.bump                           = bump;
         self.top_tippers                    = Vec::new();
+        self.preset_amounts                 = Vec::new();
+        self.social_links                   = String::new();
+        self.webhook_url                    = String::new();
+        self.active_polls_count             = 0;
+        self.active_gates_count             = 0;
         Ok(())
     }
 
@@ -126,6 +146,30 @@ impl TipProfile {
         Ok(())
     }
 
+    /// Update preset tip amounts (v3)
+    pub fn set_preset_amounts(&mut self, amounts: Vec<u64>) -> Result<()> {
+        require!(amounts.len() <= MAX_PRESET_AMOUNTS, ErrorCode::TooManyPresetAmounts);
+        for &a in &amounts {
+            require!(a >= MIN_TIP_AMOUNT && a <= MAX_TIP_AMOUNT, ErrorCode::InvalidPresetAmount);
+        }
+        self.preset_amounts = amounts;
+        Ok(())
+    }
+
+    /// Update social links (v3)
+    pub fn set_social_links(&mut self, links: String) -> Result<()> {
+        require!(links.len() <= MAX_SOCIAL_LINKS_LENGTH, ErrorCode::SocialLinksTooLong);
+        self.social_links = links;
+        Ok(())
+    }
+
+    /// Update webhook URL (v3)
+    pub fn set_webhook_url(&mut self, url: String) -> Result<()> {
+        require!(url.len() <= MAX_WEBHOOK_URL_LENGTH, ErrorCode::WebhookUrlTooLong);
+        self.webhook_url = url;
+        Ok(())
+    }
+
     /// Record an incoming SOL tip and update leaderboard.
     pub fn record_tip(
         &mut self,
@@ -148,8 +192,7 @@ impl TipProfile {
         Ok(())
     }
 
-    /// Record an incoming SPL tip (does not update leaderboard separately –
-    /// leaderboard is SOL-denominated; SPL can be added as a v3 extension).
+    /// Record an incoming SPL tip
     pub fn record_spl_tip(&mut self, amount: u64) -> Result<()> {
         self.total_tips_received = self.total_tips_received
             .checked_add(1)
@@ -175,6 +218,36 @@ impl TipProfile {
         Ok(())
     }
 
+    pub fn increment_polls(&mut self) -> Result<()> {
+        require!(self.active_polls_count < MAX_ACTIVE_POLLS, ErrorCode::MaxActivePollsReached);
+        self.active_polls_count = self.active_polls_count
+            .checked_add(1)
+            .ok_or(ErrorCode::MathOverflow)?;
+        Ok(())
+    }
+
+    pub fn decrement_polls(&mut self) -> Result<()> {
+        self.active_polls_count = self.active_polls_count
+            .checked_sub(1)
+            .ok_or(ErrorCode::MathUnderflow)?;
+        Ok(())
+    }
+
+    pub fn increment_gates(&mut self) -> Result<()> {
+        require!(self.active_gates_count < MAX_ACTIVE_GATES, ErrorCode::MaxActiveGatesReached);
+        self.active_gates_count = self.active_gates_count
+            .checked_add(1)
+            .ok_or(ErrorCode::MathOverflow)?;
+        Ok(())
+    }
+
+    pub fn decrement_gates(&mut self) -> Result<()> {
+        self.active_gates_count = self.active_gates_count
+            .checked_sub(1)
+            .ok_or(ErrorCode::MathUnderflow)?;
+        Ok(())
+    }
+
     pub fn validate_tip_amount(&self, amount: u64) -> Result<()> {
         require!(amount >= self.min_tip_amount, ErrorCode::TipAmountTooSmall);
         require!(amount <= MAX_TIP_AMOUNT, ErrorCode::TipAmountTooLarge);
@@ -185,14 +258,12 @@ impl TipProfile {
     // Reentrancy guard helpers
     // ------------------------------------------------------------------
 
-    /// Acquire guard – call at the very start of any mutating instruction.
     pub fn acquire_guard(&mut self) -> Result<()> {
         require!(!self.reentrancy_guard, ErrorCode::ReentrancyDetected);
         self.reentrancy_guard = true;
         Ok(())
     }
 
-    /// Release guard – call at the very end of any mutating instruction.
     pub fn release_guard(&mut self) {
         self.reentrancy_guard = false;
     }

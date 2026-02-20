@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -26,6 +26,12 @@ pub struct Profile {
     pub is_verified: bool,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
+    // Extended fields (v3)
+    pub preset_amounts: serde_json::Value,
+    pub social_links: String,
+    pub webhook_url: String,
+    pub active_polls_count: i32,
+    pub active_gates_count: i32,
 }
 
 // ============================================================
@@ -149,6 +155,91 @@ pub struct LeaderboardEntry {
 }
 
 // ============================================================
+// Poll (v3)
+// ============================================================
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct Poll {
+    pub id: Uuid,
+    pub poll_pda: String,
+    pub profile_pda: String,
+    pub poll_id: i64,
+    pub title: String,
+    pub description: String,
+    pub options: serde_json::Value,
+    pub total_votes: i32,
+    pub total_amount: i64,
+    pub deadline: Option<DateTime<Utc>>,
+    pub is_active: bool,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct PollVote {
+    pub id: Uuid,
+    pub poll_id: Uuid,
+    pub voter_address: String,
+    pub option_index: i32,
+    pub amount: i64,
+    pub tx_signature: Option<String>,
+    pub created_at: DateTime<Utc>,
+}
+
+// ============================================================
+// ContentGate (v3)
+// ============================================================
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct ContentGate {
+    pub id: Uuid,
+    pub gate_pda: String,
+    pub profile_pda: String,
+    pub gate_id: i64,
+    pub title: String,
+    pub content_url: String,
+    pub required_amount: i64,
+    pub access_count: i32,
+    pub is_active: bool,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct ContentAccess {
+    pub id: Uuid,
+    pub gate_id: Uuid,
+    pub accessor_address: String,
+    pub granted_at: DateTime<Utc>,
+}
+
+// ============================================================
+// Referral (v3)
+// ============================================================
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct Referral {
+    pub id: Uuid,
+    pub referral_pda: String,
+    pub referrer_address: String,
+    pub referee_profile_pda: String,
+    pub fee_share_bps: i32,
+    pub total_earned: i64,
+    pub referral_count: i32,
+    pub is_active: bool,
+    pub created_at: DateTime<Utc>,
+}
+
+// ============================================================
+// Analytics (v3)
+// ============================================================
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct AnalyticsDaily {
+    pub id: Uuid,
+    pub profile_pda: String,
+    pub date: NaiveDate,
+    pub tip_count: i32,
+    pub total_amount: i64,
+    pub unique_tippers: i32,
+    pub spl_amount: i64,
+}
+
+// ============================================================
 // API request/response DTOs
 // ============================================================
 
@@ -169,6 +260,10 @@ pub struct UpdateProfileRequest {
     pub min_tip_amount: Option<i64>,
     pub withdrawal_fee_bps: Option<i32>,
     pub accept_anonymous: Option<bool>,
+    // Extended fields
+    pub preset_amounts: Option<Vec<i64>>,
+    pub social_links: Option<String>,
+    pub webhook_url: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -248,6 +343,59 @@ pub struct VerifyCreatorRequest {
     pub verified: bool,
 }
 
+// Poll DTOs (v3)
+#[derive(Debug, Deserialize)]
+pub struct CreatePollRequest {
+    pub poll_id: i64,
+    pub title: String,
+    pub description: Option<String>,
+    pub options: Vec<String>,
+    pub deadline: Option<i64>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct VotePollRequest {
+    pub option_index: i32,
+    pub amount: Option<i64>,
+    pub tx_signature: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct PollListQuery {
+    pub active_only: Option<bool>,
+}
+
+// ContentGate DTOs (v3)
+#[derive(Debug, Deserialize)]
+pub struct CreateGateRequest {
+    pub gate_id: i64,
+    pub title: String,
+    pub content_url: String,
+    pub required_amount: i64,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GateListQuery {
+    pub active_only: Option<bool>,
+}
+
+// Referral DTOs (v3)
+#[derive(Debug, Deserialize)]
+pub struct CreateReferralRequest {
+    pub referee_profile_pda: String,
+    pub fee_share_bps: Option<i32>,
+}
+
+// Analytics DTOs (v3)
+#[derive(Debug, Deserialize)]
+pub struct AnalyticsQuery {
+    pub days: Option<i32>,
+}
+
+// ============================================================
+// Response DTOs
+// ============================================================
+
 #[derive(Debug, Serialize)]
 pub struct ProfileResponse {
     pub public_key: String,
@@ -273,6 +421,12 @@ pub struct ProfileAccountResponse {
     pub created_at: i64,
     pub updated_at: i64,
     pub leaderboard: Vec<LeaderboardResponse>,
+    // Extended fields (v3)
+    pub preset_amounts: Vec<i64>,
+    pub social_links: String,
+    pub webhook_url: String,
+    pub active_polls_count: i32,
+    pub active_gates_count: i32,
 }
 
 #[derive(Debug, Serialize)]
@@ -384,6 +538,60 @@ pub struct TipResponse {
     pub message: Option<String>,
     pub is_anonymous: bool,
     pub created_at: i64,
+}
+
+// Poll Response (v3)
+#[derive(Debug, Serialize)]
+pub struct PollResponse {
+    pub public_key: String,
+    pub poll_id: i64,
+    pub profile_pda: String,
+    pub title: String,
+    pub description: String,
+    pub options: serde_json::Value,
+    pub total_votes: i32,
+    pub total_amount: String,
+    pub deadline: Option<i64>,
+    pub is_active: bool,
+    pub created_at: i64,
+}
+
+// ContentGate Response (v3)
+#[derive(Debug, Serialize)]
+pub struct GateResponse {
+    pub public_key: String,
+    pub profile_pda: String,
+    pub gate_id: i64,
+    pub title: String,
+    pub content_url: String,
+    pub required_amount: String,
+    pub access_count: i32,
+    pub is_active: bool,
+    pub created_at: i64,
+}
+
+// Referral Response (v3)
+#[derive(Debug, Serialize)]
+pub struct ReferralResponse {
+    pub public_key: String,
+    pub referrer: String,
+    pub referee_profile: String,
+    pub fee_share_bps: i32,
+    pub total_earned: String,
+    pub referral_count: i32,
+    pub is_active: bool,
+    pub created_at: i64,
+}
+
+// Analytics Response (v3)
+#[derive(Debug, Serialize)]
+pub struct AnalyticsDayResponse {
+    pub date: String,
+    pub tip_count: i32,
+    pub total_amount: String,
+    pub total_amount_usd: f64,
+    pub unique_tippers: i32,
+    pub spl_amount: String,
 }
 
 #[derive(Debug, Deserialize)]

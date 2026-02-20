@@ -62,6 +62,54 @@ function TransactionIcon() {
   );
 }
 
+function PollIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 20V10" />
+      <path d="M12 20V4" />
+      <path d="M6 20v-6" />
+    </svg>
+  );
+}
+
+function GateIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+function ReferralIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="8.5" cy="7" r="4" />
+      <line x1="20" y1="8" x2="20" y2="14" />
+      <line x1="23" y1="11" x2="17" y2="11" />
+    </svg>
+  );
+}
+
+function AnalyticsIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+      <path d="M22 12A10 10 0 0 0 12 2v10z" />
+    </svg>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  );
+}
+
 function ChevronLeftIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -74,13 +122,47 @@ function ChevronLeftIcon() {
 // Nav items config
 // ============================================================
 
-const NAV_ITEMS = [
+interface NavSection {
+  title: string;
+  items: readonly { label: string; to: string; icon: React.ReactNode; exact: boolean }[];
+}
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    title: 'Main',
+    items: [
+      { label: 'Overview', to: '/dashboard', icon: <OverviewIcon />, exact: true },
+      { label: 'Goals', to: '/dashboard/goals', icon: <GoalIcon />, exact: false },
+      { label: 'Subscriptions', to: '/dashboard/subscriptions', icon: <SubscriptionIcon />, exact: false },
+      { label: 'Splits', to: '/dashboard/splits', icon: <SplitIcon />, exact: false },
+      { label: 'Transactions', to: '/dashboard/transactions', icon: <TransactionIcon />, exact: false },
+    ],
+  },
+  {
+    title: 'Engage',
+    items: [
+      { label: 'Polls', to: '/dashboard/polls', icon: <PollIcon />, exact: false },
+      { label: 'Content Gates', to: '/dashboard/content-gates', icon: <GateIcon />, exact: false },
+      { label: 'Referrals', to: '/dashboard/referrals', icon: <ReferralIcon />, exact: false },
+    ],
+  },
+  {
+    title: 'Insights',
+    items: [
+      { label: 'Analytics', to: '/dashboard/analytics', icon: <AnalyticsIcon />, exact: false },
+      { label: 'Settings', to: '/dashboard/settings', icon: <SettingsIcon />, exact: false },
+    ],
+  },
+];
+
+// Flat list for mobile bottom nav (top 5 most important)
+const MOBILE_NAV_ITEMS = [
   { label: 'Overview', to: '/dashboard', icon: <OverviewIcon />, exact: true },
   { label: 'Goals', to: '/dashboard/goals', icon: <GoalIcon />, exact: false },
-  { label: 'Subscriptions', to: '/dashboard/subscriptions', icon: <SubscriptionIcon />, exact: false },
-  { label: 'Splits', to: '/dashboard/splits', icon: <SplitIcon />, exact: false },
-  { label: 'Transactions', to: '/dashboard/transactions', icon: <TransactionIcon />, exact: false },
-] as const;
+  { label: 'Polls', to: '/dashboard/polls', icon: <PollIcon />, exact: false },
+  { label: 'Analytics', to: '/dashboard/analytics', icon: <AnalyticsIcon />, exact: false },
+  { label: 'Settings', to: '/dashboard/settings', icon: <SettingsIcon />, exact: false },
+];
 
 // ============================================================
 // Sidebar Component
@@ -131,35 +213,39 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         </div>
 
         {/* Navigation section */}
-        <nav className="flex-1 px-2 py-4 space-y-0.5" aria-label="Dashboard navigation">
-          <div className={clsx('sectionTitle', 'px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-600')}>
-            Navigation
-          </div>
-          {NAV_ITEMS.map(({ label, to, icon, exact }) => {
-            const active = isActive(to, exact);
-            return (
-              <Link
-                key={to}
-                to={to}
-                title={collapsed ? label : undefined}
-                className={clsx(
-                  styles.navItem,
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium',
-                  active
-                    ? 'text-white bg-[#9945FF]/20 border border-[#9945FF]/30'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
-                )}
-              >
-                <span className={clsx('flex-shrink-0', active ? 'text-[#9945FF]' : '')}>
-                  {icon}
-                </span>
-                <span className={clsx(styles.label)}>{label}</span>
-                {active && !collapsed && (
-                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#9945FF]" />
-                )}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 px-2 py-4 space-y-4 overflow-y-auto" aria-label="Dashboard navigation">
+          {NAV_SECTIONS.map((section) => (
+            <div key={section.title} className="space-y-0.5">
+              <div className={clsx('sectionTitle', 'px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-600')}>
+                {collapsed ? '' : section.title}
+              </div>
+              {section.items.map(({ label, to, icon, exact }) => {
+                const active = isActive(to, exact);
+                return (
+                  <Link
+                    key={to}
+                    to={to}
+                    title={collapsed ? label : undefined}
+                    className={clsx(
+                      styles.navItem,
+                      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium',
+                      active
+                        ? 'text-white bg-[#9945FF]/20 border border-[#9945FF]/30'
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    )}
+                  >
+                    <span className={clsx('flex-shrink-0', active ? 'text-[#9945FF]' : '')}>
+                      {icon}
+                    </span>
+                    <span className={clsx(styles.label)}>{label}</span>
+                    {active && !collapsed && (
+                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#9945FF]" />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         {/* Collapse toggle */}
@@ -183,7 +269,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       {/* Mobile bottom nav */}
       <nav className={clsx(styles.mobileBottomNav)} aria-label="Mobile bottom navigation">
         <div className="flex items-stretch justify-around h-16 px-2">
-          {NAV_ITEMS.map(({ label, to, icon, exact }) => {
+          {MOBILE_NAV_ITEMS.map(({ label, to, icon, exact }) => {
             const active = isActive(to, exact);
             return (
               <Link

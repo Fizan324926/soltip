@@ -33,3 +33,23 @@ pub async fn exists_by_username(pool: &PgPool, username: &str) -> Result<bool, A
         .await?;
     Ok(result.0 > 0)
 }
+
+pub async fn find_by_pda(pool: &PgPool, profile_pda: &str) -> Result<Option<Profile>, ApiError> {
+    let profile = sqlx::query_as::<_, Profile>(
+        "SELECT * FROM profiles WHERE profile_pda = $1"
+    )
+        .bind(profile_pda)
+        .fetch_optional(pool)
+        .await?;
+    Ok(profile)
+}
+
+pub async fn find_by_username(pool: &PgPool, username: &str) -> Result<Option<Profile>, ApiError> {
+    let profile = sqlx::query_as::<_, Profile>(
+        "SELECT * FROM profiles WHERE username = $1"
+    )
+        .bind(username)
+        .fetch_optional(pool)
+        .await?;
+    Ok(profile)
+}

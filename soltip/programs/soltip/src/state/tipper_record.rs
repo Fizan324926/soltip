@@ -1,9 +1,10 @@
 // ==========================================================
-// TipperRecord – tracks a (tipper, profile) relationship
+// TipperRecord – tracks a (tipper, profile) relationship  (v3)
 //
-// One PDA per (tipper, recipient_profile) pair.
-// Powers the on-chain leaderboard and unique-tipper counting
-// without linear scans.
+// v3 Additions:
+//  • weekly_amount / weekly_start – time-window leaderboard (weekly)
+//  • monthly_amount / monthly_start – time-window leaderboard (monthly)
+//  • Badge tier computed from total_amount
 // ==========================================================
 
 use anchor_lang::prelude::*;
@@ -25,6 +26,16 @@ pub struct TipperRecord {
     pub last_tip_at: i64,
     /// PDA bump
     pub bump: u8,
+
+    // ---- v3: Time-window tracking ----
+    /// Amount tipped in current weekly window
+    pub weekly_amount: u64,
+    /// Start timestamp of current weekly window
+    pub weekly_start: i64,
+    /// Amount tipped in current monthly window
+    pub monthly_amount: u64,
+    /// Start timestamp of current monthly window
+    pub monthly_start: i64,
 }
 
 impl TipperRecord {
@@ -45,6 +56,10 @@ impl TipperRecord {
         self.first_tip_at      = timestamp;
         self.last_tip_at       = timestamp;
         self.bump              = bump;
+        self.weekly_amount     = first_amount;
+        self.weekly_start      = timestamp;
+        self.monthly_amount    = first_amount;
+        self.monthly_start     = timestamp;
         Ok(())
     }
 
@@ -57,12 +72,40 @@ impl TipperRecord {
             .checked_add(1)
             .ok_or(anchor_lang::error!(crate::error::ErrorCode::MathOverflow))?;
         self.last_tip_at = timestamp;
+
+        // Update weekly window
+        if timestamp.saturating_sub(self.weekly_start) >= SECONDS_PER_WEEK {
+            // Reset weekly window
+            self.weekly_amount = amount;
+            self.weekly_start  = timestamp;
+        } else {
+            self.weekly_amount = self.weekly_amount
+                .checked_add(amount)
+                .ok_or(anchor_lang::error!(crate::error::ErrorCode::MathOverflow))?;
+        }
+
+        // Update monthly window
+        if timestamp.saturating_sub(self.monthly_start) >= SECONDS_PER_MONTH {
+            // Reset monthly window
+            self.monthly_amount = amount;
+            self.monthly_start  = timestamp;
+        } else {
+            self.monthly_amount = self.monthly_amount
+                .checked_add(amount)
+                .ok_or(anchor_lang::error!(crate::error::ErrorCode::MathOverflow))?;
+        }
+
         Ok(())
     }
 
     /// True on the very first tip (tip_count == 1 after initialize)
     pub fn is_new_tipper(&self) -> bool {
         self.tip_count == 1
+    }
+
+    /// Compute badge tier from cumulative amount
+    pub fn badge_tier(&self) -> u8 {
+        compute_badge_tier(self.total_amount)
     }
 }
 

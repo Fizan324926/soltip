@@ -32,3 +32,12 @@ pub async fn find_active_by_profile(pool: &PgPool, profile_pda: &str) -> Result<
         .await?;
     Ok(goals)
 }
+
+pub async fn find_active_goals(pool: &PgPool, profile_pda: &str) -> Result<Vec<Goal>, sqlx::Error> {
+    sqlx::query_as::<_, Goal>(
+        "SELECT * FROM goals WHERE profile_pda = $1 AND completed = false ORDER BY created_at DESC"
+    )
+        .bind(profile_pda)
+        .fetch_all(pool)
+        .await
+}

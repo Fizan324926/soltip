@@ -19,7 +19,7 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 // ============================================================
 function getEndpoint(network: Network): string {
   // Allow a custom RPC URL via environment variable (highest priority)
-  const customRpc = import.meta.env['VITE_RPC_URL'] as string | undefined;
+  const customRpc = (import.meta.env['VITE_SOLANA_RPC_URL'] || import.meta.env['VITE_RPC_URL']) as string | undefined;
   if (customRpc) return customRpc;
 
   switch (network) {

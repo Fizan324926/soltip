@@ -176,6 +176,9 @@ export const profileApi = {
     min_tip_amount?: number;
     withdrawal_fee_bps?: number;
     accept_anonymous?: boolean;
+    preset_amounts?: number[];
+    social_links?: string;
+    webhook_url?: string;
   }) => request<any>(`/profiles/${address}`, { method: 'PUT', body: data }),
 
   getLeaderboard: (address: string) =>
@@ -305,6 +308,96 @@ export const adminApi = {
 
   verifyCreator: (data: { authority_address: string; creator_address: string; verified: boolean }) =>
     request<any>('/admin/verify', { method: 'POST', body: data, raw: true }),
+};
+
+// ============================================================
+// Polls endpoints (v3)
+// ============================================================
+export const pollsApi = {
+  list: (profilePda: string, activeOnly = true) =>
+    request<any>(`/polls/${profilePda}`, { params: { active_only: activeOnly } }),
+
+  create: (data: {
+    poll_id: number;
+    title: string;
+    description?: string;
+    options: string[];
+    deadline?: number;
+  }) => request<any>('/polls', { method: 'POST', body: data }),
+
+  vote: (pollPda: string, data: {
+    option_index: number;
+    amount?: number;
+    tx_signature?: string;
+  }) => request<any>(`/polls/${pollPda}/vote`, { method: 'POST', body: data, raw: true }),
+
+  close: (pollPda: string) =>
+    request<any>(`/polls/${pollPda}/close`, { method: 'DELETE', raw: true }),
+};
+
+// ============================================================
+// Content Gates endpoints (v3)
+// ============================================================
+export const contentGatesApi = {
+  list: (profilePda: string, activeOnly = true) =>
+    request<any>(`/content-gates/${profilePda}`, { params: { active_only: activeOnly } }),
+
+  create: (data: {
+    gate_id: number;
+    title: string;
+    content_url: string;
+    required_amount: number;
+  }) => request<any>('/content-gates', { method: 'POST', body: data }),
+
+  verify: (gatePda: string) =>
+    request<any>(`/content-gates/${gatePda}/verify`, { method: 'POST', raw: true }),
+
+  close: (gatePda: string) =>
+    request<any>(`/content-gates/${gatePda}/close`, { method: 'DELETE', raw: true }),
+};
+
+// ============================================================
+// Referrals endpoints (v3)
+// ============================================================
+export const referralsApi = {
+  register: (data: {
+    referee_profile_pda: string;
+    fee_share_bps?: number;
+  }) => request<any>('/referrals', { method: 'POST', body: data }),
+
+  getByReferrer: (address: string) =>
+    request<any>(`/referrals/referrer/${address}`),
+
+  getByProfile: (profilePda: string) =>
+    request<any>(`/referrals/profile/${profilePda}`),
+};
+
+// ============================================================
+// Analytics endpoints (v3)
+// ============================================================
+export const analyticsApi = {
+  getAnalytics: (profilePda: string, days = 30) =>
+    request<any>(`/analytics/${profilePda}`, { params: { days } }),
+
+  getWindowLeaderboard: (profilePda: string, window: 'weekly' | 'monthly' | 'yearly') =>
+    request<any>(`/leaderboard/${profilePda}/${window}`),
+
+  getSolPrice: () =>
+    request<{ token: string; priceUsd: number; updatedAt: number }>('/price/sol'),
+};
+
+// ============================================================
+// Widget & Overlay endpoints (v3)
+// ============================================================
+export const widgetApi = {
+  getConfig: (username: string) =>
+    request<any>(`/widget/${username}`),
+
+  getOverlay: (username: string) =>
+    request<any>(`/overlay/${username}`),
+
+  exportTips: (profilePda: string) =>
+    `${API_BASE}/export/${profilePda}/tips`,
 };
 
 // ============================================================

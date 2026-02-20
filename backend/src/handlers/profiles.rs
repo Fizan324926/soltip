@@ -163,9 +163,14 @@ pub async fn update_profile(
     let min_tip_amount = body.min_tip_amount.unwrap_or(profile.min_tip_amount);
     let withdrawal_fee_bps = body.withdrawal_fee_bps.unwrap_or(profile.withdrawal_fee_bps);
     let accept_anonymous = body.accept_anonymous.unwrap_or(profile.accept_anonymous);
+    let preset_amounts: serde_json::Value = body.preset_amounts.as_ref()
+        .map(|a| serde_json::to_value(a).unwrap_or_default())
+        .unwrap_or(profile.preset_amounts);
+    let social_links = body.social_links.clone().unwrap_or(profile.social_links);
+    let webhook_url = body.webhook_url.clone().unwrap_or(profile.webhook_url);
 
     sqlx::query(
-        "UPDATE profiles SET display_name = $1, description = $2, image_url = $3, min_tip_amount = $4, withdrawal_fee_bps = $5, accept_anonymous = $6, updated_at = NOW() WHERE id = $7"
+        "UPDATE profiles SET display_name = $1, description = $2, image_url = $3, min_tip_amount = $4, withdrawal_fee_bps = $5, accept_anonymous = $6, preset_amounts = $8, social_links = $9, webhook_url = $10, updated_at = NOW() WHERE id = $7"
     )
         .bind(&display_name)
         .bind(&description)
@@ -174,6 +179,9 @@ pub async fn update_profile(
         .bind(withdrawal_fee_bps)
         .bind(accept_anonymous)
         .bind(profile.id)
+        .bind(&preset_amounts)
+        .bind(&social_links)
+        .bind(&webhook_url)
         .execute(&state.db)
         .await?;
 
@@ -225,6 +233,7 @@ async fn get_profile_leaderboard(
 }
 
 fn profile_to_response(p: Profile) -> ProfileResponse {
+    let preset_amounts: Vec<i64> = serde_json::from_value(p.preset_amounts.clone()).unwrap_or_default();
     ProfileResponse {
         public_key: p.profile_pda.clone(),
         account: ProfileAccountResponse {
@@ -245,6 +254,11 @@ fn profile_to_response(p: Profile) -> ProfileResponse {
             created_at: p.created_at.timestamp(),
             updated_at: p.updated_at.timestamp(),
             leaderboard: vec![],
+            preset_amounts,
+            social_links: p.social_links,
+            webhook_url: p.webhook_url,
+            active_polls_count: p.active_polls_count,
+            active_gates_count: p.active_gates_count,
         },
     }
 }

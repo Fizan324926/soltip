@@ -1,7 +1,11 @@
+pub mod analytics;
+pub mod content_gates;
 pub mod goals;
+pub mod platform;
+pub mod polls;
 pub mod profiles;
+pub mod referrals;
 pub mod splits;
 pub mod subscriptions;
 pub mod tips;
 pub mod vault;
-pub mod platform;

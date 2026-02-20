@@ -1,6 +1,5 @@
 // withdraw – vault-based withdrawal with fee split  (v2)
 use anchor_lang::prelude::*;
-use anchor_lang::system_program::{transfer, Transfer};
 use crate::state::{TipProfile, Vault};
 use crate::constants::*;
 use crate::error::ErrorCode;
@@ -62,25 +61,14 @@ pub fn handler(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
 
     ctx.accounts.vault.withdraw(amount)?;
 
-    let profile_key  = ctx.accounts.tip_profile.key();
-    let vault_bump   = ctx.accounts.vault.bump;
-    let vault_seeds: &[&[u8]] = &[VAULT_SEED, profile_key.as_ref(), &[vault_bump]];
-    let signer_seeds = &[vault_seeds];
-
-    let cpi_owner = CpiContext::new_with_signer(
-        ctx.accounts.system_program.to_account_info(),
-        Transfer { from: ctx.accounts.vault.to_account_info(), to: ctx.accounts.owner.to_account_info() },
-        signer_seeds,
-    );
-    transfer(cpi_owner, creator_share)?;
+    // Direct lamport manipulation for PDA accounts with data
+    // (system_program::transfer requires 'from' to have no data)
+    **ctx.accounts.vault.to_account_info().try_borrow_mut_lamports()? -= creator_share;
+    **ctx.accounts.owner.to_account_info().try_borrow_mut_lamports()? += creator_share;
 
     if platform_fee > 0 {
-        let cpi_treasury = CpiContext::new_with_signer(
-            ctx.accounts.system_program.to_account_info(),
-            Transfer { from: ctx.accounts.vault.to_account_info(), to: ctx.accounts.platform_treasury.to_account_info() },
-            signer_seeds,
-        );
-        transfer(cpi_treasury, platform_fee)?;
+        **ctx.accounts.vault.to_account_info().try_borrow_mut_lamports()? -= platform_fee;
+        **ctx.accounts.platform_treasury.to_account_info().try_borrow_mut_lamports()? += platform_fee;
     }
 
     emit!(WithdrawalEvent { owner: ctx.accounts.owner.key(), amount, fee: total_fee, creator_share, timestamp: ts });

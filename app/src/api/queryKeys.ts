@@ -144,6 +144,59 @@ export const queryKeys = {
         profilePda,
       ] as const,
   },
+
+  // ----------------------------------------------------------
+  // Polls (v3)
+  // ----------------------------------------------------------
+  polls: {
+    all: ['polls'] as const,
+    byProfile: (profilePda: string) =>
+      [...queryKeys.polls.all, 'byProfile', profilePda] as const,
+  },
+
+  // ----------------------------------------------------------
+  // Content Gates (v3)
+  // ----------------------------------------------------------
+  contentGates: {
+    all: ['contentGates'] as const,
+    byProfile: (profilePda: string) =>
+      [...queryKeys.contentGates.all, 'byProfile', profilePda] as const,
+  },
+
+  // ----------------------------------------------------------
+  // Referrals (v3)
+  // ----------------------------------------------------------
+  referrals: {
+    all: ['referrals'] as const,
+    byReferrer: (address: string) =>
+      [...queryKeys.referrals.all, 'byReferrer', address] as const,
+    byProfile: (profilePda: string) =>
+      [...queryKeys.referrals.all, 'byProfile', profilePda] as const,
+  },
+
+  // ----------------------------------------------------------
+  // Analytics (v3)
+  // ----------------------------------------------------------
+  analytics: {
+    all: ['analytics'] as const,
+    byProfile: (profilePda: string, days?: number) =>
+      [...queryKeys.analytics.all, 'byProfile', profilePda, days ?? 30] as const,
+    leaderboard: (profilePda: string, window: string) =>
+      [...queryKeys.analytics.all, 'leaderboard', profilePda, window] as const,
+    solPrice: () =>
+      [...queryKeys.analytics.all, 'solPrice'] as const,
+  },
+
+  // ----------------------------------------------------------
+  // Widget (v3)
+  // ----------------------------------------------------------
+  widget: {
+    all: ['widget'] as const,
+    config: (username: string) =>
+      [...queryKeys.widget.all, 'config', username] as const,
+    overlay: (username: string) =>
+      [...queryKeys.widget.all, 'overlay', username] as const,
+  },
 } as const;
 
 export type QueryKeys = typeof queryKeys;

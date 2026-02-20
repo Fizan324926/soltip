@@ -5,6 +5,9 @@ pub mod vault;
 pub mod tipper_record;
 pub mod tip_split;
 pub mod rate_limit;
+pub mod tip_poll;
+pub mod referral;
+pub mod content_gate;
 
 pub use tip_profile::*;
 pub use tip_goal::*;
@@ -13,3 +16,6 @@ pub use vault::*;
 pub use tipper_record::*;
 pub use tip_split::*;
 pub use rate_limit::*;
+pub use tip_poll::*;
+pub use referral::*;
+pub use content_gate::*;

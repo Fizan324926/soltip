@@ -51,6 +51,10 @@ export default function DashboardPage() {
     { icon: '\uD83D\uDD04', label: 'Subscriptions', to: '/dashboard/subscriptions' },
     { icon: '\u2702\uFE0F', label: 'Tip Splits', to: '/dashboard/splits' },
     { icon: '\uD83D\uDCCA', label: 'Transactions', to: '/dashboard/transactions' },
+    { icon: '\uD83D\uDCCA', label: 'Polls', to: '/dashboard/polls' },
+    { icon: '\uD83D\uDD12', label: 'Content Gates', to: '/dashboard/content-gates' },
+    { icon: '\uD83D\uDC65', label: 'Referrals', to: '/dashboard/referrals' },
+    { icon: '\uD83D\uDCC8', label: 'Analytics', to: '/dashboard/analytics' },
   ];
 
   return (

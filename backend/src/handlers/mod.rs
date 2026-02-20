@@ -1,8 +1,13 @@
 pub mod admin;
+pub mod analytics;
+pub mod content_gates;
 pub mod goals;
 pub mod health;
+pub mod polls;
 pub mod profiles;
+pub mod referrals;
 pub mod splits;
 pub mod subscriptions;
 pub mod tips;
 pub mod vault;
+pub mod widget;

@@ -1,11 +1,12 @@
 // ============================================================
-// SolTip Platform Constants  –  v2.0.0
-// State-of-the-art: vault, rate-limiting, splits, leaderboard
+// SolTip Platform Constants  –  v3.0.0
+// Full competitive feature parity: polls, referrals, content gates,
+// preset amounts, time-window leaderboards, media tips, badges
 // ============================================================
 
 use anchor_lang::prelude::*;
 
-pub const VERSION: &str = "2.0.0";
+pub const VERSION: &str = "3.0.0";
 
 // ------------------------------------------------------------------
 // PDA Seeds
@@ -20,6 +21,9 @@ pub const TIPPER_RECORD_SEED: &[u8]    = b"tipper_record";
 pub const TIP_SPLIT_SEED: &[u8]        = b"tip_split";
 pub const RATE_LIMIT_SEED: &[u8]       = b"rate_limit";
 pub const PLATFORM_CONFIG_SEED: &[u8]  = b"platform_config";
+pub const TIP_POLL_SEED: &[u8]         = b"tip_poll";
+pub const REFERRAL_SEED: &[u8]         = b"referral";
+pub const CONTENT_GATE_SEED: &[u8]     = b"content_gate";
 
 // ------------------------------------------------------------------
 // String Length Limits
@@ -32,6 +36,13 @@ pub const MAX_MESSAGE_LENGTH: usize          = 280;
 pub const MAX_GOAL_TITLE_LENGTH: usize       = 64;
 pub const MAX_GOAL_DESCRIPTION_LENGTH: usize = 256;
 pub const MAX_SPLIT_LABEL_LENGTH: usize      = 32;
+pub const MAX_MEDIA_URL_LENGTH: usize        = 200;
+pub const MAX_POLL_TITLE_LENGTH: usize       = 64;
+pub const MAX_POLL_OPTION_LENGTH: usize      = 32;
+pub const MAX_CONTENT_TITLE_LENGTH: usize    = 64;
+pub const MAX_CONTENT_URL_LENGTH: usize      = 200;
+pub const MAX_WEBHOOK_URL_LENGTH: usize      = 200;
+pub const MAX_SOCIAL_LINKS_LENGTH: usize     = 256;
 
 // ------------------------------------------------------------------
 // Financial Limits
@@ -51,6 +62,7 @@ pub const MAX_TOP_TIPPERS: usize      = 10;
 pub const MAX_TOP_CONTRIBUTORS: usize = 10;
 pub const MAX_ACTIVE_GOALS: u8        = 5;
 pub const MAX_SPLIT_RECIPIENTS: usize = 5;
+pub const MAX_PRESET_AMOUNTS: usize   = 5;
 
 // ------------------------------------------------------------------
 // Rate Limiting
@@ -65,6 +77,32 @@ pub const SECONDS_PER_DAY: i64   = 86_400;
 pub const SECONDS_PER_WEEK: i64  = 604_800;
 pub const SECONDS_PER_MONTH: i64 = 2_592_000;
 pub const MAX_GOAL_DURATION: i64 = 31_536_000;
+
+// ------------------------------------------------------------------
+// Poll Constants
+// ------------------------------------------------------------------
+pub const MAX_POLL_OPTIONS: usize = 4;
+pub const MIN_POLL_OPTIONS: usize = 2;
+pub const MAX_ACTIVE_POLLS: u8    = 3;
+
+// ------------------------------------------------------------------
+// Referral Constants
+// ------------------------------------------------------------------
+pub const DEFAULT_REFERRAL_FEE_BPS: u16 = 500;  // 5% of fees
+pub const MAX_REFERRAL_FEE_BPS: u16     = 2_000; // 20% max
+
+// ------------------------------------------------------------------
+// Content Gate Constants
+// ------------------------------------------------------------------
+pub const MAX_ACTIVE_GATES: u8 = 10;
+
+// ------------------------------------------------------------------
+// Badge Tier Thresholds (lamports)
+// ------------------------------------------------------------------
+pub const BADGE_BRONZE_THRESHOLD: u64  = 100_000_000;     // 0.1 SOL
+pub const BADGE_SILVER_THRESHOLD: u64  = 1_000_000_000;   // 1 SOL
+pub const BADGE_GOLD_THRESHOLD: u64    = 10_000_000_000;  // 10 SOL
+pub const BADGE_DIAMOND_THRESHOLD: u64 = 100_000_000_000; // 100 SOL
 
 // ------------------------------------------------------------------
 // Account Sizes
@@ -91,6 +129,16 @@ pub const TIP_PROFILE_SIZE: usize = 8
     + 1   // bump
     // leaderboard: 10 * (32 + 8 + 4) = 440
     + 4 + (MAX_TOP_TIPPERS * (32 + 8 + 4))
+    // preset_amounts: Vec<u64> max 5
+    + 4 + (MAX_PRESET_AMOUNTS * 8)
+    // social_links
+    + (4 + MAX_SOCIAL_LINKS_LENGTH)
+    // webhook_url
+    + (4 + MAX_WEBHOOK_URL_LENGTH)
+    // active_polls_count
+    + 1
+    // active_gates_count
+    + 1
     + 256; // reserved
 
 pub const TIP_GOAL_SIZE: usize = 8
@@ -143,7 +191,12 @@ pub const TIPPER_RECORD_SIZE: usize = 8
     + 8   // first_tip_at
     + 8   // last_tip_at
     + 1   // bump
-    + 16;
+    // Time-window tracking
+    + 8   // weekly_amount
+    + 8   // weekly_start
+    + 8   // monthly_amount
+    + 8   // monthly_start
+    + 16; // reserved
 
 pub const TIP_SPLIT_SIZE: usize = 8
     + 32  // profile (owner)
@@ -171,6 +224,44 @@ pub const PLATFORM_CONFIG_SIZE: usize = 8
     + 1   // bump
     + 64;
 
+pub const TIP_POLL_SIZE: usize = 8
+    + 32  // profile
+    + 8   // poll_id
+    + (4 + MAX_POLL_TITLE_LENGTH)      // title
+    + (4 + MAX_DESCRIPTION_LENGTH)     // description
+    // options: Vec<PollOption> max 4, each = (4+32) + 4 + 8 = 48
+    + 4 + (MAX_POLL_OPTIONS * (4 + MAX_POLL_OPTION_LENGTH + 4 + 8))
+    + 4   // total_votes
+    + 8   // total_amount
+    + 9   // deadline: Option<i64>
+    + 1   // is_active
+    + 8   // created_at
+    + 1   // bump
+    + 64; // reserved
+
+pub const REFERRAL_SIZE: usize = 8
+    + 32  // referrer
+    + 32  // referee_profile
+    + 2   // fee_share_bps
+    + 8   // total_earned
+    + 4   // referral_count
+    + 8   // created_at
+    + 1   // is_active
+    + 1   // bump
+    + 32; // reserved
+
+pub const CONTENT_GATE_SIZE: usize = 8
+    + 32  // profile
+    + 8   // gate_id
+    + (4 + MAX_CONTENT_TITLE_LENGTH)   // title
+    + (4 + MAX_CONTENT_URL_LENGTH)     // content_url (encrypted)
+    + 8   // required_amount
+    + 4   // access_count
+    + 8   // created_at
+    + 1   // is_active
+    + 1   // bump
+    + 64; // reserved
+
 // ------------------------------------------------------------------
 // Feature Flags
 // ------------------------------------------------------------------
@@ -180,6 +271,9 @@ pub const ENABLE_ANONYMOUS_TIPS: bool = true;
 pub const ENABLE_MULTI_TOKEN: bool    = true;
 pub const ENABLE_RATE_LIMITING: bool  = true;
 pub const ENABLE_TIP_SPLITS: bool     = true;
+pub const ENABLE_POLLS: bool          = true;
+pub const ENABLE_REFERRALS: bool      = true;
+pub const ENABLE_CONTENT_GATES: bool  = true;
 
 // ------------------------------------------------------------------
 // Utility Functions
@@ -212,6 +306,22 @@ pub fn validate_split_bps(bps_list: &[u16]) -> bool {
     total == 10_000
 }
 
+/// Compute badge tier from cumulative tip amount (lamports).
+/// 0 = none, 1 = bronze, 2 = silver, 3 = gold, 4 = diamond
+pub fn compute_badge_tier(total_amount: u64) -> u8 {
+    if total_amount >= BADGE_DIAMOND_THRESHOLD {
+        4
+    } else if total_amount >= BADGE_GOLD_THRESHOLD {
+        3
+    } else if total_amount >= BADGE_SILVER_THRESHOLD {
+        2
+    } else if total_amount >= BADGE_BRONZE_THRESHOLD {
+        1
+    } else {
+        0
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -242,5 +352,16 @@ mod tests {
     fn test_validate_split_bps() {
         assert!(validate_split_bps(&[5_000, 3_000, 2_000]));
         assert!(!validate_split_bps(&[5_000, 3_000, 1_000]));
+    }
+
+    #[test]
+    fn test_compute_badge_tier() {
+        assert_eq!(compute_badge_tier(0), 0);
+        assert_eq!(compute_badge_tier(50_000_000), 0);
+        assert_eq!(compute_badge_tier(100_000_000), 1); // bronze
+        assert_eq!(compute_badge_tier(500_000_000), 1);
+        assert_eq!(compute_badge_tier(1_000_000_000), 2); // silver
+        assert_eq!(compute_badge_tier(10_000_000_000), 3); // gold
+        assert_eq!(compute_badge_tier(100_000_000_000), 4); // diamond
     }
 }

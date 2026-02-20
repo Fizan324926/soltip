@@ -21,6 +21,17 @@ const DashboardSubscriptions = lazy(() => import('./pages/dashboard/DashboardSub
 const DashboardSplits        = lazy(() => import('./pages/dashboard/DashboardSplits'));
 const DashboardTransactions  = lazy(() => import('./pages/dashboard/DashboardTransactions'));
 
+// New v3 pages
+const DashboardPolls         = lazy(() => import('./pages/dashboard/DashboardPolls'));
+const DashboardContentGates  = lazy(() => import('./pages/dashboard/DashboardContentGates'));
+const DashboardReferrals     = lazy(() => import('./pages/dashboard/DashboardReferrals'));
+const DashboardAnalytics     = lazy(() => import('./pages/dashboard/DashboardAnalytics'));
+const DashboardSettings      = lazy(() => import('./pages/dashboard/DashboardSettings'));
+
+// Embeddable pages (no layout)
+const WidgetEmbed            = lazy(() => import('./pages/WidgetEmbedPage'));
+const OverlayEmbed           = lazy(() => import('./pages/OverlayPage'));
+
 // ============================================================
 // Loading fallback – shown while any lazy page chunk is loading
 // ============================================================
@@ -68,6 +79,10 @@ const App: FC = () => {
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/admin" element={<AdminPage />} />
 
+        {/* ── Embeddable pages (no layout wrapper) ──────── */}
+        <Route path="/widget/:username" element={<WidgetEmbed />} />
+        <Route path="/overlay/:username" element={<OverlayEmbed />} />
+
         {/* ── Dashboard (nested layout) ──────────────────── */}
         <Route path="/dashboard" element={<DashboardLayout />}>
           {/* Index redirects to the overview sub-route */}
@@ -76,6 +91,12 @@ const App: FC = () => {
           <Route path="subscriptions" element={<DashboardSubscriptions />} />
           <Route path="splits"        element={<DashboardSplits />} />
           <Route path="transactions"  element={<DashboardTransactions />} />
+          {/* New v3 routes */}
+          <Route path="polls"         element={<DashboardPolls />} />
+          <Route path="content-gates" element={<DashboardContentGates />} />
+          <Route path="referrals"     element={<DashboardReferrals />} />
+          <Route path="analytics"     element={<DashboardAnalytics />} />
+          <Route path="settings"      element={<DashboardSettings />} />
           {/* Fallback for unknown dashboard sub-routes */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>

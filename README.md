@@ -1,6 +1,8 @@
 # SolTip - Decentralized Tipping Platform on Solana
 
-A full-stack decentralized tipping and creator monetization platform built on Solana. Creators set up profiles, receive SOL/SPL token tips, run fundraising goals, accept recurring subscriptions, and split incoming tips across multiple wallets -- all enforced on-chain through an Anchor smart contract.
+A full-stack decentralized tipping and creator monetization platform built on Solana. Creators set up profiles, receive SOL/SPL token tips, run fundraising goals, accept recurring subscriptions, split tips across wallets, create community polls, gate exclusive content, earn referral commissions, and track analytics -- all enforced on-chain through an Anchor smart contract.
+
+> **Deployment Guide**: See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete instructions on deploying to devnet and mainnet, including how to get RPC keys, set up the database, and configure all environment variables.
 
 ---
 
@@ -8,6 +10,7 @@ A full-stack decentralized tipping and creator monetization platform built on So
 
 - [Architecture Overview](#architecture-overview)
 - [System Architecture Diagram](#system-architecture-diagram)
+- [Features](#features)
 - [User Flow](#user-flow)
 - [Data Flow: Sending a Tip](#data-flow-sending-a-tip)
 - [On-Chain Program (Anchor)](#on-chain-program-anchor)
@@ -25,7 +28,6 @@ A full-stack decentralized tipping and creator monetization platform built on So
   - [State Management](#state-management)
 - [Project Structure](#project-structure)
 - [Development Setup](#development-setup)
-- [Deployment Guide](#deployment-guide)
 - [Environment Variables](#environment-variables)
 - [Tech Stack](#tech-stack)
 
@@ -45,24 +47,25 @@ SolTip is a three-layer application:
           v                        v
 +--------------------+    +------------------------+
 |   BACKEND API      |    |   SOLANA BLOCKCHAIN    |
-|  Actix-web (Rust)  |    |  Anchor 0.32.1 Program |
-|  PostgreSQL + SQLx |    |  14 Instructions       |
+|  Actix-web (Rust)  |    |  Anchor 0.30.1 Program |
+|  PostgreSQL + SQLx |    |  18 Instructions       |
 |  Ed25519 Auth      |    |  8 Account Types       |
 +--------------------+    +------------------------+
           |
           v
 +--------------------+
 |    PostgreSQL      |
+|  15 tables         |
 |  Tip history       |
-|  Profile cache     |
-|  Analytics         |
+|  Polls, gates,     |
+|  analytics, etc.   |
 +--------------------+
 ```
 
 **Why three layers?**
 
 - **On-chain program**: Enforces all financial rules (tips, fees, rate limits, splits). Money never touches a centralized server.
-- **Backend API**: Stores historical data (tip history, search indexes, analytics) that would be expensive to query on-chain. Also handles wallet signature authentication.
+- **Backend API**: Stores historical data (tip history, polls, content gates, analytics, referrals) that would be expensive to query on-chain. Also handles wallet signature authentication, webhooks, and SOL/USD price feed.
 - **Frontend**: Single-page app with code-split routes, wallet integration, and real-time data via React Query.
 
 ---
@@ -78,28 +81,102 @@ SolTip is a three-layer application:
                (on-chain)             (SOL escrow)
                     |                      |
           +---------+---------+            |
-          |         |         |            |
-      Leaderboard  Goals  TipSplit     Withdraw
-      (top 10)   (max 5)  (2-5 wallets)   |
-                                     Fee Split:
-                                   - Creator gets (100% - fee)
-                                   - Treasury gets PLATFORM_FEE_BPS
-                                   - Creator-set withdrawal_fee_bps
+          |    |    |    |    |            |
+      Leaderboard Goals Split Polls    Withdraw
+      (top 10) (max5) (2-5)  (max3)      |
+                                    Fee Split:
+                                  - Creator gets (100% - fee)
+                                  - Treasury gets PLATFORM_FEE_BPS
+                                  - Referrer gets fee share (if any)
 
     Tipper Wallet
          |
-    +----+----+----+----+
-    |    |    |         |
-  SOL   SPL  Split  Subscribe
-  Tip   Tip  Tip    (recurring)
-    |    |    |         |
-    +----+----+         |
-         |              |
-    RateLimit PDA   Subscription PDA
-    (per pair)      (per subscriber)
-    - 3s cooldown
-    - 100/day cap
+    +----+----+----+----+----+
+    |    |    |    |         |
+  SOL   SPL  Split Poll  Subscribe
+  Tip   Tip  Tip  Vote   (recurring)
+    |    |    |    |         |
+    +----+----+    |         |
+         |         |         |
+    RateLimit   ContentGate  Subscription PDA
+    (per pair)  (tip-gated)  (per subscriber)
 ```
+
+---
+
+## Features
+
+### Core Tipping
+- SOL tips with message and anonymous option
+- SPL token tips (USDC, USDT, custom tokens)
+- Atomic multi-recipient split tips
+- On-chain rate limiting (3s cooldown, 100/day per pair)
+- Reentrancy guard on all financial operations
+
+### Creator Tools
+- Custom profiles with username, avatar, bio
+- Configurable minimum tip amount and withdrawal fee
+- Preset tip amounts for quick tipping buttons
+- SOL and SPL vault with manual withdrawal
+- Verified creator badges (admin-granted)
+
+### Fundraising Goals
+- Up to 5 active goals per creator
+- Target amount, deadline, progress tracking
+- Unique contributor counting
+- Close and reclaim rent when complete
+
+### Recurring Subscriptions
+- SOL and SPL token subscriptions
+- Configurable interval and amount
+- Auto-renewal with crank processing
+- Cancel anytime
+
+### Tip Splits
+- 2-5 recipients with BPS-based shares
+- Atomic on-chain splitting
+- Configurable labels per recipient
+
+### Community Polls (v3)
+- Create tip-funded polls with 2-4 options
+- Vote by tipping, SOL amount recorded per option
+- Real-time vote progress bars
+- Up to 3 active polls per creator
+
+### Content Gates (v3)
+- Gate exclusive content behind tip thresholds
+- Tipper must have tipped at least the required amount
+- Access granted permanently once threshold met
+- Content URL revealed after verification
+
+### Referral Program (v3)
+- Register as a referrer for any creator
+- Earn commission on referred tips (configurable BPS)
+- Track total earnings and referral count
+- Maximum 20% fee share cap
+
+### Analytics Dashboard (v3)
+- Daily/weekly/monthly tip trends
+- SOL/USD conversion with live price feed
+- Time-window leaderboards (weekly/monthly/yearly)
+- CSV export for tax reporting
+
+### Embeddable Widget (v3)
+- One-line iframe embed for any website
+- Shows creator stats, preset amounts, and CTA
+- Dark-themed, responsive design
+
+### OBS Overlay (v3)
+- Browser source for streaming software
+- Auto-refreshing tip alerts (5s polling)
+- Goal progress bar overlay
+- Active poll display
+- Transparent background for compositing
+
+### Platform Admin
+- Emergency pause/unpause all financial operations
+- Verify/unverify creators
+- Platform fee configuration
 
 ---
 
@@ -108,7 +185,7 @@ SolTip is a three-layer application:
 ```
 CREATOR FLOW:
 =============
-1. Connect Wallet (Phantom/Solflare/etc.)
+1. Connect Wallet (Phantom/Solflare/Backpack)
      |
 2. Onboarding Wizard (4 steps)
      |-- Choose username (lowercase, alphanumeric, underscore)
@@ -117,13 +194,20 @@ CREATOR FLOW:
      |-- Review & create profile (on-chain tx)
      |
 3. Dashboard
-     |-- View tip history & analytics
-     |-- Create fundraising goals (max 5 active)
-     |-- Configure tip splits (2-5 recipients, BPS must sum to 10000)
-     |-- Manage subscriptions
-     |-- Withdraw from vault (SOL/SPL)
+     |-- Overview: stats, vault balance, quick actions
+     |-- Goals: create/manage fundraising campaigns
+     |-- Subscriptions: view active subscribers
+     |-- Splits: configure multi-recipient tip splitting
+     |-- Transactions: full tip history
+     |-- Polls: create/manage community polls
+     |-- Content Gates: gate content behind tip thresholds
+     |-- Referrals: track referral earnings
+     |-- Analytics: daily charts, leaderboards, CSV export
+     |-- Settings: preset amounts, social links, webhook URL, embed codes
      |
-4. Share profile link: soltip.app/<username>
+4. Share profile: soltip.app/<username>
+5. Embed widget: <iframe src="soltip.app/widget/<username>" />
+6. OBS overlay: soltip.app/overlay/<username>
 
 TIPPER FLOW:
 ============
@@ -132,16 +216,17 @@ TIPPER FLOW:
 2. Click creator profile
      |
 3. Send Tip
-     |-- Choose amount (min 1000 lamports)
+     |-- Choose amount (preset or custom)
      |-- Optional message (max 280 chars)
      |-- Optional anonymous flag
      |-- Sign & send transaction
      |
-4. Tip arrives in creator's Vault PDA (not directly to wallet)
+4. Tip arrives in creator's Vault PDA
      |-- Platform fee (1%) deducted automatically
-     |-- Rate limit enforced (3s cooldown, 100/day per pair)
+     |-- Rate limit enforced (3s cooldown, 100/day)
      |-- Leaderboard updated if top-10 worthy
      |-- TipperRecord updated for tracking
+     |-- Webhook fired (if configured)
 
 ADMIN FLOW:
 ===========
@@ -157,61 +242,36 @@ ADMIN FLOW:
 
 ## Data Flow: Sending a Tip
 
-This is the most common operation. Here's exactly what happens at each layer:
-
 ```
 Step 1: FRONTEND (browser)
   - User enters amount, message, clicks "Send Tip"
-  - useAnchorClient() builds the transaction:
-      Program: soltip (BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo)
-      Instruction: send_tip
-      Accounts:
-        - tipper (signer, mut)
-        - tip_profile (mut)          -- PDA: [b"tip_profile", creator_wallet]
-        - vault (mut)                -- PDA: [b"vault", tip_profile]
-        - tipper_record (init_if_needed, mut) -- PDA: [b"tipper_record", tipper, tip_profile]
-        - rate_limit (init_if_needed, mut)    -- PDA: [b"rate_limit", tipper, tip_profile]
-        - platform_config            -- PDA: [b"platform_config"]
-        - platform_treasury (mut)    -- PDA: [b"treasury"]
-        - system_program
-      Args: amount (u64), message (String), is_anonymous (bool)
+  - useAnchorClient() builds the transaction
   - Wallet popup: user signs transaction
 
 Step 2: ON-CHAIN PROGRAM (Solana validator)
   a. Check platform_config.paused == false
   b. Validate amount (MIN_TIP_AMOUNT <= amount <= MAX_TIP_AMOUNT)
-  c. Validate message (length <= 280, no HTML injection chars)
-  d. Check accept_anonymous if is_anonymous
-  e. Rate limit check:
-     - If window_start is stale (>24h ago), reset counter
-     - Require tip_count_today < MAX_TIPS_PER_DAY (100)
-     - Require clock.unix_timestamp - last_tip_at >= COOLDOWN (3s)
-  f. Set reentrancy_guard = true on tip_profile
-  g. Calculate platform_fee = amount * PLATFORM_FEE_BPS / 10000
-  h. Transfer (amount - platform_fee) lamports: tipper -> vault
-  i. Transfer platform_fee lamports: tipper -> platform_treasury
-  j. Update tip_profile stats (total_tips, total_amount, unique_tippers)
-  k. Update/insert tipper_record (total_amount, tip_count)
-  l. Update leaderboard if tipper qualifies for top 10
-  m. Update rate_limit (last_tip_at, tip_count_today)
-  n. Set reentrancy_guard = false
-  o. Return success
+  c. Validate message length and sanitize
+  d. Rate limit check (cooldown + daily cap)
+  e. Set reentrancy_guard = true
+  f. Calculate platform_fee = amount * PLATFORM_FEE_BPS / 10000
+  g. Transfer (amount - platform_fee) -> vault
+  h. Transfer platform_fee -> treasury
+  i. Update tip_profile stats
+  j. Update tipper_record + leaderboard
+  k. Set reentrancy_guard = false
 
 Step 3: FRONTEND (post-confirmation)
   - Wait for transaction confirmation
-  - Extract tx signature
-  - POST /api/v1/tips with { tx_signature, tipper_address,
-    recipient_address, amount_lamports, message, is_anonymous }
+  - POST /api/v1/tips with tip details
   - Auth: Bearer <base58_sig>.<base58_pubkey>.<timestamp>
 
 Step 4: BACKEND API
   a. Verify wallet signature (ed25519)
-  b. Verify tipper_address matches authenticated wallet
-  c. Look up recipient profile in PostgreSQL
-  d. Insert tip record into `tips` table
-  e. Update profile stats (total_tips_received, total_amount_received_lamports)
-  f. Update unique_tippers count if first-time tipper
-  g. Return 201 Created
+  b. Insert tip record into database
+  c. Update profile stats
+  d. Fire webhook (if configured)
+  e. Return 201 Created
 ```
 
 ---
@@ -222,51 +282,46 @@ Step 4: BACKEND API
 
 | Account | PDA Seeds | Description |
 |---------|-----------|-------------|
-| `TipProfile` | `["tip_profile", owner]` | Creator profile with stats, settings, on-chain leaderboard (top 10), reentrancy guard |
-| `Vault` | `["vault", tip_profile]` | SOL escrow -- all tips land here, creator withdraws manually |
-| `TipperRecord` | `["tipper_record", tipper, tip_profile]` | Per-pair tracking: total amount, tip count, timestamps |
-| `RateLimit` | `["rate_limit", tipper, tip_profile]` | Per-pair rate limiter: 3s cooldown + 100/day rolling window |
-| `TipGoal` | `["tip_goal", tip_profile, goal_id]` | Fundraising campaign with target, deadline, progress tracking |
-| `Subscription` | `["subscription", subscriber, tip_profile]` | Recurring payment: amount, interval, next due date, SOL or SPL |
-| `TipSplit` | `["tip_split", tip_profile]` | Multi-recipient config: 2-5 wallets with BPS shares summing to 10000 |
-| `PlatformConfig` | `["platform_config"]` | Singleton: authority, treasury, fee BPS, pause state |
+| `TipProfile` | `["tip_profile", owner]` | Creator profile with stats, settings, leaderboard |
+| `Vault` | `["vault", tip_profile]` | SOL escrow for tips |
+| `TipperRecord` | `["tipper_record", tipper, tip_profile]` | Per-pair tip tracking |
+| `RateLimit` | `["rate_limit", tipper, tip_profile]` | Per-pair rate limiter |
+| `TipGoal` | `["tip_goal", tip_profile, goal_id]` | Fundraising campaign |
+| `Subscription` | `["subscription", subscriber, tip_profile]` | Recurring payment |
+| `TipSplit` | `["tip_split", tip_profile]` | Multi-recipient config |
+| `PlatformConfig` | `["platform_config"]` | Singleton platform settings |
 
 ### Instructions
 
 | # | Instruction | Auth | Description |
 |---|-------------|------|-------------|
-| 1 | `initialize_platform` | Authority | One-time setup: set authority, treasury, fee |
-| 2 | `create_profile` | Creator | Create TipProfile + Vault PDAs |
-| 3 | `update_profile` | Creator | Update display name, bio, settings |
-| 4 | `send_tip` | Tipper | Send SOL tip with rate limiting + leaderboard |
-| 5 | `send_tip_spl` | Tipper | Send SPL token tip (USDC, USDT, etc.) |
-| 6 | `configure_split` | Creator | Set up 2-5 recipient split with BPS shares |
-| 7 | `send_tip_split` | Tipper | Atomic multi-recipient SOL tip |
-| 8 | `initialize_vault` | Creator | Create SOL vault for a profile |
-| 9 | `withdraw` | Creator | Withdraw SOL from vault (fee deducted) |
-| 10 | `withdraw_spl` | Creator | Withdraw SPL tokens from vault |
-| 11 | `create_goal` | Creator | Create fundraising goal (max 5 active) |
-| 12 | `contribute_goal` | Tipper | Fund a goal with rate limiting |
-| 13 | `close_goal` | Creator | Close goal (completed or cancelled) |
+| 1 | `initialize_platform` | Authority | One-time setup |
+| 2 | `create_profile` | Creator | Create TipProfile + Vault |
+| 3 | `update_profile` | Creator | Update settings |
+| 4 | `send_tip` | Tipper | Send SOL tip |
+| 5 | `send_tip_spl` | Tipper | Send SPL token tip |
+| 6 | `configure_split` | Creator | Set up tip splitting |
+| 7 | `send_tip_split` | Tipper | Atomic multi-recipient tip |
+| 8 | `initialize_vault` | Creator | Create SOL vault |
+| 9 | `withdraw` | Creator | Withdraw SOL from vault |
+| 10 | `withdraw_spl` | Creator | Withdraw SPL tokens |
+| 11 | `create_goal` | Creator | Create fundraising goal |
+| 12 | `contribute_goal` | Tipper | Fund a goal |
+| 13 | `close_goal` | Creator | Close a goal |
 | 14 | `create_subscription` | Subscriber | Start recurring payment |
 | 15 | `cancel_subscription` | Subscriber | Cancel recurring payment |
-| 16 | `process_subscription` | Anyone (crank) | Execute a due subscription payment |
+| 16 | `process_subscription` | Anyone (crank) | Execute due payment |
 | 17 | `verify_creator` | Authority | Grant/revoke verified badge |
 | 18 | `pause_platform` | Authority | Emergency pause toggle |
 
 ### PDA Derivation
 
-All accounts are Program Derived Addresses (PDAs). No private keys exist for these accounts -- the program controls them deterministically.
-
-```
-// Example: derive a TipProfile address
-const [tipProfilePda, bump] = PublicKey.findProgramAddressSync(
+```typescript
+const [tipProfilePda] = PublicKey.findProgramAddressSync(
   [Buffer.from("tip_profile"), creatorWallet.toBuffer()],
   PROGRAM_ID
 );
-
-// Example: derive a Vault address
-const [vaultPda, vaultBump] = PublicKey.findProgramAddressSync(
+const [vaultPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("vault"), tipProfilePda.toBuffer()],
   PROGRAM_ID
 );
@@ -274,20 +329,12 @@ const [vaultPda, vaultBump] = PublicKey.findProgramAddressSync(
 
 ### Security Mechanisms
 
-1. **Reentrancy Guard**: `tip_profile.reentrancy_guard` is set to `true` before any transfer and `false` after. Prevents cross-instruction reentrancy within the same transaction.
-
-2. **Rate Limiting**: Each (tipper, recipient) pair has a `RateLimit` PDA with:
-   - 3-second cooldown between tips
-   - 100 tips per 24-hour rolling window
-   - Window resets after 24h of inactivity
-
-3. **Platform Pause**: `PlatformConfig.paused` is checked at the start of every tipping instruction. When paused, all financial operations revert.
-
-4. **Input Validation**: All strings are length-checked and sanitized (no `<`, `>`, `&` characters). Amounts are bounds-checked against MIN/MAX constants.
-
-5. **Ownership Checks**: Every mutation requires the signing wallet to match the account owner (e.g., only the profile creator can withdraw, only the subscriber can cancel).
-
-6. **Fee Arithmetic**: Uses `u128` intermediate values with `checked_mul`/`checked_div` to prevent overflow. Fees are calculated as `amount * fee_bps / 10000`.
+1. **Reentrancy Guard**: Set before transfers, cleared after
+2. **Rate Limiting**: 3s cooldown + 100/day per (tipper, recipient) pair
+3. **Platform Pause**: Kill switch for all financial operations
+4. **Input Validation**: Length checks, character sanitization, bounds checking
+5. **Ownership Checks**: Signer must match account owner
+6. **Safe Arithmetic**: `u128` intermediates with `checked_mul`/`checked_div`
 
 ---
 
@@ -295,78 +342,76 @@ const [vaultPda, vaultBump] = PublicKey.findProgramAddressSync(
 
 ### Authentication
 
-All mutation endpoints (POST/PUT/DELETE) require wallet signature authentication:
+Wallet signature auth (no passwords, no sessions):
 
 ```
-Authorization: Bearer <base58_signature>.<base58_pubkey>.<timestamp_seconds>
+Authorization: Bearer <base58_signature>.<base58_pubkey>.<timestamp>
 ```
 
-**How it works:**
-
-1. Frontend signs the message `SolTip-Auth:<unix_timestamp>` using the wallet's `signMessage`
-2. Encodes the 64-byte ed25519 signature as base58
-3. Sends `<sig>.<pubkey>.<timestamp>` as Bearer token
-4. Backend verifies:
-   - Timestamp is within 5 minutes of server time (anti-replay)
-   - Signature is valid for the reconstructed message
-   - Pubkey matches the `owner_address` / `tipper_address` in the request body
-
-**Why not JWT?** Wallet-native auth means no passwords, no session cookies, no registration. The wallet IS the identity. The signature proves wallet ownership without revealing the private key.
+Frontend signs `SolTip-Auth:<timestamp>` using wallet's `signMessage`. Backend verifies the ed25519 signature and checks timestamp freshness (configurable via `AUTH_TOKEN_MAX_AGE_SECS`).
 
 ### Database Schema
 
-PostgreSQL with 7 tables mirroring on-chain state for fast queries:
+PostgreSQL with 15 tables:
 
 ```
-profiles            -- Creator profiles (search, pagination, filtering)
-vaults              -- Vault balances
-tips                -- Full tip history with indexing
-goals               -- Fundraising goals with progress
-subscriptions       -- Recurring payment tracking
-tip_splits          -- Split configurations
-  split_recipients  -- Individual split recipients (FK to tip_splits)
-platform_config     -- Platform authority & settings
+Core:        profiles, vaults, tips, goals, subscriptions, tip_splits, split_recipients
+v3:          polls, poll_votes, content_gates, content_access, referrals
+System:      webhook_deliveries, price_cache, analytics_daily
 ```
-
-All tables use UUID primary keys, `TIMESTAMPTZ` timestamps, and appropriate indexes for common query patterns.
 
 ### API Endpoints
 
-**Public (no auth required):**
+**Public (no auth):**
 
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/api/v1/health` | Health check |
-| GET | `/api/v1/profiles` | List profiles (paginated, searchable, filterable) |
-| GET | `/api/v1/profiles/{address}` | Get profile by wallet, PDA, or username |
-| GET | `/api/v1/profiles/{address}/leaderboard` | Top 10 tippers for a creator |
-| GET | `/api/v1/vault/{profile_pda}` | Get vault balance |
-| GET | `/api/v1/tips/history/{address}` | Tip history (paginated) |
-| GET | `/api/v1/goals/{profile_pda}` | List goals for a creator |
-| GET | `/api/v1/subscriptions/subscriber/{address}` | List subscriptions by subscriber |
-| GET | `/api/v1/splits/{profile_pda}` | Get split config |
-| GET | `/api/v1/admin/config` | Platform config |
-| GET | `/api/v1/transactions/{address}` | Transaction history |
+| GET | `/api/v1/profiles` | List profiles (paginated, searchable) |
+| GET | `/api/v1/profiles/{address}` | Get profile |
+| GET | `/api/v1/profiles/{address}/leaderboard` | Top tippers |
+| GET | `/api/v1/vault/{profile_pda}` | Vault balance |
+| GET | `/api/v1/tips/history/{address}` | Tip history |
+| GET | `/api/v1/goals/{profile_pda}` | List goals |
+| GET | `/api/v1/subscriptions/subscriber/{addr}` | Subscriptions |
+| GET | `/api/v1/splits/{profile_pda}` | Split config |
+| GET | `/api/v1/polls/{profile_pda}` | List polls |
+| GET | `/api/v1/content-gates/{profile_pda}` | List gates |
+| GET | `/api/v1/referrals/referrer/{addr}` | Referrals by referrer |
+| GET | `/api/v1/referrals/profile/{pda}` | Referrals by profile |
+| GET | `/api/v1/analytics/{profile_pda}` | Analytics data |
+| GET | `/api/v1/leaderboard/{pda}/{window}` | Time-window leaderboard |
+| GET | `/api/v1/price/sol` | SOL/USD price |
+| GET | `/api/v1/widget/{username}` | Widget config |
+| GET | `/api/v1/overlay/{username}` | OBS overlay config |
+| GET | `/api/v1/export/{pda}/tips` | CSV export |
 
-**Authenticated (wallet signature required):**
+**Authenticated (wallet signature):**
 
-| Method | Path | Auth Check | Description |
-|--------|------|------------|-------------|
-| POST | `/api/v1/profiles` | wallet == owner_address | Create profile |
-| PUT | `/api/v1/profiles/{address}` | wallet == path address | Update profile |
-| POST | `/api/v1/tips` | wallet == tipper_address | Record SOL tip |
-| POST | `/api/v1/tips/spl` | wallet == tipper_address | Record SPL tip |
-| POST | `/api/v1/tips/split` | wallet == tipper_address | Record split tip |
-| POST | `/api/v1/vault/initialize` | wallet == owner_address | Initialize vault |
-| POST | `/api/v1/vault/withdraw` | wallet == vault owner | Record withdrawal |
-| POST | `/api/v1/goals` | wallet == owner_address | Create goal |
-| POST | `/api/v1/goals/{pda}/contribute` | any authenticated wallet | Contribute to goal |
-| DELETE | `/api/v1/goals/{pda}` | wallet == profile owner | Close goal |
-| POST | `/api/v1/subscriptions` | wallet == subscriber_address | Create subscription |
-| DELETE | `/api/v1/subscriptions/{pda}` | any authenticated wallet | Cancel subscription |
-| POST | `/api/v1/splits` | wallet == owner_address | Configure split |
-| POST | `/api/v1/admin/pause` | wallet == authority | Pause/unpause |
-| POST | `/api/v1/admin/verify` | wallet == authority | Verify/unverify creator |
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/v1/profiles` | Create profile |
+| PUT | `/api/v1/profiles/{address}` | Update profile |
+| POST | `/api/v1/tips` | Record SOL tip |
+| POST | `/api/v1/tips/spl` | Record SPL tip |
+| POST | `/api/v1/tips/split` | Record split tip |
+| POST | `/api/v1/vault/initialize` | Initialize vault |
+| POST | `/api/v1/vault/withdraw` | Record withdrawal |
+| POST | `/api/v1/goals` | Create goal |
+| POST | `/api/v1/goals/{pda}/contribute` | Contribute |
+| DELETE | `/api/v1/goals/{pda}` | Close goal |
+| POST | `/api/v1/subscriptions` | Create subscription |
+| DELETE | `/api/v1/subscriptions/{pda}` | Cancel subscription |
+| POST | `/api/v1/splits` | Configure split |
+| POST | `/api/v1/polls` | Create poll |
+| POST | `/api/v1/polls/{pda}/vote` | Vote on poll |
+| DELETE | `/api/v1/polls/{pda}/close` | Close poll |
+| POST | `/api/v1/content-gates` | Create gate |
+| POST | `/api/v1/content-gates/{pda}/verify` | Verify access |
+| DELETE | `/api/v1/content-gates/{pda}/close` | Close gate |
+| POST | `/api/v1/referrals` | Register referral |
+| POST | `/api/v1/admin/pause` | Pause/unpause |
+| POST | `/api/v1/admin/verify` | Verify/unverify |
 
 ---
 
@@ -376,13 +421,13 @@ All tables use UUID primary keys, `TIMESTAMPTZ` timestamps, and appropriate inde
 
 ```
 <React.StrictMode>
-  <ErrorBoundary>          -- Catches render errors, shows error + reload button
-    <ThemeProvider>         -- Dark/light mode on <html> element
-      <WalletProvider>     -- Solana wallet adapter (Phantom, Solflare, etc.)
-        <QueryProvider>    -- TanStack React Query v5 (caching, refetching)
-          <ToastProvider>  -- react-hot-toast notifications
+  <ErrorBoundary>
+    <ThemeProvider>
+      <WalletProvider>       -- Solana wallet adapter
+        <QueryProvider>      -- TanStack React Query v5
+          <ToastProvider>    -- react-hot-toast
             <BrowserRouter>
-              <App />      -- useWalletAuth() auto-signs on connect
+              <App />        -- useWalletAuth() auto-signs
             </BrowserRouter>
           </ToastProvider>
         </QueryProvider>
@@ -394,26 +439,33 @@ All tables use UUID primary keys, `TIMESTAMPTZ` timestamps, and appropriate inde
 
 ### Page Routes
 
-| Path | Page | Auth Required |
-|------|------|---------------|
-| `/` | Landing page (hero, stats, features, CTA) | No |
-| `/discover` | Creator discovery (search, filters, cards) | No |
-| `/onboarding` | 4-step profile creation wizard | Wallet |
-| `/dashboard` | Creator dashboard (overview) | Wallet |
+| Path | Page | Auth |
+|------|------|------|
+| `/` | Landing page | No |
+| `/discover` | Creator discovery | No |
+| `/onboarding` | Profile creation wizard | Wallet |
+| `/dashboard` | Dashboard overview | Wallet |
 | `/dashboard/goals` | Goal management | Wallet |
 | `/dashboard/subscriptions` | Subscription management | Wallet |
 | `/dashboard/splits` | Split configuration | Wallet |
 | `/dashboard/transactions` | Transaction history | Wallet |
-| `/admin` | Platform admin panel | Authority wallet |
+| `/dashboard/polls` | Poll management | Wallet |
+| `/dashboard/content-gates` | Content gate management | Wallet |
+| `/dashboard/referrals` | Referral dashboard | Wallet |
+| `/dashboard/analytics` | Analytics & leaderboards | Wallet |
+| `/dashboard/settings` | Profile settings & embeds | Wallet |
+| `/admin` | Platform admin panel | Authority |
+| `/widget/:username` | Embeddable tip widget | No |
+| `/overlay/:username` | OBS alert overlay | No |
 | `/:username` | Public creator profile | No |
 | `*` | 404 Not Found | No |
 
 ### State Management
 
-- **Server state**: TanStack React Query v5 -- all API data is fetched, cached, and refetched automatically
-- **Client state**: Zustand stores for local UI state
+- **Server state**: TanStack React Query v5 with query key factory
+- **Client state**: Zustand stores (wallet, profile, platform, UI)
 - **Wallet state**: `@solana/wallet-adapter-react` hooks
-- **Anchor client**: Custom `useAnchorClient()` hook returns `AnchorClient | null` (null when wallet disconnected)
+- **Anchor client**: Custom `useAnchorClient()` hook
 
 ---
 
@@ -424,44 +476,42 @@ soltip/
 +-- soltip/                        # Anchor smart contract
 |   +-- programs/soltip/src/
 |   |   +-- lib.rs                 # Program entry (18 instructions)
-|   |   +-- constants.rs           # Seeds, sizes, limits, validation
+|   |   +-- constants.rs           # Seeds, sizes, limits
 |   |   +-- error.rs               # Error codes (50+ types)
-|   |   +-- state/                 # 8 account struct definitions
-|   |   +-- instructions/          # One file per instruction (18 files)
-|   +-- tests/                     # Anchor integration tests
-|   +-- Anchor.toml                # Anchor config (cluster, program ID)
+|   |   +-- state/                 # 8 account structs
+|   |   +-- instructions/          # 18 instruction files
+|   +-- tests/                     # 64 integration tests
+|   +-- Anchor.toml
 |
 +-- backend/                       # Actix-web REST API
 |   +-- src/
 |   |   +-- main.rs                # Server entry, CORS, migrations
-|   |   +-- routes.rs              # Route definitions
-|   |   +-- handlers/              # HTTP handlers (7 modules)
-|   |   +-- middleware/mod.rs      # Ed25519 wallet auth
+|   |   +-- routes.rs              # 40+ route definitions
+|   |   +-- handlers/              # HTTP handlers (9 modules)
+|   |   +-- middleware/            # Ed25519 wallet auth
 |   |   +-- models.rs              # Request/response DTOs
-|   |   +-- error.rs               # API error types
-|   |   +-- db/                    # Database query helpers
-|   |   +-- services/solana.rs     # Solana RPC client
-|   |   +-- config.rs              # Server config
-|   +-- migrations/                # PostgreSQL schema
-|   +-- Cargo.toml
+|   |   +-- db/                    # Database query helpers (7 modules)
+|   |   +-- services/              # Price feed, webhooks, Solana RPC
+|   |   +-- config.rs              # Constants
+|   +-- migrations/                # PostgreSQL migrations (2 files)
+|   +-- .env.example               # All backend config vars
 |
 +-- app/                           # React frontend
 |   +-- src/
-|   |   +-- App.tsx                # Route definitions + wallet auth
-|   |   +-- main.tsx               # Provider tree + error boundary
-|   |   +-- api/                   # React Query hooks (7 feature modules)
+|   |   +-- App.tsx                # Route definitions
+|   |   +-- main.tsx               # Provider tree
+|   |   +-- api/                   # React Query hooks (9 modules)
 |   |   +-- components/            # UI components (layout, shared, ui)
-|   |   +-- features/              # Feature modules (12 features)
-|   |   +-- hooks/                 # Custom hooks (useAnchorClient, useWalletAuth, etc.)
-|   |   +-- lib/                   # Anchor client, API client, Solana utils
+|   |   +-- features/              # 15 feature page modules
+|   |   +-- hooks/                 # Custom hooks
+|   |   +-- lib/                   # Anchor client, API client, utils
 |   |   +-- providers/             # Wallet, Query, Theme, Toast
-|   |   +-- stores/                # Zustand state stores
-|   |   +-- types/                 # TypeScript interfaces
-|   |   +-- styles/                # Tailwind CSS (globals, animations, theme)
-|   +-- index.html
-|   +-- package.json
+|   |   +-- stores/                # Zustand state stores (4)
+|   +-- .env.example               # All frontend config vars
 |   +-- vite.config.ts
-|   +-- tailwind.config.ts
+|
++-- DEPLOYMENT.md                  # Comprehensive deployment guide
++-- README.md                      # This file
 ```
 
 ---
@@ -471,137 +521,49 @@ soltip/
 ### Prerequisites
 
 - Rust 1.75+ (`rustup install stable`)
-- Anchor CLI 0.32.1 (`avm install 0.32.1`)
+- Anchor CLI 0.30.1 (`avm install 0.30.1`)
 - Solana CLI 1.18+ (`sh -c "$(curl -sSfL https://release.solana.com/stable/install)"`)
 - Node.js 18+ and npm
 - PostgreSQL 14+
 
-### 1. Clone and install
+### Quick Start
 
 ```bash
+# 1. Clone
 git clone https://github.com/Fizan324926/soltip.git
 cd soltip
-```
 
-### 2. Set up the database
-
-```bash
-# Create PostgreSQL database
+# 2. Database
 createdb soltip
-
-# Copy env file and configure
 cp backend/.env.example backend/.env
-# Edit backend/.env with your DATABASE_URL
-```
+# Edit backend/.env: set DATABASE_URL
 
-### 3. Run the backend
+# 3. Backend
+cd backend && cargo run
+# Server at http://localhost:8080, migrations auto-run
 
-```bash
-cd backend
-cargo run
-# Server starts at http://localhost:8080
-# Migrations run automatically on startup
-```
-
-### 4. Run the frontend
-
-```bash
-cd app
-npm install
+# 4. Frontend
+cd ../app && npm install
 cp .env.example .env.local
-# Edit .env.local with your settings
+# Edit .env.local: set VITE_PROGRAM_ID, VITE_API_URL
 npm run dev
-# Dev server starts at http://localhost:3000
+# Dev server at http://localhost:3000
+
+# 5. Anchor program
+cd ../soltip && anchor build --skip-lint
+# Run tests: anchor test --skip-lint
 ```
 
-### 5. Build the Anchor program
-
-```bash
-cd soltip
-anchor build
-# Output: target/deploy/soltip.so
-```
-
----
-
-## Deployment Guide
-
-### Deploy to Solana Devnet
-
-```bash
-# 1. Configure Solana CLI for devnet
-solana config set --url devnet
-
-# 2. Create a deploy wallet (if you don't have one)
-solana-keygen new -o ~/.config/solana/id.json
-
-# 3. Fund with devnet SOL (need ~5 SOL)
-#    Visit https://faucet.solana.com or:
-solana airdrop 2
-
-# 4. Build the program
-cd soltip
-anchor build
-
-# 5. Deploy
-anchor deploy
-
-# 6. Verify
-solana program show BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo
-```
-
-### Deploy Backend
-
-```bash
-# Build optimized binary
-cd backend
-cargo build --release
-
-# Run with production env
-DATABASE_URL=postgres://... \
-SOLANA_RPC_URL=https://api.devnet.solana.com \
-PROGRAM_ID=BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo \
-HOST=0.0.0.0 \
-PORT=8080 \
-RUST_LOG=info \
-./target/release/soltip-backend
-```
-
-### Deploy Frontend
-
-```bash
-cd app
-npm run build
-# Output: dist/ -- serve with any static file server (Nginx, Vercel, Cloudflare Pages)
-```
+For production deployment, see **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 
 ---
 
 ## Environment Variables
 
-### Backend (`backend/.env`)
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DATABASE_URL` | *required* | PostgreSQL connection string |
-| `SOLANA_RPC_URL` | `https://api.devnet.solana.com` | Solana RPC endpoint |
-| `PROGRAM_ID` | `BhynwWdN5...` | Deployed program address |
-| `JWT_SECRET` | `dev-secret-change-me` | Legacy (unused, kept for compat) |
-| `HOST` | `127.0.0.1` | Bind address |
-| `PORT` | `8080` | Bind port |
-| `RUST_LOG` | `info` | Log level |
-
-### Frontend (`app/.env.local`)
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `VITE_SOLANA_NETWORK` | `devnet` | Network name |
-| `VITE_SOLANA_RPC_URL` | `https://api.devnet.solana.com` | RPC endpoint |
-| `VITE_PROGRAM_ID` | `BhynwWdN5...` | Program address |
-| `VITE_API_URL` | `http://localhost:8080/api/v1` | Backend API base URL |
-| `VITE_PLATFORM_FEE_BPS` | `100` | Platform fee (display only) |
-| `VITE_USDC_MINT` | devnet USDC | USDC token mint address |
-| `VITE_USDT_MINT` | devnet USDT | USDT token mint address |
+All environment variables are documented in:
+- **Backend**: [`backend/.env.example`](./backend/.env.example) (15 variables)
+- **Frontend**: [`app/.env.example`](./app/.env.example) (20+ variables)
+- **Full reference**: [DEPLOYMENT.md - Environment Variable Reference](./DEPLOYMENT.md#environment-variable-reference)
 
 ---
 
@@ -610,7 +572,7 @@ npm run build
 | Layer | Technology | Version |
 |-------|------------|---------|
 | Blockchain | Solana | Mainnet-Beta / Devnet |
-| Smart Contract | Anchor | 0.32.1 |
+| Smart Contract | Anchor | 0.30.1 |
 | Backend | Actix-web (Rust) | 4.x |
 | Database | PostgreSQL + SQLx | 0.8 |
 | Auth | Ed25519 wallet signatures | ed25519-dalek 2.x |
@@ -621,8 +583,6 @@ npm run build
 | State (server) | TanStack React Query | 5.x |
 | State (client) | Zustand | 5.x |
 | Wallet | Solana Wallet Adapter | latest |
-| Charts | Recharts | 2.x |
-| Animations | Framer Motion | 11.x |
 
 ---
 

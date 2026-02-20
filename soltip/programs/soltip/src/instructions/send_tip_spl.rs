@@ -7,7 +7,8 @@
 // ==========================================================
 
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, TokenAccount, Transfer as SplTransfer};
+use anchor_spl::token::{self, Token, Transfer as SplTransfer};
+use anchor_spl::token_interface::TokenAccount;
 use crate::state::{TipProfile, RateLimit};
 use crate::instructions::initialize_platform::PlatformConfig;
 use crate::constants::*;
@@ -34,7 +35,7 @@ pub struct SendTipSpl<'info> {
         mut,
         constraint = tipper_token_account.owner == tipper.key() @ ErrorCode::TokenAccountOwnerMismatch,
     )]
-    pub tipper_token_account: Account<'info, TokenAccount>,
+    pub tipper_token_account: InterfaceAccount<'info, TokenAccount>,
 
     /// Recipient profile
     #[account(
@@ -53,7 +54,7 @@ pub struct SendTipSpl<'info> {
         constraint = recipient_token_account.owner    == recipient_owner.key()          @ ErrorCode::TokenAccountOwnerMismatch,
         constraint = recipient_token_account.mint     == tipper_token_account.mint      @ ErrorCode::TokenMintMismatch,
     )]
-    pub recipient_token_account: Account<'info, TokenAccount>,
+    pub recipient_token_account: InterfaceAccount<'info, TokenAccount>,
 
     /// Rate-limit PDA
     #[account(

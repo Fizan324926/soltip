@@ -23,6 +23,20 @@ pub enum ErrorCode {
     UnsafeTextContent,
     #[msg("Username cannot be empty")]
     EmptyUsername,
+    #[msg("Media URL too long (max 200 chars)")]
+    MediaUrlTooLong,
+    #[msg("Poll title too long (max 64 chars)")]
+    PollTitleTooLong,
+    #[msg("Poll option label too long (max 32 chars)")]
+    PollOptionTooLong,
+    #[msg("Content title too long (max 64 chars)")]
+    ContentTitleTooLong,
+    #[msg("Content URL too long (max 200 chars)")]
+    ContentUrlTooLong,
+    #[msg("Webhook URL too long (max 200 chars)")]
+    WebhookUrlTooLong,
+    #[msg("Social links too long (max 256 chars)")]
+    SocialLinksTooLong,
 
     // ========== Financial ==========
     #[msg("Tip amount below minimum")]
@@ -109,6 +123,12 @@ pub enum ErrorCode {
     TipSplitsDisabled,
     #[msg("Feature not implemented")]
     FeatureNotImplemented,
+    #[msg("Polls disabled")]
+    PollsDisabled,
+    #[msg("Referrals disabled")]
+    ReferralsDisabled,
+    #[msg("Content gates disabled")]
+    ContentGatesDisabled,
 
     // ========== Token ==========
     #[msg("Invalid token mint")]
@@ -185,4 +205,48 @@ pub enum ErrorCode {
     InvalidSubscriptionInterval,
     #[msg("Subscription amount must be > 0")]
     InvalidSubscriptionAmount,
+
+    // ========== Polls ==========
+    #[msg("Too many poll options (max 4)")]
+    TooManyPollOptions,
+    #[msg("Too few poll options (min 2)")]
+    TooFewPollOptions,
+    #[msg("Max active polls reached (3)")]
+    MaxActivePollsReached,
+    #[msg("Poll not active")]
+    PollNotActive,
+    #[msg("Poll deadline expired")]
+    PollDeadlineExpired,
+    #[msg("Invalid poll option index")]
+    InvalidPollOption,
+    #[msg("Poll is still active")]
+    PollStillActive,
+    #[msg("Not poll owner")]
+    NotPollOwner,
+
+    // ========== Referrals ==========
+    #[msg("Referral already exists")]
+    ReferralAlreadyExists,
+    #[msg("Invalid referral fee (max 20%)")]
+    InvalidReferralFee,
+    #[msg("Cannot refer yourself")]
+    CannotReferSelf,
+    #[msg("Referral not active")]
+    ReferralNotActive,
+
+    // ========== Content Gates ==========
+    #[msg("Max active content gates reached (10)")]
+    MaxActiveGatesReached,
+    #[msg("Content gate not active")]
+    ContentGateNotActive,
+    #[msg("Insufficient tips to access gated content")]
+    InsufficientTipsForAccess,
+    #[msg("Not gate owner")]
+    NotGateOwner,
+
+    // ========== Preset Amounts ==========
+    #[msg("Too many preset amounts (max 5)")]
+    TooManyPresetAmounts,
+    #[msg("Preset amount must be > 0")]
+    InvalidPresetAmount,
 }

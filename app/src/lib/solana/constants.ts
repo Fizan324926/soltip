@@ -4,7 +4,7 @@ import { PublicKey } from '@solana/web3.js';
 // Program ID
 // ============================================================
 export const PROGRAM_ID = new PublicKey(
-  'BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo'
+  import.meta.env['VITE_PROGRAM_ID'] ?? 'BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo'
 );
 
 // ============================================================
