@@ -72,158 +72,530 @@ SCENARIO 3: Large Scale (10,000 active streamers)
 
 ---
 
-## 🏢 EXISTING COMPETITORS (Your Competition)
+## 🏢 EXISTING COMPETITORS (Deep Competitive Analysis)
+
+> For each competitor: what they have that we don't, what we can build to match or beat it, and unique angles only SolTip can offer.
+
+---
 
 ### **1. STREAMLABS (Web2 - Centralized)**
 ```
-Website: streamlabs.com
-Users: 4+ million streamers
-Revenue: $50M+ annually
-Features:
-├─ Alerts & widgets
-├─ Donation links
-├─ Merch store
-├─ Event lists
-└─ Analytics
-
-Fees:
-├─ Platform fee: FREE
-├─ Payment processor: 2.9% + $0.30 (PayPal/Stripe)
-└─ Currency conversion: 3-5%
-
-TOTAL USER COST: 5-8% per donation
-
-YOUR ADVANTAGE:
-✅ Lower fees (2% vs 5-8%)
-✅ Instant settlement (crypto)
-✅ Global payments (no PayPal restrictions)
-✅ Anonymous tipping
+Website:  streamlabs.com
+Users:    4+ million streamers
+Revenue:  $50M+ annually
+Fees:     2.9% + $0.30 PayPal/Stripe + 3-5% currency conversion = 5-8% total
 ```
+
+#### What Streamlabs Has That We Don't
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  FEATURE                     STREAMLABS    SOLTIP (current)     │
+├─────────────────────────────────────────────────────────────────┤
+│  OBS/Streamlabs Desktop App  ✅ Full app   ❌ Web only           │
+│  Live alert overlays (TTS)   ✅ Real-time  ❌ No overlay system  │
+│  Chat widget (Twitch/YT)     ✅ Integrated ❌ No chat support    │
+│  Merch store (print-on-dem.) ✅ Built-in   ❌ No merch           │
+│  Clip creation tools         ✅ Yes        ❌ No                 │
+│  Event list widget           ✅ Yes        ❌ No                 │
+│  Loyalty points system       ✅ Yes        ❌ No                 │
+│  Mobile app (iOS/Android)    ✅ Yes        ❌ No                 │
+│  Fiat payment acceptance     ✅ PayPal etc ❌ Crypto only        │
+│  Charity fundraising mode    ✅ Yes        ❌ No                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### How We Compete & What to Build
+```
+SHORT-TERM (can build now):
+├─ Webhook system → stream any tip event to any URL
+│   Creator plugs URL into OBS browser source for custom alerts
+├─ Alert widget page (browser source URL)
+│   Show tip notification overlay without desktop app
+├─ Read-only Twitch/YouTube chat parser
+│   Display chat messages alongside tips on dashboard
+
+MEDIUM-TERM (3-6 months):
+├─ OBS Dock Plugin (Electron/WebSocket)
+│   Lightweight browser dock, no full app needed
+├─ Fiat on-ramp integration (MoonPay / Transak)
+│   Tippers pay with credit card → auto-converted to SOL/USDC
+├─ Loyalty points on-chain
+│   Every tip earns points, redeemable for perks (NFTs, discounts)
+
+SOLTIP-EXCLUSIVE EDGE OVER STREAMLABS:
+✅ Fees: 2% vs 5-8% = creator keeps 3-6% more
+✅ Instant payout vs 7-30 day PayPal hold
+✅ No chargebacks (blockchain finality)
+✅ Works in any country PayPal/Stripe blocks
+✅ Anonymous tipping (no personal data leaked)
+✅ Tips earn yield in DeFi while sitting in vault
+```
+
+---
 
 ### **2. STREAMELEMENTS (Web2 - Centralized)**
 ```
-Website: streamelements.com
-Users: 1.5+ million streamers
-Revenue: $20M+ annually
-Features:
-├─ Chatbot
-├─ Overlays
-├─ Tipping
-├─ Merch
-└─ Analytics
-
-Fees:
-├─ Platform fee: FREE
-├─ Payment processor: 2.9% + $0.30
-└─ Payout fee: $1-3 per withdrawal
-
-YOUR ADVANTAGE:
-✅ No payout fees
-✅ Crypto-native (no bank needed)
-✅ Programmable (smart contracts)
-✅ Composable with other DeFi
+Website:  streamelements.com
+Users:    1.5+ million streamers
+Revenue:  $20M+ annually
+Fees:     2.9% + $0.30 + $1-3 payout fee per withdrawal
 ```
+
+#### What StreamElements Has That We Don't
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  FEATURE                     STREAMELEMENTS  SOLTIP (current)  │
+├─────────────────────────────────────────────────────────────────┤
+│  AI Chatbot (commands/mods)  ✅ Full chatbot ❌ No chatbot       │
+│  Overlay editor (drag-drop)  ✅ Visual editor❌ No overlay tool  │
+│  Store with point redemption ✅ Point shop  ❌ No point shop     │
+│  Activity feed widget        ✅ Yes         ❌ No                │
+│  Merch fulfillment           ✅ Yes         ❌ No                │
+│  Stream health monitoring    ✅ Basic       ❌ No                │
+│  Multi-platform (Twitch+YT)  ✅ Yes         ❌ No multi-platform │
+│  Tip page (hosted URL)       ✅ Yes         ❌ Profile page only │
+│  Custom tip amounts (presets)✅ Yes         ❌ Manual only       │
+│  Poll & voting tools         ✅ Yes         ❌ No                │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### How We Compete & What to Build
+```
+SHORT-TERM:
+├─ Preset tip amounts on profile page (e.g. "Tip $1", "Tip $5", "Tip $10")
+│   Creator sets 3-5 preset SOL/USDC amounts
+├─ Shareable tip page with custom slug
+│   soltip.app/t/alice → clean standalone tip page
+│   Embeddable as iframe in any website
+
+MEDIUM-TERM:
+├─ On-chain polls funded by tips
+│   "Vote YES: tip 0.1 SOL | Vote NO: tip 0.05 SOL"
+│   Most-tipped option wins → gamification + income
+├─ Tip-gated content links
+│   Creator sets a URL that only unlocks after viewer tips X amount
+├─ Webhook → Twitch bot integration
+│   When tip received, bot posts message in chat automatically
+
+SOLTIP-EXCLUSIVE EDGE OVER STREAMELEMENTS:
+✅ No payout fees (StreamElements charges $1-3 per withdrawal)
+✅ Programmable money: tips can auto-split, yield-farm
+✅ No account ban risk (decentralized)
+✅ Multi-token in one platform (SOL, USDC, USDT, any SPL)
+```
+
+---
 
 ### **3. TIPEEESTREAM (Web2 - Centralized)**
 ```
-Website: tipeeestream.com
-Users: 500,000+ streamers
-Revenue: $10M+ annually
-Focus: European market
-Features:
-├─ Multi-currency
-├─ Alerts
-├─ Goals
-├─ Polls
-└─ Leaderboards
-
-Fees: 1% platform + 2.9% payment processor = 3.9% total
-
-YOUR ADVANTAGE:
-✅ Lower fees (2% vs 3.9%)
-✅ Borderless (no SEPA/SWIFT needed)
-✅ Permissionless (no account needed)
+Website:  tipeeestream.com
+Users:    500,000+ streamers
+Revenue:  $10M+ annually
+Focus:    European market (strong SEPA integration)
+Fees:     1% platform + 2.9% processor = 3.9% total
 ```
+
+#### What Tipeeestream Has That We Don't
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  FEATURE                     TIPEEESTREAM   SOLTIP (current)   │
+├─────────────────────────────────────────────────────────────────┤
+│  Bank transfer (SEPA/IBAN)   ✅ Yes         ❌ Crypto only       │
+│  Viewer polls during stream  ✅ Yes         ❌ No                │
+│  Multi-currency display      ✅ EUR/USD/GBP ❌ SOL/USD only      │
+│  Leaderboard widget (overlay)✅ Live widget ❌ Dashboard only    │
+│  Ranking badges for tippers  ✅ Bronze/Gold ❌ No                │
+│  Top tipper of week/month    ✅ Yes         ❌ No time-window     │
+│  Minimum tip enforcement UI  ✅ Clear UX    ⚠️ Exists but hidden │
+│  Tip media requests          ✅ Song/video  ❌ No                │
+│  Payment page in 15 langs    ✅ 15 langs    ❌ English only       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### How We Compete & What to Build
+```
+SHORT-TERM:
+├─ Time-window leaderboards
+│   Weekly/monthly leaderboard, not just all-time
+│   Resets every Sunday → recurring engagement
+├─ Tipper rank badges (on-chain NFT)
+│   Bronze = 0.1 SOL total, Silver = 1 SOL, Gold = 10 SOL
+│   Displayed on tip notification overlays
+
+MEDIUM-TERM:
+├─ Tip media requests
+│   Tipper attaches a YouTube URL or Spotify track with tip
+│   Creator plays it on stream (moderated queue)
+├─ USD/EUR price display
+│   Show SOL amount AND fiat equivalent in real time
+│   "You tipped 0.5 SOL (~$50 USD)"
+├─ Multi-language frontend
+│   i18n for top 10 streaming markets
+
+SOLTIP-EXCLUSIVE EDGE OVER TIPEEESTREAM:
+✅ Truly borderless (no SEPA bank account needed)
+✅ Crypto-native audience (Tipeeestream has zero web3 features)
+✅ Rate limiting on-chain (no fraud, no fake tips)
+✅ Permissionless: no identity verification required
+```
+
+---
 
 ### **4. KO-FI (Web2 - Centralized)**
 ```
-Website: ko-fi.com
-Users: 2+ million creators
-Revenue: $15M+ annually
-Features:
-├─ One-time tips
-├─ Monthly subscriptions
-├─ Shop
-├─ Commissions
-└─ Goals
-
-Fees:
-├─ Free tier: 0% platform fee
-├─ Payment processor: 2.9% + $0.30
-├─ Ko-fi Gold: $6/month for premium
-
-YOUR ADVANTAGE:
-✅ Decentralized (no shutdown risk)
-✅ Composable (integrate with other dApps)
-✅ Token support (any SPL token)
+Website:  ko-fi.com
+Users:    2+ million creators
+Revenue:  $15M+ annually
+Focus:    Artists, writers, indie creators (not streamers)
+Fees:     0% platform fee (Ko-fi Gold: $6/month) + 2.9% Stripe
 ```
 
-### **5. WEB3 COMPETITORS (Crypto-Native)**
+#### What Ko-fi Has That We Don't
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  FEATURE                     KO-FI          SOLTIP (current)   │
+├─────────────────────────────────────────────────────────────────┤
+│  Digital product store       ✅ PDF/presets ❌ No digital store  │
+│  Commission booking system   ✅ Yes         ❌ No                │
+│  Membership tiers (Patreon-  ✅ 3 tiers     ⚠️ Subscriptions    │
+│  style with benefits)        ✅ with perks  │  (no perk delivery)│
+│  Direct message from fans    ✅ Yes         ❌ No messaging       │
+│  Embed button (any website)  ✅ 1-line code ❌ No embed widget   │
+│  Gallery / portfolio page    ✅ Yes         ❌ No portfolio       │
+│  Physical product shipping   ✅ Yes         ❌ No                │
+│  Crowdfunding (project-based)✅ Yes         ❌ Goals only        │
+│  Wishlist (Amazon-linked)    ✅ Yes         ❌ No                │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### How We Compete & What to Build
+```
+SHORT-TERM:
+├─ Embeddable tip button widget
+│   <script src="soltip.app/widget.js" data-creator="alice"></script>
+│   Any blog/portfolio can add a tip button in one line
+├─ Membership tiers on-chain
+│   Creator sets 3 tiers (Bronze $5/mo, Silver $15/mo, Gold $50/mo)
+│   Subscription PDA gates gated content via token ownership proof
+
+MEDIUM-TERM:
+├─ Digital product delivery
+│   Creator uploads file, sets price → buyer tips → auto-delivers file
+│   100% on-chain payment, file stored on IPFS/Arweave
+├─ Crowdfunding mode (enhanced goals)
+│   Goal has deadline, refund if not reached
+│   Smart contract holds funds in escrow, auto-refunds on failure
+
+SOLTIP-EXCLUSIVE EDGE OVER KO-FI:
+✅ No 2.9% Stripe fee on every tip (Ko-fi's "free" tier still pays Stripe)
+✅ Instant withdrawal (Ko-fi holds for 7 days minimum)
+✅ Cannot be deplatformed (Ko-fi bans creators for content policy)
+✅ Multi-token (Ko-fi is USD only)
+✅ Programmable subscriptions (auto-payment, no manual renewal)
+```
+
+---
+
+### **5. PATREON (Web2 - Centralized)**
+```
+Website:  patreon.com
+Users:    250,000+ active creators
+Revenue:  $160M+ annually
+Focus:    Membership/subscription model for all creators
+Fees:     8-12% platform + 2.9% + $0.30 payment = 11-15% total
+```
+
+#### What Patreon Has That We Don't
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  FEATURE                     PATREON        SOLTIP (current)   │
+├─────────────────────────────────────────────────────────────────┤
+│  Patron-only posts feed      ✅ Yes         ❌ No content feed   │
+│  Tiered membership perks     ✅ 3-10 tiers  ⚠️ Subscriptions    │
+│  Patron messaging system     ✅ Yes         ❌ No                │
+│  Merch integration           ✅ Yes         ❌ No                │
+│  App integrations (Discord,  ✅ Auto-role   ❌ No auto Discord   │
+│  Zoom, Google Drive)         ✅ Yes         │  role              │
+│  Early access delivery       ✅ Built-in    ❌ Manual only       │
+│  Charge up-front option      ✅ Yes         ❌ No                │
+│  Patron management dashboard ✅ Rich CRM    ❌ Basic list        │
+│  Annual subscription option  ✅ Yes         ❌ Monthly only      │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### How We Compete & What to Build
+```
+SHORT-TERM:
+├─ On-chain subscriber list export
+│   Creator can download CSV of all subscriber wallets
+│   Use for external airdrops, Discord role assignments
+├─ Subscription intervals: weekly/monthly/quarterly/annual
+│   Currently only flexible interval; add named presets
+
+MEDIUM-TERM:
+├─ Discord role bot
+│   SolTip bot checks subscriber PDA on-chain
+│   Automatically grants/revokes Discord roles based on active sub
+│   This is Patreon's #1 feature → replicate with zero middleman
+├─ Token-gated content links
+│   Creator posts URL only visible after wallet holds active sub PDA
+│   Works with any external platform (Notion, Google Drive, etc.)
+
+SOLTIP-EXCLUSIVE EDGE OVER PATREON:
+✅ Fees: ~2% vs 11-15% (Patreon is the most expensive competitor)
+✅ No content censorship (Patreon bans adult content, politics)
+✅ Instant subscription payments (no monthly billing cycle delays)
+✅ Subscriber owns their relationship (not locked in Patreon CRM)
+✅ Crypto-native subscribers (wallets, not emails — less spam)
+```
+
+---
+
+### **6. ONLY FAN$ / FANSLY (Web2 - Adult/Creator)**
+```
+Focus:    Adult content + creator monetization
+Fees:     20% platform fee (highest in market)
+Users:    3M+ creators
+```
+
+#### What They Have That We Don't
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  FEATURE                     ONLYFANS       SOLTIP (current)   │
+├─────────────────────────────────────────────────────────────────┤
+│  Pay-per-view messages       ✅ Yes         ❌ No messaging       │
+│  Paid post unlocking         ✅ Yes         ❌ No                │
+│  Story-like content          ✅ Yes         ❌ No                │
+│  Referral commission for     ✅ 5% lifetime ❌ No referral system │
+│  bringing new creators       ✅             │                    │
+│  Chargeback protection       ✅ Guaranteed  ❌ N/A (blockchain)  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### How We Compete & What to Build
+```
+SOLTIP-EXCLUSIVE EDGE:
+✅ 2% fee vs 20% = creator keeps 18% MORE (massive)
+✅ Cannot be banned/deplatformed for any content
+✅ No bank can freeze funds (non-custodial)
+✅ Anonymous creator AND tipper (privacy by default)
+✅ Global (OnlyFans blocks many countries)
+
+BUILD:
+├─ Referral program on-chain
+│   Creator A refers Creator B → A gets 5% of B's fees for 1 year
+│   Tracked by PDA, auto-paid from fee collection
+```
+
+---
+
+### **7. WEB3 COMPETITORS (Crypto-Native)**
 
 #### **A. SHOWTIME (Solana)**
 ```
-Website: showtime.xyz
-Status: Active
-Focus: NFT creators + tipping
-Users: ~50,000
-Features:
-├─ NFT drops
-├─ Social feed
-├─ Tipping (SOL)
-└─ Creator profiles
-
-YOUR ADVANTAGE:
-✅ Focused ONLY on tipping (specialized)
-✅ Multi-token support
-✅ Streamer-specific features (goals, alerts)
-✅ Better analytics
+Website:  showtime.xyz
+Focus:    NFT creators + social + tipping
+Users:    ~50,000
 ```
+
+#### What Showtime Has That We Don't
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  FEATURE                     SHOWTIME       SOLTIP (current)   │
+├─────────────────────────────────────────────────────────────────┤
+│  NFT display / gallery       ✅ Core feature❌ No NFT gallery    │
+│  Social feed (posts/likes)   ✅ Yes         ❌ No social feed    │
+│  Follow system               ✅ Yes         ❌ No follow         │
+│  NFT minting from profile    ✅ Yes         ❌ No                │
+│  Collector identity          ✅ Core        ❌ Creator-only      │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### How We Compete & What to Build
+```
+SHORT-TERM:
+├─ NFT tip receipt minting
+│   Every tip above 1 SOL mints a commemorative NFT receipt
+│   Tipper gets NFT as proof-of-support (tradeable)
+
+MEDIUM-TERM:
+├─ Creator portfolio/gallery tab on profile
+│   Display owned NFTs from wallet
+│   No minting needed, just Metaplex read
+
+SOLTIP-EXCLUSIVE EDGE OVER SHOWTIME:
+✅ Focused on tipping economics (rate limiting, splits, vaults)
+✅ Recurring subscriptions (Showtime has none)
+✅ Fundraising goals with deadlines
+✅ Multi-token tips (USDC, USDT) not just SOL
+✅ Real streamer tooling (rate limits = anti-bot protection)
+```
+
+---
 
 #### **B. SUPERTEAM EARN (Solana)**
 ```
-Website: earn.superteam.fun
-Status: Active
-Focus: Bounties + tips for developers
-Users: ~20,000
-Features:
-├─ Bounty boards
-├─ One-time payments
-└─ Talent directory
-
-YOUR ADVANTAGE:
-✅ Streamer/creator focused
-✅ Recurring tips
-✅ Real-time alerts
-✅ Better UX for live streaming
+Website:  earn.superteam.fun
+Focus:    Bounties + payments for developers/contributors
+Users:    ~20,000
 ```
+
+#### What Superteam Has That We Don't
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  FEATURE                     SUPERTEAM      SOLTIP (current)   │
+├─────────────────────────────────────────────────────────────────┤
+│  Bounty board (work-for-pay) ✅ Core        ❌ No bounties       │
+│  Skills/talent directory     ✅ Yes         ❌ No skills listing │
+│  Project-based payments      ✅ Escrow      ❌ No project escrow │
+│  Ecosystem reputation score  ✅ Yes         ❌ No reputation     │
+│  Application/submission flow ✅ Yes         ❌ No                │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### How We Compete & What to Build
+```
+BUILD:
+├─ "Hire me" tab on creator profile
+│   Creator lists services with fixed SOL price
+│   Tipper pays → funds held in vault until creator delivers
+│   Simple escrow: creator marks complete → funds release
+
+SOLTIP-EXCLUSIVE EDGE OVER SUPERTEAM:
+✅ Live streaming focus (Superteam is dev bounties only)
+✅ Real-time tips (Superteam has no tipping)
+✅ Creator economy audience, not developer-only
+✅ Recurring subscriptions
+✅ Rate limiting (anti-abuse)
+```
+
+---
 
 #### **C. GLASS (Solana)**
 ```
-Website: glass.xyz
-Status: Active
-Focus: Video creators + tips
-Users: ~10,000
-Features:
-├─ Video hosting
-├─ NFT gating
-├─ Tipping
-└─ Subscriptions
+Website:  glass.xyz
+Focus:    Video creators + NFT gating + subscriptions
+Users:    ~10,000
+```
 
-YOUR ADVANTAGE:
-✅ Lightweight (no video hosting costs)
-✅ Embeddable widget
-✅ Cross-platform (not just video)
-✅ Gaming/streaming specific
+#### What Glass Has That We Don't
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  FEATURE                     GLASS          SOLTIP (current)   │
+├─────────────────────────────────────────────────────────────────┤
+│  Video hosting on-chain      ✅ Core        ❌ No video hosting  │
+│  NFT-gated video access      ✅ Core        ❌ No token gating   │
+│  Collector revenue share     ✅ Yes         ❌ No                │
+│  Video comment system        ✅ Yes         ❌ No comments       │
+│  Creator NFT drops           ✅ Yes         ❌ No NFT drops      │
+│  Lens Protocol integration   ✅ Yes         ❌ No social graph   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### How We Compete & What to Build
+```
+BUILD:
+├─ Token-gated external links
+│   Creator sets: "hold active subscription → unlock link"
+│   Wallet checks sub PDA on-chain → shows/hides content URL
+│   Works with any external video (YouTube unlisted, Vimeo, etc.)
+
+SOLTIP-EXCLUSIVE EDGE OVER GLASS:
+✅ No video hosting cost (Glass pays Arweave for every upload)
+✅ Cross-platform (not video-only)
+✅ Gaming/streaming specific tooling
+✅ Tip splitting for collab streams
+✅ Cheaper fees (Glass charges for NFT minting per video)
+```
+
+---
+
+#### **D. GIVETH (Multi-chain)**
+```
+Website:  giveth.io
+Focus:    Charity / public goods / non-profit donations
+Chains:   Ethereum, Gnosis, Polygon, Optimism, Celo
+Users:    ~30,000
+```
+
+#### What Giveth Has That We Don't
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  FEATURE                     GIVETH         SOLTIP (current)   │
+├─────────────────────────────────────────────────────────────────┤
+│  Multi-chain support         ✅ 5+ chains   ❌ Solana only       │
+│  GIVback reward system       ✅ Donate→earn ❌ No donor rewards  │
+│  Project verification        ✅ DAO-voted   ❌ Admin only        │
+│  Quadratic funding rounds    ✅ Yes         ❌ No                │
+│  DAO governance (GIV token)  ✅ Full DAO    ❌ No governance     │
+│  Public project registry     ✅ Open API    ❌ No registry       │
+│  Impact tracking + reports   ✅ Yes         ❌ No                │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### How We Compete & What to Build
+```
+SOLTIP NICHE: Giveth is charity-focused; we target creator economy.
+No direct overlap, but useful for feature inspiration:
+
+BUILD:
+├─ GIVback-style tipper rewards
+│   Tippers earn SolTip points for every tip sent
+│   Redeemable for reduced fees or NFT badges
+│   Creates "tip more → earn more" flywheel
+
+SOLTIP-EXCLUSIVE EDGE OVER GIVETH:
+✅ Not charity-only (general creator economy)
+✅ Streaming-specific features
+✅ Rate limiting (Giveth has no fraud protection)
+✅ Subscriptions and splits
+✅ Faster Solana finality (400ms vs 13s on Ethereum)
+```
+
+---
+
+## 📊 FEATURE GAP SUMMARY TABLE
+
+```
+Priority ranking: 🔴 High impact / 🟡 Medium / 🟢 Low / ✅ Already built
+
+FEATURE                              BUILT?  PRIORITY  NOTES
+─────────────────────────────────────────────────────────────────────
+Tip sending (SOL)                    ✅      —         Core feature
+Tip sending (SPL/USDC)               ✅      —         Multi-token
+Rate limiting (anti-spam)            ✅      —         On-chain
+Fundraising goals                    ✅      —         With deadline
+Recurring subscriptions              ✅      —         SOL + SPL
+Tip splits (multi-recipient)         ✅      —         2-5 wallets
+On-chain leaderboard                 ✅      —         Top 10
+Platform pause (kill switch)         ✅      —         Admin
+Verified creator badge               ✅      —         Admin
+Wallet signature auth (API)          ✅      —         Ed25519
+─────────────────────────────────────────────────────────────────────
+Embeddable tip button widget         ❌      🔴        Beats Ko-fi/Streamlabs
+Webhook / alert overlay URL          ❌      🔴        Beats StreamElements
+Preset tip amounts on profile        ❌      🔴        Simple UX win
+Fiat on-ramp (credit card → SOL)     ❌      🔴        Beats all Web3 rivals
+Discord role bot (subscriber sync)   ❌      🔴        Kills Patreon's #1 feature
+Time-window leaderboards (weekly)    ❌      🔴        Beats Tipeeestream
+USD/EUR fiat price display           ❌      🔴        Basic UX need
+─────────────────────────────────────────────────────────────────────
+NFT tip receipt minting              ❌      🟡        Unique web3 feature
+Token-gated content links            ❌      🟡        Beats Glass/Ko-fi
+Tipper rank badges (on-chain)        ❌      🟡        Gamification
+Tip media requests (song/video)      ❌      🟡        Beats Tipeeestream
+Referral program (on-chain)          ❌      🟡        Growth loop
+Tip-funded polls / voting            ❌      🟡        Unique engagement
+Mobile app (iOS/Android)             ❌      🟡        Scale requirement
+Multi-language (i18n)                ❌      🟡        Global reach
+─────────────────────────────────────────────────────────────────────
+DeFi yield on vault balance          ❌      🟢        Marinade/Kamino
+Cross-chain bridging (ETH→SOL)       ❌      🟢        Long-term
+DAO governance ($SOLTIP token)       ❌      🟢        Phase 3
+OBS desktop plugin                   ❌      🟢        Long-term
+AI analytics / insight engine        ❌      🟢        Phase 3
+Digital product store                ❌      🟢        Expand market
+Bounty/escrow for services           ❌      🟢        Expand market
 ```
 
 ---
