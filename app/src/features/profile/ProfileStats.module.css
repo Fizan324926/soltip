@@ -1,0 +1,4 @@
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.card { padding: 1.25rem; background: var(--color-surface-card); border: 1px solid var(--color-border); border-radius: 0.875rem; text-align: center; }
+.val { font-size: 1.3rem; font-weight: 800; color: var(--color-solana-green); margin-bottom: 0.25rem; }
+.lbl { font-size: 0.8rem; color: var(--color-text-secondary); }

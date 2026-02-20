@@ -1,0 +1,235 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   CSS Custom Properties – Color System
+   ============================================================ */
+:root {
+  /* Brand */
+  --color-solana-purple: #9945ff;
+  --color-solana-green: #14f195;
+
+  /* Purple scale */
+  --color-purple-50: #f5edff;
+  --color-purple-100: #e8d0ff;
+  --color-purple-200: #d0a3ff;
+  --color-purple-300: #b870ff;
+  --color-purple-400: #a357ff;
+  --color-purple-500: #9945ff;
+  --color-purple-600: #7c2ee8;
+  --color-purple-700: #611bc6;
+  --color-purple-800: #490ea3;
+  --color-purple-900: #340780;
+
+  /* Green scale */
+  --color-green-50: #e6fff5;
+  --color-green-100: #b3ffe0;
+  --color-green-200: #80ffcc;
+  --color-green-300: #4dffb8;
+  --color-green-400: #2bffa6;
+  --color-green-500: #14f195;
+  --color-green-600: #0dcb7e;
+  --color-green-700: #08a566;
+  --color-green-800: #04804f;
+  --color-green-900: #015a38;
+
+  /* Neutral / surface */
+  --color-surface-base: #0a0a0f;
+  --color-surface-raised: #111118;
+  --color-surface-overlay: #18181f;
+  --color-surface-sunken: #07070c;
+
+  /* Borders */
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-default: rgba(255, 255, 255, 0.10);
+  --color-border-strong: rgba(255, 255, 255, 0.18);
+  --color-border-brand: rgba(153, 69, 255, 0.40);
+
+  /* Text */
+  --color-text-primary: rgba(255, 255, 255, 0.95);
+  --color-text-secondary: rgba(255, 255, 255, 0.65);
+  --color-text-tertiary: rgba(255, 255, 255, 0.40);
+  --color-text-disabled: rgba(255, 255, 255, 0.25);
+  --color-text-brand: var(--color-solana-purple);
+  --color-text-accent: var(--color-solana-green);
+
+  /* Status */
+  --color-success: #14f195;
+  --color-warning: #f5a623;
+  --color-error: #ff4d4d;
+  --color-info: #60a5fa;
+}
+
+/* ============================================================
+   Base Layer
+   ============================================================ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-surface-base);
+    color: var(--color-text-primary);
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  /* Heading defaults */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-text-primary);
+  }
+
+  /* Link defaults */
+  a {
+    color: var(--color-solana-purple);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  a:hover {
+    color: var(--color-purple-400);
+  }
+
+  /* Focus ring */
+  :focus-visible {
+    outline: 2px solid var(--color-solana-purple);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Code / mono */
+  code, kbd, pre, samp {
+    font-family: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+    font-size: 0.875em;
+  }
+
+  /* Remove default margin on p inside components */
+  p {
+    margin: 0;
+  }
+}
+
+/* ============================================================
+   Custom Scrollbar  (WebKit)
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(153, 69, 255, 0.30);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(153, 69, 255, 0.55);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(153, 69, 255, 0.30) var(--color-surface-base);
+}
+
+/* ============================================================
+   Text Selection
+   ============================================================ */
+::selection {
+  background-color: rgba(153, 69, 255, 0.35);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: rgba(153, 69, 255, 0.35);
+  color: #ffffff;
+}
+
+/* ============================================================
+   Component Layer – Utility Classes
+   ============================================================ */
+@layer components {
+  /* Glass card */
+  .card-glass {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border-default);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+  }
+
+  /* Brand gradient text */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-solana-purple), var(--color-solana-green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Subtle purple glow on focus/hover for interactive elements */
+  .glow-purple {
+    box-shadow: 0 0 0 0 rgba(153, 69, 255, 0);
+    transition: box-shadow 0.25s ease;
+  }
+
+  .glow-purple:hover,
+  .glow-purple:focus {
+    box-shadow: 0 0 20px rgba(153, 69, 255, 0.35);
+  }
+
+  /* Truncate helper */
+  .truncate-address {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.02em;
+    font-size: 0.8125rem;
+  }
+}
+
+/* ============================================================
+   Utilities Layer
+   ============================================================ */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .transition-smooth {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .bg-surface-raised {
+    background-color: var(--color-surface-raised);
+  }
+
+  .bg-surface-overlay {
+    background-color: var(--color-surface-overlay);
+  }
+}

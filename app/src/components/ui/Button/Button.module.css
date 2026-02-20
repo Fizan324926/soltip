@@ -1,0 +1,208 @@
+/* ===== BASE ===== */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  border-radius: 0.625rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease,
+    opacity 0.15s ease,
+    border-color 0.2s ease;
+  white-space: nowrap;
+  user-select: none;
+  outline: none;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.btn:focus-visible {
+  outline: 2px solid #9945FF;
+  outline-offset: 2px;
+}
+
+.btn:disabled,
+.btn.loading {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* ===== SIZES ===== */
+.sm {
+  font-size: 0.8125rem;
+  padding: 0.375rem 0.875rem;
+  height: 2rem;
+}
+
+.md {
+  font-size: 0.9375rem;
+  padding: 0.5rem 1.25rem;
+  height: 2.5rem;
+}
+
+.lg {
+  font-size: 1rem;
+  padding: 0.6875rem 1.75rem;
+  height: 3rem;
+}
+
+/* ===== VARIANTS ===== */
+
+/* PRIMARY — purple gradient */
+.primary {
+  background: linear-gradient(135deg, #9945FF 0%, #7B2FBE 100%);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #b06aff 0%, #9945FF 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: inherit;
+}
+
+.primary:not(:disabled):not(.loading):hover {
+  box-shadow: 0 0 24px rgba(153, 69, 255, 0.55);
+  transform: translateY(-1px);
+}
+
+.primary:not(:disabled):not(.loading):hover::before {
+  opacity: 1;
+}
+
+.primary:not(:disabled):not(.loading):active {
+  transform: translateY(0);
+  box-shadow: 0 0 12px rgba(153, 69, 255, 0.35);
+}
+
+/* SECONDARY — outlined purple */
+.secondary {
+  background: rgba(153, 69, 255, 0.08);
+  color: #9945FF;
+  border-color: #9945FF;
+}
+
+.secondary:not(:disabled):not(.loading):hover {
+  background: rgba(153, 69, 255, 0.16);
+  box-shadow: 0 0 16px rgba(153, 69, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.secondary:not(:disabled):not(.loading):active {
+  transform: translateY(0);
+  background: rgba(153, 69, 255, 0.12);
+}
+
+/* GHOST — transparent */
+.ghost {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  border-color: transparent;
+}
+
+.ghost:not(:disabled):not(.loading):hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+.ghost:not(:disabled):not(.loading):active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* DANGER — red */
+.danger {
+  background: linear-gradient(135deg, #FF4444 0%, #CC2222 100%);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.danger:not(:disabled):not(.loading):hover {
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.45);
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #ff6666 0%, #FF4444 100%);
+}
+
+.danger:not(:disabled):not(.loading):active {
+  transform: translateY(0);
+}
+
+/* SUCCESS — green */
+.success {
+  background: linear-gradient(135deg, #14F195 0%, #0BBF74 100%);
+  color: #0D0D1A;
+  border-color: transparent;
+}
+
+.success:not(:disabled):not(.loading):hover {
+  box-shadow: 0 0 20px rgba(20, 241, 149, 0.45);
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #3fffa8 0%, #14F195 100%);
+}
+
+.success:not(:disabled):not(.loading):active {
+  transform: translateY(0);
+}
+
+/* ===== ICON CONTAINER ===== */
+.iconLeft,
+.iconRight {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ===== LOADING OVERLAY ===== */
+.spinnerWrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.contentHidden {
+  visibility: hidden;
+}
+
+.loadingContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+/* ===== SHIMMER (for primary loading) ===== */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}

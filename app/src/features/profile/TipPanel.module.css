@@ -1,0 +1,10 @@
+.root { min-width: 320px; padding: 0.5rem 0; }
+.connect { text-align: center; padding: 2rem 0; display: flex; flex-direction: column; align-items: center; gap: 1rem; color: var(--color-text-secondary); }
+.presets { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1.25rem 0 0.75rem; }
+.preset { padding: 0.35rem 0.875rem; border: 1px solid var(--color-border); border-radius: 0.5rem; background: transparent; color: var(--color-text-secondary); font-size: 0.875rem; cursor: pointer; transition: all 0.15s; }
+.preset:hover { border-color: var(--color-solana-purple); color: var(--color-solana-purple); }
+.presetActive { background: var(--color-solana-purple) !important; border-color: var(--color-solana-purple) !important; color: #fff !important; }
+.inp { margin-bottom: 0.75rem; }
+.msg { margin-bottom: 1.25rem; }
+.sendBtn { background: linear-gradient(135deg, #9945FF, #7c3acd) !important; }
+.note { font-size: 0.875rem; color: var(--color-text-secondary); margin: 1rem 0; }

@@ -1,0 +1,15 @@
+.root { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+.header { display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem; flex-wrap: wrap; }
+.info { flex: 1; min-width: 200px; }
+.actions { display: flex; flex-direction: column; gap: 0.75rem; }
+.nameRow { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+.name { font-size: 2rem; font-weight: 900; color: var(--color-text-primary); }
+.username { color: var(--color-text-secondary); margin-bottom: 0.5rem; }
+.explorer { font-size: 0.8rem; color: var(--color-solana-blue); display: inline-block; margin-bottom: 0.75rem; }
+.desc { color: var(--color-text-secondary); line-height: 1.65; max-width: 480px; }
+.tipBtn { background: linear-gradient(135deg, #9945FF, #7c3acd) !important; box-shadow: 0 0 28px rgba(153,69,255,0.35); min-width: 140px; }
+.tabs { margin-top: 2.5rem; }
+.skHdr { height: 160px; border-radius: 1rem; margin-bottom: 1.5rem; }
+.skStats { height: 100px; border-radius: 1rem; margin-bottom: 2rem; }
+.notFound { text-align: center; padding: 5rem 1rem; color: var(--color-text-secondary); }
+.notFound h2 { font-size: 1.5rem; color: var(--color-text-primary); margin-bottom: 0.5rem; }

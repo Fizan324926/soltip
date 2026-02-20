@@ -1,0 +1,219 @@
+/* ============================================================
+   SolTip – Full Design Token System
+   ============================================================ */
+
+:root {
+  /* ──────────────────────────────────────────────────────────
+     Colors – Surface
+     ────────────────────────────────────────────────────────── */
+  --surface-base:     #0a0a0f;   /* page background */
+  --surface-raised:   #111118;   /* card, sidebar, nav */
+  --surface-overlay:  #18181f;   /* popover, dropdown, modal */
+  --surface-sunken:   #07070c;   /* inset / input background */
+  --surface-code:     #0d0d14;   /* code block background */
+
+  /* ──────────────────────────────────────────────────────────
+     Colors – Border
+     ────────────────────────────────────────────────────────── */
+  --border-subtle:    rgba(255, 255, 255, 0.05);
+  --border-default:   rgba(255, 255, 255, 0.10);
+  --border-strong:    rgba(255, 255, 255, 0.18);
+  --border-brand:     rgba(153, 69, 255, 0.40);
+  --border-accent:    rgba(20, 241, 149, 0.35);
+  --border-error:     rgba(255, 77, 77, 0.45);
+  --border-focus:     rgba(153, 69, 255, 0.70);
+
+  /* ──────────────────────────────────────────────────────────
+     Colors – Text
+     ────────────────────────────────────────────────────────── */
+  --text-primary:   rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-tertiary:  rgba(255, 255, 255, 0.40);
+  --text-disabled:  rgba(255, 255, 255, 0.25);
+  --text-inverse:   rgba(0, 0, 0, 0.90);
+  --text-brand:     #9945ff;
+  --text-accent:    #14f195;
+  --text-error:     #ff6b6b;
+  --text-warning:   #f5a623;
+  --text-success:   #14f195;
+  --text-info:      #60a5fa;
+
+  /* ──────────────────────────────────────────────────────────
+     Colors – Accent / Brand
+     ────────────────────────────────────────────────────────── */
+  --brand-purple:        #9945ff;
+  --brand-purple-light:  #b870ff;
+  --brand-purple-dark:   #7c2ee8;
+  --brand-green:         #14f195;
+  --brand-green-light:   #4dffb8;
+  --brand-green-dark:    #0dcb7e;
+
+  /* Gradient */
+  --gradient-brand:     linear-gradient(135deg, #9945ff 0%, #14f195 100%);
+  --gradient-brand-h:   linear-gradient(90deg,  #9945ff 0%, #14f195 100%);
+  --gradient-surface:   linear-gradient(180deg, #111118 0%, #0a0a0f 100%);
+  --gradient-card:      linear-gradient(145deg, rgba(153,69,255,0.06) 0%, rgba(20,241,149,0.03) 100%);
+
+  /* ──────────────────────────────────────────────────────────
+     Colors – Status
+     ────────────────────────────────────────────────────────── */
+  --status-success-bg:    rgba(20, 241, 149, 0.10);
+  --status-success-text:  #14f195;
+  --status-success-border:rgba(20, 241, 149, 0.30);
+
+  --status-warning-bg:    rgba(245, 166, 35, 0.10);
+  --status-warning-text:  #f5a623;
+  --status-warning-border:rgba(245, 166, 35, 0.30);
+
+  --status-error-bg:      rgba(255, 77, 77, 0.10);
+  --status-error-text:    #ff6b6b;
+  --status-error-border:  rgba(255, 77, 77, 0.30);
+
+  --status-info-bg:       rgba(96, 165, 250, 0.10);
+  --status-info-text:     #60a5fa;
+  --status-info-border:   rgba(96, 165, 250, 0.30);
+
+  /* ──────────────────────────────────────────────────────────
+     Spacing Scale (rem)
+     ────────────────────────────────────────────────────────── */
+  --space-1:  0.25rem;   /*  4px */
+  --space-2:  0.50rem;   /*  8px */
+  --space-3:  0.75rem;   /* 12px */
+  --space-4:  1.00rem;   /* 16px */
+  --space-5:  1.25rem;   /* 20px */
+  --space-6:  1.50rem;   /* 24px */
+  --space-8:  2.00rem;   /* 32px */
+  --space-10: 2.50rem;   /* 40px */
+  --space-12: 3.00rem;   /* 48px */
+  --space-16: 4.00rem;   /* 64px */
+  --space-20: 5.00rem;   /* 80px */
+  --space-24: 6.00rem;   /* 96px */
+
+  /* ──────────────────────────────────────────────────────────
+     Border Radius
+     ────────────────────────────────────────────────────────── */
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* ──────────────────────────────────────────────────────────
+     Shadows
+     ────────────────────────────────────────────────────────── */
+
+  /* Base card shadow */
+  --shadow-card:
+    0 1px 3px rgba(0, 0, 0, 0.40),
+    0 4px 12px rgba(0, 0, 0, 0.30);
+
+  /* Card with subtle purple glow */
+  --shadow-card-brand:
+    0 1px 3px rgba(0, 0, 0, 0.40),
+    0 4px 16px rgba(0, 0, 0, 0.30),
+    0 0 32px rgba(153, 69, 255, 0.12);
+
+  /* Elevated modal / dropdown */
+  --shadow-elevated:
+    0 8px 32px rgba(0, 0, 0, 0.60),
+    0 2px 8px rgba(0, 0, 0, 0.40);
+
+  /* Button / interactive glow */
+  --shadow-btn-brand:
+    0 4px 16px rgba(153, 69, 255, 0.40),
+    0 1px 4px rgba(0, 0, 0, 0.30);
+
+  /* Green accent glow */
+  --shadow-btn-accent:
+    0 4px 16px rgba(20, 241, 149, 0.30),
+    0 1px 4px rgba(0, 0, 0, 0.30);
+
+  /* Inset / focus ring */
+  --shadow-focus:
+    0 0 0 2px var(--surface-raised),
+    0 0 0 4px var(--brand-purple);
+
+  /* ──────────────────────────────────────────────────────────
+     Z-Index Layers
+     ────────────────────────────────────────────────────────── */
+  --z-below:    -1;
+  --z-base:      0;
+  --z-raised:    1;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-popover:  500;
+  --z-toast:    600;
+  --z-tooltip:  700;
+
+  /* ──────────────────────────────────────────────────────────
+     Typography Scale
+     ────────────────────────────────────────────────────────── */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.875rem;   /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+  --text-4xl:  2.25rem;    /* 36px */
+  --text-5xl:  3rem;       /* 48px */
+  --text-6xl:  3.75rem;    /* 60px */
+
+  /* ──────────────────────────────────────────────────────────
+     Transition
+     ────────────────────────────────────────────────────────── */
+  --transition-fast:   0.10s ease;
+  --transition-base:   0.20s ease;
+  --transition-slow:   0.35s ease;
+  --transition-spring: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ──────────────────────────────────────────────────────────
+     Layout
+     ────────────────────────────────────────────────────────── */
+  --sidebar-width:       240px;
+  --topbar-height:        64px;
+  --max-content-width: 1280px;
+  --card-max-width:      480px;
+}
+
+/* ── Component-specific tokens ───────────────────────────────── */
+:root {
+  /* Input */
+  --input-bg:          var(--surface-sunken);
+  --input-border:      var(--border-default);
+  --input-border-focus:var(--border-focus);
+  --input-text:        var(--text-primary);
+  --input-placeholder: var(--text-tertiary);
+  --input-radius:      var(--radius-md);
+  --input-padding-x:   var(--space-4);
+  --input-padding-y:   var(--space-3);
+
+  /* Button – Primary */
+  --btn-primary-bg:        var(--brand-purple);
+  --btn-primary-text:      #ffffff;
+  --btn-primary-shadow:    var(--shadow-btn-brand);
+  --btn-primary-hover-bg:  var(--brand-purple-dark);
+
+  /* Button – Secondary */
+  --btn-secondary-bg:      transparent;
+  --btn-secondary-border:  var(--border-strong);
+  --btn-secondary-text:    var(--text-primary);
+
+  /* Button – Accent (green) */
+  --btn-accent-bg:         var(--brand-green);
+  --btn-accent-text:       #000000;
+  --btn-accent-shadow:     var(--shadow-btn-accent);
+
+  /* Badge */
+  --badge-verified-bg:     rgba(20, 241, 149, 0.15);
+  --badge-verified-text:   var(--brand-green);
+  --badge-verified-border: var(--status-success-border);
+
+  /* Progress bar */
+  --progress-track:        rgba(255, 255, 255, 0.06);
+  --progress-fill:         var(--gradient-brand-h);
+}

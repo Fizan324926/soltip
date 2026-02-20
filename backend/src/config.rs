@@ -1,0 +1,10 @@
+pub const PLATFORM_FEE_BPS: u16 = 100;
+pub const MAX_USERNAME_LENGTH: usize = 32;
+pub const MAX_DISPLAY_NAME_LENGTH: usize = 64;
+pub const MAX_DESCRIPTION_LENGTH: usize = 256;
+pub const MAX_IMAGE_URL_LENGTH: usize = 200;
+pub const MAX_MESSAGE_LENGTH: usize = 280;
+pub const MAX_GOAL_TITLE_LENGTH: usize = 64;
+pub const MAX_GOAL_DESCRIPTION_LENGTH: usize = 256;
+pub const MAX_SPLIT_RECIPIENTS: usize = 5;
+pub const BPS_DENOMINATOR: u64 = 10_000;

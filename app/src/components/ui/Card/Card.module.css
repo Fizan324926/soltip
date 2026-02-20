@@ -1,0 +1,98 @@
+/* ===== BASE ===== */
+.card {
+  position: relative;
+  border-radius: 1rem;
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.25s ease;
+}
+
+/* ===== HOVERABLE ===== */
+.hoverable {
+  cursor: pointer;
+}
+
+.hoverable:hover {
+  transform: translateY(-2px);
+}
+
+/* ===== PADDING VARIANTS ===== */
+.padNone   { padding: 0; }
+.padSm     { padding: 0.75rem; }
+.padMd     { padding: 1.25rem; }
+.padLg     { padding: 2rem; }
+
+/* ===== VARIANT: DEFAULT ===== */
+.default {
+  background: #131325;
+  border: 1px solid #2A2A4A;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.default.hoverable:hover {
+  box-shadow: 0 8px 40px rgba(153, 69, 255, 0.18);
+  border-color: rgba(153, 69, 255, 0.3);
+}
+
+/* ===== VARIANT: ELEVATED ===== */
+.elevated {
+  background: #1A1A30;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.elevated.hoverable:hover {
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(153, 69, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* ===== VARIANT: BORDERED ===== */
+.bordered {
+  background: #131325;
+  border: 1px solid #2A2A4A;
+  box-shadow: none;
+}
+
+/* Gradient border on hover via pseudo-element */
+.bordered::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(1rem + 1px);
+  background: linear-gradient(135deg, #9945FF, #14F195);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: -1;
+}
+
+.bordered.hoverable:hover::before {
+  opacity: 1;
+}
+
+.bordered.hoverable:hover {
+  border-color: transparent;
+}
+
+/* ===== VARIANT: GLASS ===== */
+.glass {
+  background: rgba(19, 19, 37, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(153, 69, 255, 0.18);
+  box-shadow:
+    0 4px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass.hoverable:hover {
+  background: rgba(19, 19, 37, 0.7);
+  border-color: rgba(153, 69, 255, 0.35);
+  box-shadow:
+    0 8px 48px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}

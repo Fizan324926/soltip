@@ -1,0 +1,85 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background-color: rgba(13, 13, 26, 0.8);
+  border-bottom: 1px solid rgba(42, 42, 74, 0.6);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.navbar:hover {
+  background-color: rgba(13, 13, 26, 0.9);
+}
+
+.pausedBanner {
+  background: linear-gradient(90deg, #ff4444 0%, #ff8800 100%);
+  animation: pulseWarning 2s ease-in-out infinite;
+}
+
+@keyframes pulseWarning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+.mobileMenu {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background-color: rgba(13, 13, 26, 0.97);
+  border-bottom: 1px solid rgba(42, 42, 74, 0.8);
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: #e2e8f0;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  transform-origin: center;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.navLink {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #9945FF, #14F195);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+}
+
+.navLink.active::after,
+.navLink:hover::after {
+  transform: scaleX(1);
+}

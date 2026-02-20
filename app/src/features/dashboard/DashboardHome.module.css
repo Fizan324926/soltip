@@ -1,0 +1,26 @@
+.root { padding: 2rem 0; }
+.welcome { margin-bottom: 2rem; }
+.greeting { font-size: 1.75rem; font-weight: 900; color: var(--color-text-primary); margin-bottom: 0.25rem; }
+.hi { background: linear-gradient(135deg,#9945FF,#14F195); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.sub { color: var(--color-text-secondary); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+.card { padding: 1.5rem; background: var(--color-surface-card); border: 1px solid var(--color-border); border-radius: 1rem; text-align: center; transition: border-color 0.2s; }
+.card:hover { border-color: var(--color-solana-purple); }
+.icon { font-size: 2rem; margin-bottom: 0.75rem; }
+.val { font-size: 1.35rem; font-weight: 800; color: var(--color-solana-green); margin-bottom: 0.25rem; }
+.lbl { font-size: 0.8rem; color: var(--color-text-secondary); }
+.quick { margin-bottom: 2.5rem; }
+.qTitle { font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 1rem; }
+.qGrid { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 1rem; }
+.qCard { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1.5rem 1rem; background: var(--color-surface-card); border: 1px solid var(--color-border); border-radius: 1rem; text-decoration: none; color: var(--color-text-secondary); font-size: 0.875rem; font-weight: 600; transition: all 0.2s; }
+.qCard:hover { border-color: var(--color-solana-purple); color: var(--color-solana-purple); transform: translateY(-2px); }
+.qIcon { font-size: 1.75rem; }
+.qLabel { font-size: 0.875rem; }
+.vault { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: linear-gradient(135deg,rgba(153,69,255,0.1),rgba(20,241,149,0.05)); border: 1px solid rgba(153,69,255,0.3); border-radius: 1rem; }
+.vault h3 { font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.25rem; }
+.vaultBal { font-size: 1.15rem; font-weight: 800; color: var(--color-solana-green); }
+.skH { height:80px; border-radius:0.75rem; margin-bottom:2rem; }
+.skCard { height:120px; border-radius:1rem; }
+.noProfile { text-align:center; padding:4rem 1rem; max-width:480px; margin:0 auto; }
+.noProfile h2 { font-size:1.5rem; font-weight:800; color:var(--color-text-primary); margin-bottom:0.75rem; }
+.noProfile p { color:var(--color-text-secondary); margin-bottom:2rem; line-height:1.6; }
