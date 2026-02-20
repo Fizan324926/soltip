@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
 import { WalletConnectButton } from "@/components/shared/WalletConnectButton/WalletConnectButton";
 import { useSendTip } from "@/api/tips/useSendTip";
 import { useSendTipSpl } from "@/api/tips/useSendTipSpl";
-import { SOL_DECIMALS } from "@/lib/solana/constants";
+import { solToLamports } from "@/lib/solana/utils";
 import styles from "./TipPanel.module.css";
 
 const PRESETS = [0.1, 0.5, 1, 5, 10];
@@ -28,7 +28,7 @@ export default function TipPanel({ open, onClose, recipientAddress, recipientNam
   const sendSpl = useSendTipSpl();
 
   const handleSend = async () => {
-    const lamports = BigInt(Math.round(parseFloat(amount) * SOL_DECIMALS));
+    const lamports = solToLamports(parseFloat(amount));
     await sendTip.mutateAsync({ recipientAddress, amount: lamports, message: message || undefined });
     onClose();
     setAmount(""); setMessage("");

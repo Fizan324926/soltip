@@ -564,8 +564,8 @@ For production deployment, see **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 
 ```bash
 # 1. Copy and configure environment
-cp .env.docker .env
-# Edit .env: set PROGRAM_ID, JWT_SECRET, POSTGRES_PASSWORD
+cp .env.docker.example .env
+# Edit .env: set PROGRAM_ID, JWT_SECRET, POSTGRES_PASSWORD, CORS_ORIGINS
 
 # 2. Run everything
 docker compose up -d

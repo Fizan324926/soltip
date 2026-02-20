@@ -35,9 +35,9 @@ pub fn verify_wallet_auth(req: &ServiceRequest) -> Result<Option<WalletAuth>, Er
         .or_else(|| header_str.strip_prefix("bearer "))
         .unwrap_or(header_str);
 
-    // Legacy JWT tokens (starts with "ey") — skip verification for now
+    // Legacy JWT tokens (starts with "ey") — reject
     if token.starts_with("ey") {
-        return Ok(None);
+        return Err(ErrorUnauthorized("Legacy JWT auth not supported"));
     }
 
     // Parse: <signature>.<pubkey>.<timestamp>

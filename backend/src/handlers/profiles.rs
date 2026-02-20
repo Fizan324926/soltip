@@ -4,6 +4,7 @@ use uuid::Uuid;
 use crate::app_middleware::require_wallet_auth;
 use crate::error::ApiError;
 use crate::models::*;
+use crate::services;
 use crate::AppState;
 
 pub async fn list_profiles(
@@ -95,6 +96,10 @@ pub async fn create_profile(
         return Err(ApiError::Unauthorized("Wallet does not match owner_address".to_string()));
     }
 
+    // BE-09: Validate Solana address
+    services::solana::validate_address(&body.owner_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid owner_address: {}", e)))?;
+
     if body.username.is_empty() || body.username.len() > crate::config::MAX_USERNAME_LENGTH {
         return Err(ApiError::BadRequest("Invalid username length".to_string()));
     }
@@ -146,6 +151,50 @@ pub async fn update_profile(
 
     if auth.wallet_address != address {
         return Err(ApiError::Unauthorized("Wallet does not match profile owner".to_string()));
+    }
+
+    // BE-16: Validate field lengths
+    if let Some(ref display_name) = body.display_name {
+        if display_name.len() > crate::config::MAX_DISPLAY_NAME_LENGTH {
+            return Err(ApiError::BadRequest(format!(
+                "display_name exceeds max length of {}", crate::config::MAX_DISPLAY_NAME_LENGTH
+            )));
+        }
+    }
+    if let Some(ref description) = body.description {
+        if description.len() > crate::config::MAX_DESCRIPTION_LENGTH {
+            return Err(ApiError::BadRequest(format!(
+                "description exceeds max length of {}", crate::config::MAX_DESCRIPTION_LENGTH
+            )));
+        }
+    }
+    if let Some(ref image_url) = body.image_url {
+        if image_url.len() > crate::config::MAX_IMAGE_URL_LENGTH {
+            return Err(ApiError::BadRequest(format!(
+                "image_url exceeds max length of {}", crate::config::MAX_IMAGE_URL_LENGTH
+            )));
+        }
+    }
+    if let Some(ref social_links) = body.social_links {
+        if social_links.len() > crate::config::MAX_SOCIAL_LINKS_LENGTH {
+            return Err(ApiError::BadRequest(format!(
+                "social_links exceeds max length of {}", crate::config::MAX_SOCIAL_LINKS_LENGTH
+            )));
+        }
+    }
+    if let Some(ref webhook_url) = body.webhook_url {
+        if webhook_url.len() > crate::config::MAX_WEBHOOK_URL_LENGTH {
+            return Err(ApiError::BadRequest(format!(
+                "webhook_url exceeds max length of {}", crate::config::MAX_WEBHOOK_URL_LENGTH
+            )));
+        }
+    }
+    if let Some(ref preset_amounts) = body.preset_amounts {
+        if preset_amounts.len() > crate::config::MAX_PRESET_AMOUNTS {
+            return Err(ApiError::BadRequest(format!(
+                "preset_amounts exceeds max count of {}", crate::config::MAX_PRESET_AMOUNTS
+            )));
+        }
     }
 
     let profile: Option<Profile> = sqlx::query_as(

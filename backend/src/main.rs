@@ -1,9 +1,11 @@
 use actix_cors::Cors;
+use actix_governor::{Governor, GovernorConfigBuilder};
 use actix_web::{middleware, web, App, HttpServer};
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use log::info;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
+use std::time::Duration;
 
 mod config;
 mod db;
@@ -45,9 +47,9 @@ async fn main() -> std::io::Result<()> {
         .unwrap_or_else(|_| "BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo".to_string());
     let platform_authority = env::var("PLATFORM_AUTHORITY").unwrap_or_default();
 
-    // Auth
+    // Auth - BE-03: JWT_SECRET must be set
     let jwt_secret = env::var("JWT_SECRET")
-        .unwrap_or_else(|_| "dev-secret-change-me".to_string());
+        .expect("JWT_SECRET environment variable must be set");
     let auth_token_max_age_secs: i64 = env::var("AUTH_TOKEN_MAX_AGE_SECS")
         .unwrap_or_else(|_| "300".to_string())
         .parse()
@@ -59,7 +61,10 @@ async fn main() -> std::io::Result<()> {
         .unwrap_or_else(|_| "8080".to_string())
         .parse()
         .expect("PORT must be a number");
-    let cors_origins = env::var("CORS_ORIGINS").unwrap_or_else(|_| "*".to_string());
+
+    // BE-08: CORS_ORIGINS must be set
+    let cors_origins = env::var("CORS_ORIGINS")
+        .expect("CORS_ORIGINS must be set");
 
     // Database
     let db_max_connections: u32 = env::var("DB_MAX_CONNECTIONS")
@@ -85,8 +90,11 @@ async fn main() -> std::io::Result<()> {
         .expect("PRICE_CACHE_TTL_SECS must be a number");
 
     info!("Connecting to database...");
+    // BE-24: Configure DB pool with acquire and idle timeouts
     let pool = PgPoolOptions::new()
         .max_connections(db_max_connections)
+        .acquire_timeout(Duration::from_secs(5))
+        .idle_timeout(Duration::from_secs(300))
         .connect(&database_url)
         .await
         .expect("Failed to connect to database");
@@ -116,6 +124,13 @@ async fn main() -> std::io::Result<()> {
 
     let cors_origins_clone = cors_origins.clone();
 
+    // BE-20: Rate limiting - 60 requests per minute per IP
+    let governor_conf = GovernorConfigBuilder::default()
+        .seconds_per_request(1)
+        .burst_size(60)
+        .finish()
+        .expect("Failed to build rate limiter config");
+
     HttpServer::new(move || {
         let cors = if cors_origins_clone == "*" {
             Cors::default()
@@ -139,8 +154,18 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .app_data(state.clone())
+            // BE-15: Request body size limit (64 KB)
+            .app_data(web::JsonConfig::default().limit(65536))
             .wrap(cors)
+            .wrap(Governor::new(&governor_conf))
             .wrap(middleware::Logger::default())
+            // BE-21: Security headers
+            .wrap(
+                middleware::DefaultHeaders::new()
+                    .add(("X-Content-Type-Options", "nosniff"))
+                    .add(("X-Frame-Options", "DENY"))
+                    .add(("Referrer-Policy", "strict-origin-when-cross-origin"))
+            )
             .configure(routes::configure)
     })
     .bind(format!("{}:{}", host, port))?

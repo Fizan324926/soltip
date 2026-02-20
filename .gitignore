@@ -37,10 +37,11 @@ app/dist/
 
 # ----- Environment / secrets -----
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
+!.env.*.example
 !backend/.env.example
+!app/.env.example
 
 # ----- Keypairs (NEVER commit private keys) -----
 *-keypair.json

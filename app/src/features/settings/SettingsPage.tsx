@@ -34,10 +34,14 @@ export default function SettingsPage() {
       const preset_amounts = presets
         .filter(p => p && parseFloat(p) > 0)
         .map(p => Math.floor(parseFloat(p) * 1e9));
+      const trimmedWebhook = webhookUrl.trim();
+      if (trimmedWebhook && !trimmedWebhook.startsWith('https://')) {
+        throw new Error('Webhook URL must use HTTPS');
+      }
       return profileApi.updateProfile(publicKeyString!, {
         preset_amounts,
         social_links: socialLinks,
-        webhook_url: webhookUrl,
+        webhook_url: trimmedWebhook,
       });
     },
     onSuccess: () => {
@@ -123,11 +127,17 @@ export default function SettingsPage() {
         </p>
         <input
           value={webhookUrl}
-          onChange={(e) => setWebhookUrl(e.target.value)}
+          onChange={(e) => {
+            const v = e.target.value;
+            setWebhookUrl(v);
+          }}
           placeholder="https://your-server.com/webhooks/soltip"
           maxLength={200}
           className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-base)] px-4 py-2 text-[var(--color-text-primary)]"
         />
+        {webhookUrl && !webhookUrl.startsWith('https://') && (
+          <p className="text-xs text-red-400 mt-1">Webhook URL must start with https://</p>
+        )}
       </div>
 
       {/* Embed Widget Info */}

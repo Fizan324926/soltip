@@ -17,45 +17,46 @@ interface PlatformState {
 }
 
 // ============================================================
-// Store
+// Store (devtools only in development)
 // ============================================================
+const storeImpl = (set: any) => ({
+  config: null,
+  isPaused: false,
+  lastFetchedAt: null,
+
+  setConfig: (config: PlatformConfig) =>
+    set(
+      {
+        config,
+        isPaused: config.paused,
+        lastFetchedAt: Date.now(),
+      },
+      false,
+      'platform/setConfig'
+    ),
+
+  setPaused: (paused: boolean) =>
+    set(
+      (state: PlatformState) => ({
+        isPaused: paused,
+        config: state.config ? { ...state.config, paused } : null,
+      }),
+      false,
+      'platform/setPaused'
+    ),
+
+  clear: () =>
+    set(
+      { config: null, isPaused: false, lastFetchedAt: null },
+      false,
+      'platform/clear'
+    ),
+});
+
 export const usePlatformStore = create<PlatformState>()(
-  devtools(
-    (set) => ({
-      config: null,
-      isPaused: false,
-      lastFetchedAt: null,
-
-      setConfig: (config) =>
-        set(
-          {
-            config,
-            isPaused: config.paused,
-            lastFetchedAt: Date.now(),
-          },
-          false,
-          'platform/setConfig'
-        ),
-
-      setPaused: (paused) =>
-        set(
-          (state) => ({
-            isPaused: paused,
-            config: state.config ? { ...state.config, paused } : null,
-          }),
-          false,
-          'platform/setPaused'
-        ),
-
-      clear: () =>
-        set(
-          { config: null, isPaused: false, lastFetchedAt: null },
-          false,
-          'platform/clear'
-        ),
-    }),
-    { name: 'PlatformStore' }
-  )
+  import.meta.env.DEV
+    ? devtools(storeImpl, { name: 'PlatformStore' })
+    : storeImpl
 );
 
 // ============================================================

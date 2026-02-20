@@ -136,6 +136,7 @@ impl TipProfile {
             self.min_tip_amount = v;
         }
         if let Some(v) = withdrawal_fee_bps {
+            require!(v >= PLATFORM_FEE_BPS, ErrorCode::InvalidWithdrawalFee);
             require!(v <= MAX_WITHDRAWAL_FEE_BPS, ErrorCode::InvalidWithdrawalFee);
             self.withdrawal_fee_bps = v;
         }

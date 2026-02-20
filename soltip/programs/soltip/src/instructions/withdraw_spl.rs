@@ -12,8 +12,7 @@
 // ==========================================================
 
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, Transfer as SplTransfer};
-use anchor_spl::token_interface::TokenAccount;
+use anchor_spl::token::{self, Token, Transfer as SplTransfer, TokenAccount};
 use crate::state::TipProfile;
 use crate::constants::*;
 use crate::error::ErrorCode;
@@ -57,7 +56,7 @@ pub struct WithdrawSpl<'info> {
         constraint = creator_token_account.owner == owner.key()             @ ErrorCode::TokenAccountOwnerMismatch,
         constraint = creator_token_account.mint  == platform_fee_token_account.mint @ ErrorCode::TokenMintMismatch,
     )]
-    pub creator_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub creator_token_account: Account<'info, TokenAccount>,
 
     /// Platform fee SPL token account (receives platform cut).
     /// Must share the same mint as the creator token account.
@@ -65,7 +64,7 @@ pub struct WithdrawSpl<'info> {
         mut,
         constraint = platform_fee_token_account.mint == creator_token_account.mint @ ErrorCode::TokenMintMismatch,
     )]
-    pub platform_fee_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub platform_fee_token_account: Account<'info, TokenAccount>,
 
     pub token_program: Program<'info, Token>,
 }

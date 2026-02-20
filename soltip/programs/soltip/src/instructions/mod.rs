@@ -30,6 +30,10 @@ pub mod close_content_gate;
 pub mod register_referral;
 // v3: Extended profile update (presets, social links, webhook)
 pub mod update_profile_extended;
+// Admin: treasury withdrawal
+pub mod withdraw_treasury;
+// Admin: reentrancy guard reset
+pub mod reset_reentrancy_guard;
 
 // Export Accounts structs and events explicitly (avoids handler name collisions)
 pub use create_profile::CreateProfile;
@@ -59,3 +63,5 @@ pub use verify_content_access::{VerifyContentAccess, ContentAccessEvent};
 pub use close_content_gate::CloseContentGate;
 pub use register_referral::{RegisterReferral, ReferralCreatedEvent};
 pub use update_profile_extended::UpdateProfileExtended;
+pub use withdraw_treasury::WithdrawTreasury;
+pub use reset_reentrancy_guard::ResetReentrancyGuard;

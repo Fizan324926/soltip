@@ -26,47 +26,46 @@ interface PersistedWallet {
 }
 
 // ============================================================
-// Store
+// Store (devtools only in development)
 // ============================================================
+const persistedStore = persist<WalletState>(
+  (set) => ({
+    publicKey: null,
+    connected: false,
+    network: (import.meta.env['VITE_SOLANA_NETWORK'] as Network) ?? 'devnet',
+
+    setPublicKey: (pk) =>
+      set({ publicKey: pk }, false, 'wallet/setPublicKey'),
+
+    setConnected: (connected) =>
+      set({ connected }, false, 'wallet/setConnected'),
+
+    setNetwork: (network) =>
+      set({ network }, false, 'wallet/setNetwork'),
+
+    disconnect: () =>
+      set(
+        { publicKey: null, connected: false },
+        false,
+        'wallet/disconnect'
+      ),
+  }),
+  {
+    name: 'soltip-wallet',
+    partialize: (state): PersistedWallet => ({
+      network: state.network,
+    }),
+    merge: (persisted, current) => ({
+      ...current,
+      ...(persisted as PersistedWallet),
+    }),
+  }
+);
+
 export const useWalletStore = create<WalletState>()(
-  devtools(
-    persist(
-      (set) => ({
-        publicKey: null,
-        connected: false,
-        network: (import.meta.env['VITE_SOLANA_NETWORK'] as Network) ?? 'devnet',
-
-        setPublicKey: (pk) =>
-          set({ publicKey: pk }, false, 'wallet/setPublicKey'),
-
-        setConnected: (connected) =>
-          set({ connected }, false, 'wallet/setConnected'),
-
-        setNetwork: (network) =>
-          set({ network }, false, 'wallet/setNetwork'),
-
-        disconnect: () =>
-          set(
-            { publicKey: null, connected: false },
-            false,
-            'wallet/disconnect'
-          ),
-      }),
-      {
-        name: 'soltip-wallet',
-        // Only persist the network preference; publicKey comes from the adapter
-        partialize: (state): PersistedWallet => ({
-          network: state.network,
-        }),
-        // Rehydrate: network only, public key always starts null
-        merge: (persisted, current) => ({
-          ...current,
-          ...(persisted as PersistedWallet),
-        }),
-      }
-    ),
-    { name: 'WalletStore' }
-  )
+  import.meta.env.DEV
+    ? devtools(persistedStore, { name: 'WalletStore' })
+    : persistedStore
 );
 
 // ============================================================

@@ -7,9 +7,8 @@
 // ==========================================================
 
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, Transfer as SplTransfer};
-use anchor_spl::token_interface::TokenAccount;
-use crate::state::{TipProfile, RateLimit};
+use anchor_spl::token::{self, Token, Transfer as SplTransfer, TokenAccount};
+use crate::state::{TipProfile, TipperRecord, RateLimit};
 use crate::instructions::initialize_platform::PlatformConfig;
 use crate::constants::*;
 use crate::error::ErrorCode;
@@ -35,7 +34,7 @@ pub struct SendTipSpl<'info> {
         mut,
         constraint = tipper_token_account.owner == tipper.key() @ ErrorCode::TokenAccountOwnerMismatch,
     )]
-    pub tipper_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub tipper_token_account: Account<'info, TokenAccount>,
 
     /// Recipient profile
     #[account(
@@ -54,7 +53,17 @@ pub struct SendTipSpl<'info> {
         constraint = recipient_token_account.owner    == recipient_owner.key()          @ ErrorCode::TokenAccountOwnerMismatch,
         constraint = recipient_token_account.mint     == tipper_token_account.mint      @ ErrorCode::TokenMintMismatch,
     )]
-    pub recipient_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub recipient_token_account: Account<'info, TokenAccount>,
+
+    /// Per-(tipper, profile) record: init if first tip, else mut
+    #[account(
+        init_if_needed,
+        payer  = tipper,
+        space  = TipperRecord::LEN,
+        seeds  = [TIPPER_RECORD_SEED, tipper.key().as_ref(), recipient_profile.key().as_ref()],
+        bump,
+    )]
+    pub tipper_record: Account<'info, TipperRecord>,
 
     /// Rate-limit PDA
     #[account(
@@ -138,6 +147,20 @@ pub fn handler(
         },
     );
     token::transfer(cpi, amount)?;
+
+    // TipperRecord – init or update (same pattern as send_tip)
+    let is_new_tipper = ctx.accounts.tipper_record.tip_count == 0;
+    if is_new_tipper {
+        ctx.accounts.tipper_record.initialize(
+            ctx.accounts.tipper.key(),
+            ctx.accounts.recipient_profile.key(),
+            amount,
+            ts,
+            ctx.bumps.tipper_record,
+        )?;
+    } else {
+        ctx.accounts.tipper_record.record_tip(amount, ts)?;
+    }
 
     // Update SPL stats on profile
     ctx.accounts.recipient_profile.record_spl_tip(amount)?;

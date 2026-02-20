@@ -78,22 +78,25 @@ pub async fn configure_split(
         .ok_or_else(|| ApiError::NotFound("Profile not found".to_string()))?
         .0;
 
+    // BE-12: Wrap delete+insert in a database transaction to prevent race conditions
+    let mut tx = state.db.begin().await.map_err(|e| ApiError::Database(e.to_string()))?;
+
     // Delete existing split config
     let existing: Option<TipSplit> = sqlx::query_as(
-        "SELECT * FROM tip_splits WHERE profile_pda = $1"
+        "SELECT * FROM tip_splits WHERE profile_pda = $1 FOR UPDATE"
     )
         .bind(&profile_pda)
-        .fetch_optional(&state.db)
+        .fetch_optional(&mut *tx)
         .await?;
 
     if let Some(existing_split) = &existing {
         sqlx::query("DELETE FROM split_recipients WHERE split_id = $1")
             .bind(existing_split.id)
-            .execute(&state.db)
+            .execute(&mut *tx)
             .await?;
         sqlx::query("DELETE FROM tip_splits WHERE id = $1")
             .bind(existing_split.id)
-            .execute(&state.db)
+            .execute(&mut *tx)
             .await?;
     }
 
@@ -106,7 +109,7 @@ pub async fn configure_split(
         .bind(split_id)
         .bind(&split_pda)
         .bind(&profile_pda)
-        .execute(&state.db)
+        .execute(&mut *tx)
         .await?;
 
     for recipient in &body.recipients {
@@ -119,9 +122,11 @@ pub async fn configure_split(
             .bind(&recipient.wallet)
             .bind(recipient.share_bps)
             .bind(&recipient.label)
-            .execute(&state.db)
+            .execute(&mut *tx)
             .await?;
     }
+
+    tx.commit().await.map_err(|e| ApiError::Database(e.to_string()))?;
 
     Ok(HttpResponse::Created().json(TxResponse {
         success: true,

@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use crate::state::TipProfile;
 use crate::constants::*;
+use crate::error::ErrorCode;
 
 /// Accounts required to create a new creator tip profile.
 ///
@@ -36,6 +37,11 @@ pub fn handler(
     description: String,
     image_url: String,
 ) -> Result<()> {
+    // Validate text content on all user-provided strings
+    require!(validate_text_content(&display_name), ErrorCode::UnsafeTextContent);
+    require!(validate_text_content(&description), ErrorCode::UnsafeTextContent);
+    require!(validate_text_content(&image_url), ErrorCode::UnsafeTextContent);
+
     let tip_profile = &mut ctx.accounts.tip_profile;
     let clock = Clock::get()?;
 

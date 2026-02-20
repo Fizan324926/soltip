@@ -5,7 +5,7 @@ use crate::db;
 use crate::AppState;
 use crate::app_middleware::require_wallet_auth;
 
-/// POST /content-gates – create a content gate
+/// POST /content-gates -- create a content gate
 pub async fn create_gate(
     state: web::Data<AppState>,
     req: HttpRequest,
@@ -33,7 +33,7 @@ pub async fn create_gate(
     Ok(HttpResponse::Created().json(to_gate_response(&gate)))
 }
 
-/// GET /content-gates/{profile_pda} – list content gates
+/// GET /content-gates/{profile_pda} -- list content gates
 pub async fn list_gates(
     state: web::Data<AppState>,
     path: web::Path<String>,
@@ -42,11 +42,12 @@ pub async fn list_gates(
     let profile_pda = path.into_inner();
     let active_only = query.active_only.unwrap_or(true);
     let gates = db::content_gates::find_gates_by_profile(&state.db, &profile_pda, active_only).await?;
-    let responses: Vec<GateResponse> = gates.iter().map(to_gate_response).collect();
+    // BE-13: Use list response that hides content_url
+    let responses: Vec<GateResponse> = gates.iter().map(to_gate_list_response).collect();
     Ok(HttpResponse::Ok().json(responses))
 }
 
-/// POST /content-gates/{gate_pda}/verify – verify and grant access
+/// POST /content-gates/{gate_pda}/verify -- verify and grant access
 pub async fn verify_access(
     state: web::Data<AppState>,
     req: HttpRequest,
@@ -97,7 +98,7 @@ pub async fn verify_access(
     })))
 }
 
-/// DELETE /content-gates/{gate_pda} – close a content gate
+/// DELETE /content-gates/{gate_pda} -- close a content gate
 pub async fn close_gate(
     state: web::Data<AppState>,
     req: HttpRequest,
@@ -128,6 +129,22 @@ pub async fn close_gate(
     Ok(HttpResponse::Ok().json(TxResponse { success: true, message: "Gate closed".into() }))
 }
 
+/// BE-13: Gate response for listing - hides content_url
+fn to_gate_list_response(g: &ContentGate) -> GateResponse {
+    GateResponse {
+        public_key: g.gate_pda.clone(),
+        profile_pda: g.profile_pda.clone(),
+        gate_id: g.gate_id,
+        title: g.title.clone(),
+        content_url: String::new(), // Hidden in list responses
+        required_amount: g.required_amount.to_string(),
+        access_count: g.access_count,
+        is_active: g.is_active,
+        created_at: g.created_at.timestamp(),
+    }
+}
+
+/// Full gate response - includes content_url (used for create/verify)
 fn to_gate_response(g: &ContentGate) -> GateResponse {
     GateResponse {
         public_key: g.gate_pda.clone(),

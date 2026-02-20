@@ -59,12 +59,20 @@ pub struct ContributeGoal<'info> {
     #[account(mut)]
     pub recipient_owner: UncheckedAccount<'info>,
 
-    /// Global platform config – checked for pause state.
+    /// Global platform config – checked for pause state and fee BPS.
     #[account(
         seeds = [PLATFORM_CONFIG_SEED],
         bump  = platform_config.bump,
     )]
     pub platform_config: Account<'info, PlatformConfig>,
+
+    /// CHECK: PDA verified by seeds – platform treasury receives platform fee
+    #[account(
+        mut,
+        seeds = [PLATFORM_TREASURY_SEED],
+        bump,
+    )]
+    pub platform_treasury: UncheckedAccount<'info>,
 
     /// System program for transferring SOL
     pub system_program: Program<'info, System>,
@@ -109,7 +117,13 @@ pub fn handler(
     // Validate goal can accept contributions
     tip_goal.validate_can_contribute(clock.unix_timestamp)?;
 
-    // Transfer SOL from contributor to recipient
+    // Calculate platform fee and creator share
+    let platform_fee = calculate_fee(amount, PLATFORM_FEE_BPS)?;
+    let creator_share = amount
+        .checked_sub(platform_fee)
+        .ok_or(ErrorCode::MathUnderflow)?;
+
+    // Transfer creator share to recipient
     let transfer_ctx = CpiContext::new(
         ctx.accounts.system_program.to_account_info(),
         Transfer {
@@ -117,15 +131,27 @@ pub fn handler(
             to: ctx.accounts.recipient_owner.to_account_info(),
         },
     );
-    transfer(transfer_ctx, amount)?;
+    transfer(transfer_ctx, creator_share)?;
+
+    // Transfer platform fee to treasury
+    if platform_fee > 0 {
+        let fee_ctx = CpiContext::new(
+            ctx.accounts.system_program.to_account_info(),
+            Transfer {
+                from: ctx.accounts.contributor.to_account_info(),
+                to: ctx.accounts.platform_treasury.to_account_info(),
+            },
+        );
+        transfer(fee_ctx, platform_fee)?;
+    }
 
     // Record contribution in goal (unique contributor tracking is best-effort;
     // a full deduplication system would require a per-(contributor, goal) PDA)
-    tip_goal.add_contribution(amount, true, clock.unix_timestamp)?;
+    tip_goal.add_contribution(amount, false, clock.unix_timestamp)?;
 
     // Record tip in profile (contributor = tipper for leaderboard)
     let contributor_key = ctx.accounts.contributor.key();
-    recipient_profile.record_tip(contributor_key, amount, true)?;
+    recipient_profile.record_tip(contributor_key, amount, false)?;
 
     // Capture values for event before references are released
     let current_amount = tip_goal.current_amount;

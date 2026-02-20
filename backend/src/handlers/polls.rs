@@ -5,7 +5,7 @@ use crate::db;
 use crate::AppState;
 use crate::app_middleware::require_wallet_auth;
 
-/// POST /polls – create a new poll
+/// POST /polls -- create a new poll
 pub async fn create_poll(
     state: web::Data<AppState>,
     req: HttpRequest,
@@ -46,7 +46,7 @@ pub async fn create_poll(
     Ok(HttpResponse::Created().json(to_poll_response(&poll)))
 }
 
-/// GET /polls/{profile_pda} – list polls for a profile
+/// GET /polls/{profile_pda} -- list polls for a profile
 pub async fn list_polls(
     state: web::Data<AppState>,
     path: web::Path<String>,
@@ -59,13 +59,18 @@ pub async fn list_polls(
     Ok(HttpResponse::Ok().json(responses))
 }
 
-/// POST /polls/{poll_pda}/vote – vote on a poll
+/// POST /polls/{poll_pda}/vote -- vote on a poll
 pub async fn vote_poll(
     state: web::Data<AppState>,
     req: HttpRequest,
     path: web::Path<String>,
     body: web::Json<VotePollRequest>,
 ) -> Result<HttpResponse, ApiError> {
+    // BE-26: Check platform pause
+    if db::platform::is_paused(&state.db).await? {
+        return Err(ApiError::BadRequest("Platform is currently paused".to_string()));
+    }
+
     let auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Auth required".into()))?;
     let poll_pda = path.into_inner();
     let b = body.into_inner();
@@ -103,7 +108,7 @@ pub async fn vote_poll(
     })))
 }
 
-/// DELETE /polls/{poll_pda} – close a poll
+/// DELETE /polls/{poll_pda} -- close a poll
 pub async fn close_poll(
     state: web::Data<AppState>,
     req: HttpRequest,

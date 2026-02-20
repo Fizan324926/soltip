@@ -254,7 +254,7 @@ pub const CONTENT_GATE_SIZE: usize = 8
     + 32  // profile
     + 8   // gate_id
     + (4 + MAX_CONTENT_TITLE_LENGTH)   // title
-    + (4 + MAX_CONTENT_URL_LENGTH)     // content_url (encrypted)
+    + 32  // content_url_hash ([u8; 32] sha256)
     + 8   // required_amount
     + 4   // access_count
     + 8   // created_at

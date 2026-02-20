@@ -5,7 +5,7 @@ use crate::models::Subscription;
 
 pub async fn find_by_subscriber(pool: &PgPool, address: &str) -> Result<Vec<Subscription>, ApiError> {
     let subs = sqlx::query_as::<_, Subscription>(
-        "SELECT * FROM subscriptions WHERE subscriber_address = $1 ORDER BY created_at DESC"
+        "SELECT * FROM subscriptions WHERE subscriber_address = $1 ORDER BY created_at DESC LIMIT 100"
     )
         .bind(address)
         .fetch_all(pool)
@@ -25,7 +25,7 @@ pub async fn find_by_pda(pool: &PgPool, subscription_pda: &str) -> Result<Option
 
 pub async fn find_active_by_recipient(pool: &PgPool, profile_pda: &str) -> Result<Vec<Subscription>, ApiError> {
     let subs = sqlx::query_as::<_, Subscription>(
-        "SELECT * FROM subscriptions WHERE recipient_profile_pda = $1 AND is_active = true ORDER BY created_at DESC"
+        "SELECT * FROM subscriptions WHERE recipient_profile_pda = $1 AND is_active = true ORDER BY created_at DESC LIMIT 100"
     )
         .bind(profile_pda)
         .fetch_all(pool)

@@ -47,6 +47,10 @@ pub fn handler(
     // Validate feature is enabled
     require!(ENABLE_GOALS, ErrorCode::GoalsDisabled);
 
+    // Validate text content on all user-provided strings
+    require!(validate_text_content(&title), ErrorCode::UnsafeTextContent);
+    require!(validate_text_content(&description), ErrorCode::UnsafeTextContent);
+
     let tip_profile = &mut ctx.accounts.tip_profile;
     let tip_goal = &mut ctx.accounts.tip_goal;
     let clock = Clock::get()?;

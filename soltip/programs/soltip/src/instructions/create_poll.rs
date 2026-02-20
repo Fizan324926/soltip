@@ -39,6 +39,13 @@ pub fn handler(
 ) -> Result<()> {
     require!(ENABLE_POLLS, ErrorCode::PollsDisabled);
 
+    // Validate text content on all user-provided strings
+    require!(validate_text_content(&title), ErrorCode::UnsafeTextContent);
+    require!(validate_text_content(&description), ErrorCode::UnsafeTextContent);
+    for opt in &options {
+        require!(validate_text_content(opt), ErrorCode::UnsafeTextContent);
+    }
+
     let tip_profile = &mut ctx.accounts.tip_profile;
     let tip_poll = &mut ctx.accounts.tip_poll;
     let clock = Clock::get()?;

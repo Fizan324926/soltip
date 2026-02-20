@@ -6,8 +6,12 @@ use crate::models::*;
 use crate::AppState;
 
 pub async fn get_platform_config(
+    req: HttpRequest,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, ApiError> {
+    // BE-10: Require auth to access admin config
+    let _auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
+
     let config: Option<PlatformConfigRow> = sqlx::query_as(
         "SELECT * FROM platform_config ORDER BY created_at DESC LIMIT 1"
     )

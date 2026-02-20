@@ -5,7 +5,7 @@ use crate::models::Goal;
 
 pub async fn find_by_profile(pool: &PgPool, profile_pda: &str) -> Result<Vec<Goal>, ApiError> {
     let goals = sqlx::query_as::<_, Goal>(
-        "SELECT * FROM goals WHERE profile_pda = $1 ORDER BY created_at DESC"
+        "SELECT * FROM goals WHERE profile_pda = $1 ORDER BY created_at DESC LIMIT 100"
     )
         .bind(profile_pda)
         .fetch_all(pool)

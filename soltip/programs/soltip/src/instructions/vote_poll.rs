@@ -98,9 +98,9 @@ pub fn handler(
     transfer(cpi, amount)?;
     ctx.accounts.vault.deposit(amount)?;
 
-    // Update profile stats
+    // Update profile stats (cannot easily track per-voter uniqueness in polls)
     let voter_key = ctx.accounts.voter.key();
-    ctx.accounts.recipient_profile.record_tip(voter_key, amount, true)?;
+    ctx.accounts.recipient_profile.record_tip(voter_key, amount, false)?;
 
     emit!(PollVoteEvent {
         voter:        ctx.accounts.voter.key(),

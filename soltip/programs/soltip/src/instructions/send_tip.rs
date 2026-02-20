@@ -124,6 +124,7 @@ pub fn handler(
     // ── 4. Rate-limit ───────────────────────────────────────────────
     let is_new_rl = ctx.accounts.rate_limit.last_tip_at == 0;
     if is_new_rl {
+        // First tip: initialize the rate limit (sets last_tip_at and tip_count_today=1)
         ctx.accounts.rate_limit.initialize(
             ctx.accounts.tipper.key(),
             ctx.accounts.recipient_profile.key(),

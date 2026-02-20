@@ -20,49 +20,50 @@ interface UserProfileState {
 }
 
 // ============================================================
-// Store
+// Store (devtools only in development)
 // ============================================================
+const storeImpl = (set: any) => ({
+  profile: null,
+  vault: null,
+  hasProfile: false,
+  isLoading: false,
+  lastFetchedAt: null,
+
+  setProfile: (profile: TipProfile | null) =>
+    set(
+      {
+        profile,
+        hasProfile: profile !== null,
+        lastFetchedAt: Date.now(),
+      },
+      false,
+      'userProfile/setProfile'
+    ),
+
+  setVault: (vault: Vault | null) =>
+    set({ vault }, false, 'userProfile/setVault'),
+
+  setLoading: (isLoading: boolean) =>
+    set({ isLoading }, false, 'userProfile/setLoading'),
+
+  clear: () =>
+    set(
+      {
+        profile: null,
+        vault: null,
+        hasProfile: false,
+        isLoading: false,
+        lastFetchedAt: null,
+      },
+      false,
+      'userProfile/clear'
+    ),
+});
+
 export const useUserProfileStore = create<UserProfileState>()(
-  devtools(
-    (set) => ({
-      profile: null,
-      vault: null,
-      hasProfile: false,
-      isLoading: false,
-      lastFetchedAt: null,
-
-      setProfile: (profile) =>
-        set(
-          {
-            profile,
-            hasProfile: profile !== null,
-            lastFetchedAt: Date.now(),
-          },
-          false,
-          'userProfile/setProfile'
-        ),
-
-      setVault: (vault) =>
-        set({ vault }, false, 'userProfile/setVault'),
-
-      setLoading: (isLoading) =>
-        set({ isLoading }, false, 'userProfile/setLoading'),
-
-      clear: () =>
-        set(
-          {
-            profile: null,
-            vault: null,
-            hasProfile: false,
-            isLoading: false,
-            lastFetchedAt: null,
-          },
-          false,
-          'userProfile/clear'
-        ),
-    }),
-    { name: 'UserProfileStore' }
-  )
+  import.meta.env.DEV
+    ? devtools(storeImpl, { name: 'UserProfileStore' })
+    : storeImpl
 );
 
 // ============================================================

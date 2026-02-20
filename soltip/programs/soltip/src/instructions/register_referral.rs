@@ -21,7 +21,7 @@ pub struct RegisterReferral<'info> {
     #[account(
         seeds = [TIP_PROFILE_SEED, referrer.key().as_ref()],
         bump = referrer_profile.bump,
-        has_one = owner @ ErrorCode::NotProfileOwner,
+        constraint = referrer_profile.owner == referrer.key() @ ErrorCode::NotProfileOwner,
     )]
     pub referrer_profile: Account<'info, TipProfile>,
 
@@ -44,11 +44,6 @@ pub struct RegisterReferral<'info> {
         bump,
     )]
     pub referral: Account<'info, Referral>,
-
-    /// Alias so Anchor `has_one` matches the profile field
-    /// CHECK: must equal referrer_profile.owner
-    #[account(address = referrer_profile.owner)]
-    pub owner: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>,
 }

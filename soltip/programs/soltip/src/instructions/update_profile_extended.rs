@@ -23,6 +23,14 @@ pub fn handler(
     social_links: Option<String>,
     webhook_url: Option<String>,
 ) -> Result<()> {
+    // Validate text content on all user-provided strings
+    if let Some(ref v) = social_links {
+        require!(validate_text_content(v), ErrorCode::UnsafeTextContent);
+    }
+    if let Some(ref v) = webhook_url {
+        require!(validate_text_content(v), ErrorCode::UnsafeTextContent);
+    }
+
     let tip_profile = &mut ctx.accounts.tip_profile;
     let clock = Clock::get()?;
 

@@ -60,12 +60,20 @@ pub struct ProcessSubscription<'info> {
     )]
     pub subscription: Account<'info, Subscription>,
 
-    /// Global platform config – checked for pause state.
+    /// Global platform config – checked for pause state and fee BPS.
     #[account(
         seeds = [PLATFORM_CONFIG_SEED],
         bump  = platform_config.bump,
     )]
     pub platform_config: Account<'info, PlatformConfig>,
+
+    /// CHECK: PDA verified by seeds – platform treasury receives platform fee
+    #[account(
+        mut,
+        seeds = [PLATFORM_TREASURY_SEED],
+        bump,
+    )]
+    pub platform_treasury: UncheckedAccount<'info>,
 
     /// System program for transferring SOL
     pub system_program: Program<'info, System>,
@@ -84,10 +92,21 @@ pub fn handler(ctx: Context<ProcessSubscription>) -> Result<()> {
     let recipient_profile = &mut ctx.accounts.recipient_profile;
     let clock = Clock::get()?;
 
+    // Capture payments_made before processing to determine if this is first payment
+    let is_first_payment = subscription.payment_count == 0;
+
     // Process the payment (this validates payment is due and updates state)
     subscription.process_payment(clock.unix_timestamp)?;
 
-    // Transfer SOL from subscriber to recipient
+    let amount = subscription.amount_per_interval;
+
+    // Calculate platform fee and creator share
+    let platform_fee = calculate_fee(amount, PLATFORM_FEE_BPS)?;
+    let creator_share = amount
+        .checked_sub(platform_fee)
+        .ok_or(ErrorCode::MathUnderflow)?;
+
+    // Transfer creator share to recipient
     let transfer_ctx = CpiContext::new(
         ctx.accounts.system_program.to_account_info(),
         Transfer {
@@ -95,11 +114,23 @@ pub fn handler(ctx: Context<ProcessSubscription>) -> Result<()> {
             to: ctx.accounts.recipient_owner.to_account_info(),
         },
     );
-    transfer(transfer_ctx, subscription.amount_per_interval)?;
+    transfer(transfer_ctx, creator_share)?;
 
-    // Record tip in profile
+    // Transfer platform fee to treasury
+    if platform_fee > 0 {
+        let fee_ctx = CpiContext::new(
+            ctx.accounts.system_program.to_account_info(),
+            Transfer {
+                from: ctx.accounts.subscriber.to_account_info(),
+                to: ctx.accounts.platform_treasury.to_account_info(),
+            },
+        );
+        transfer(fee_ctx, platform_fee)?;
+    }
+
+    // Record tip in profile (only first payment counts as new tipper)
     let subscriber_key = ctx.accounts.subscriber.key();
-    recipient_profile.record_tip(subscriber_key, subscription.amount_per_interval, true)?;
+    recipient_profile.record_tip(subscriber_key, amount, is_first_payment)?;
 
     // Capture values for event (subscription is already mutably borrowed above)
     let amount_paid    = subscription.amount_per_interval;

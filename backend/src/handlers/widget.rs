@@ -1,10 +1,11 @@
-use actix_web::{web, HttpResponse};
+use actix_web::{web, HttpRequest, HttpResponse};
+use crate::app_middleware::require_wallet_auth;
 use crate::error::ApiError;
 use crate::db;
 use crate::services;
 use crate::AppState;
 
-/// GET /widget/{username} – embeddable tip widget config
+/// GET /widget/{username} -- embeddable tip widget config
 /// Returns JSON that the frontend widget component consumes.
 pub async fn get_widget_config(
     state: web::Data<AppState>,
@@ -47,7 +48,7 @@ pub async fn get_widget_config(
         })))
 }
 
-/// GET /overlay/{username} – alert overlay data for OBS browser source
+/// GET /overlay/{username} -- alert overlay data for OBS browser source
 /// Returns config for the live streaming overlay.
 pub async fn get_overlay_config(
     state: web::Data<AppState>,
@@ -111,12 +112,33 @@ pub async fn get_overlay_config(
         })))
 }
 
-/// GET /export/{profile_pda}/tips – CSV export of tips
+/// BE-19: Sanitize a CSV field to prevent CSV injection
+fn sanitize_csv_field(field: &str) -> String {
+    let trimmed = field.trim();
+    if trimmed.starts_with('=') || trimmed.starts_with('+') || trimmed.starts_with('-') || trimmed.starts_with('@') {
+        format!("'{}", trimmed)
+    } else {
+        trimmed.to_string()
+    }
+}
+
+/// GET /export/{profile_pda}/tips -- CSV export of tips
 pub async fn export_tips_csv(
+    req: HttpRequest,
     state: web::Data<AppState>,
     path: web::Path<String>,
 ) -> Result<HttpResponse, ApiError> {
+    // BE-07: Require auth for CSV export
+    let auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
     let profile_pda = path.into_inner();
+
+    // Verify the caller owns the profile
+    let profile = db::profiles::find_by_pda(&state.db, &profile_pda)
+        .await?
+        .ok_or_else(|| ApiError::NotFound("Profile not found".into()))?;
+    if profile.owner_address != auth.wallet_address {
+        return Err(ApiError::Unauthorized("Only the profile owner can export tips".to_string()));
+    }
 
     let tips = sqlx::query_as::<_, crate::models::Tip>(
         "SELECT * FROM tips WHERE recipient_profile_pda = $1 ORDER BY created_at DESC LIMIT 10000",
@@ -127,14 +149,22 @@ pub async fn export_tips_csv(
 
     let mut csv = String::from("Date,Tipper,Amount (lamports),Type,Token Mint,Message,Anonymous\n");
     for t in &tips {
+        // BE-19: Sanitize fields to prevent CSV injection
+        let tipper = if t.is_anonymous {
+            "anonymous".to_string()
+        } else {
+            sanitize_csv_field(&t.tipper_address)
+        };
+        let message = t.message.as_deref().unwrap_or("").replace(',', ";");
+        let message = sanitize_csv_field(&message);
         csv.push_str(&format!(
             "{},{},{},{},{},{},{}\n",
             t.created_at.format("%Y-%m-%d %H:%M:%S"),
-            if t.is_anonymous { "anonymous" } else { &t.tipper_address },
+            tipper,
             t.amount_lamports,
             t.tip_type,
             t.token_mint.as_deref().unwrap_or("SOL"),
-            t.message.as_deref().unwrap_or("").replace(',', ";"),
+            message,
             t.is_anonymous,
         ));
     }

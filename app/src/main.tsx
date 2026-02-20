@@ -52,7 +52,7 @@ class ErrorBoundary extends React.Component<
           <h1 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#ff6b6b' }}>
             Something went wrong
           </h1>
-          <pre style={{
+          <p style={{
             background: '#131325',
             padding: '1rem',
             borderRadius: '8px',
@@ -63,9 +63,7 @@ class ErrorBoundary extends React.Component<
             textAlign: 'left',
           }}>
             {this.state.error.message}
-            {'\n\n'}
-            {this.state.error.stack}
-          </pre>
+          </p>
           <button
             onClick={() => window.location.reload()}
             style={{

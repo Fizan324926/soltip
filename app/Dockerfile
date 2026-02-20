@@ -21,14 +21,24 @@ ARG VITE_FEATURE_WIDGET=true
 
 RUN npm run build
 
-# ── Stage 2: Serve with nginx ───────────────────────────────────
-FROM nginx:alpine
+# ── Stage 2: Serve with unprivileged nginx ──────────────────────
+FROM nginxinc/nginx-unprivileged:alpine
 
-# SPA routing: all paths → index.html
+# SPA routing + security headers
+COPY --from=builder /app/dist /usr/share/nginx/html
+
 RUN printf 'server {\n\
-    listen 80;\n\
+    listen 8080;\n\
     root /usr/share/nginx/html;\n\
     index index.html;\n\
+    server_tokens off;\n\
+\n\
+    # Security headers\n\
+    add_header X-Frame-Options "SAMEORIGIN" always;\n\
+    add_header X-Content-Type-Options "nosniff" always;\n\
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;\n\
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;\n\
+    add_header Content-Security-Policy "default-src '"'"'self'"'"'; script-src '"'"'self'"'"'; style-src '"'"'self'"'"' '"'"'unsafe-inline'"'"' https://fonts.googleapis.com; font-src '"'"'self'"'"' https://fonts.gstatic.com; img-src '"'"'self'"'"' https: data:; connect-src '"'"'self'"'"' https://*.solana.com https://*.helius-rpc.com https://*.quiknode.pro wss:;" always;\n\
 \n\
     location / {\n\
         try_files $uri $uri/ /index.html;\n\
@@ -44,8 +54,6 @@ RUN printf 'server {\n\
     gzip_min_length 256;\n\
 }\n' > /etc/nginx/conf.d/default.conf
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]

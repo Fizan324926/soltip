@@ -19,54 +19,54 @@ interface UiState {
 }
 
 // ============================================================
-// Store
+// Store (devtools only in development)
 // ============================================================
+const persistedStore = persist<UiState>(
+  (set) => ({
+    theme: 'dark',
+    sidebarOpen: false,
+    activeTipModal: null,
+
+    toggleTheme: () =>
+      set(
+        (state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' }),
+        false,
+        'ui/toggleTheme'
+      ),
+
+    setTheme: (theme) =>
+      set({ theme }, false, 'ui/setTheme'),
+
+    setSidebarOpen: (open) =>
+      set({ sidebarOpen: open }, false, 'ui/setSidebarOpen'),
+
+    toggleSidebar: () =>
+      set(
+        (state) => ({ sidebarOpen: !state.sidebarOpen }),
+        false,
+        'ui/toggleSidebar'
+      ),
+
+    openTipModal: (profilePubkey) =>
+      set(
+        { activeTipModal: profilePubkey },
+        false,
+        'ui/openTipModal'
+      ),
+
+    closeTipModal: () =>
+      set({ activeTipModal: null }, false, 'ui/closeTipModal'),
+  }),
+  {
+    name: 'soltip-ui',
+    partialize: (state) => ({ theme: state.theme }),
+  }
+);
+
 export const useUiStore = create<UiState>()(
-  devtools(
-    persist(
-      (set) => ({
-        theme: 'dark',
-        sidebarOpen: false,
-        activeTipModal: null,
-
-        toggleTheme: () =>
-          set(
-            (state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' }),
-            false,
-            'ui/toggleTheme'
-          ),
-
-        setTheme: (theme) =>
-          set({ theme }, false, 'ui/setTheme'),
-
-        setSidebarOpen: (open) =>
-          set({ sidebarOpen: open }, false, 'ui/setSidebarOpen'),
-
-        toggleSidebar: () =>
-          set(
-            (state) => ({ sidebarOpen: !state.sidebarOpen }),
-            false,
-            'ui/toggleSidebar'
-          ),
-
-        openTipModal: (profilePubkey) =>
-          set(
-            { activeTipModal: profilePubkey },
-            false,
-            'ui/openTipModal'
-          ),
-
-        closeTipModal: () =>
-          set({ activeTipModal: null }, false, 'ui/closeTipModal'),
-      }),
-      {
-        name: 'soltip-ui',
-        // Only persist the theme preference
-        partialize: (state) => ({ theme: state.theme }),
-      }
-    ),
-    { name: 'UiStore' }
-  )
+  import.meta.env.DEV
+    ? devtools(persistedStore, { name: 'UiStore' })
+    : persistedStore
 );
 
 // ============================================================

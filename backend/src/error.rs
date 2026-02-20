@@ -48,9 +48,12 @@ impl ResponseError for ApiError {
                     "error": "database_error", "message": "A database error occurred"
                 }))
             }
-            ApiError::Solana(msg) => HttpResponse::BadGateway().json(serde_json::json!({
-                "error": "solana_error", "message": msg
-            })),
+            ApiError::Solana(msg) => {
+                log::error!("Solana error: {}", msg);
+                HttpResponse::BadGateway().json(serde_json::json!({
+                    "error": "solana_error", "message": "A Solana network error occurred"
+                }))
+            }
         }
     }
 }

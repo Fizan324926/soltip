@@ -33,10 +33,13 @@ pub fn handler(
     ctx: Context<CreateContentGate>,
     gate_id: u64,
     title: String,
-    content_url: String,
+    content_url_hash: [u8; 32],
     required_amount: u64,
 ) -> Result<()> {
     require!(ENABLE_CONTENT_GATES, ErrorCode::ContentGatesDisabled);
+
+    // Validate text content
+    require!(validate_text_content(&title), ErrorCode::UnsafeTextContent);
 
     let tip_profile = &mut ctx.accounts.tip_profile;
     let content_gate = &mut ctx.accounts.content_gate;
@@ -48,7 +51,7 @@ pub fn handler(
         tip_profile.key(),
         gate_id,
         title,
-        content_url,
+        content_url_hash,
         required_amount,
         clock.unix_timestamp,
         ctx.bumps.content_gate,

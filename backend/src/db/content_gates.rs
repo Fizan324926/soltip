@@ -33,14 +33,14 @@ pub async fn find_gates_by_profile(
 ) -> Result<Vec<ContentGate>, sqlx::Error> {
     if active_only {
         sqlx::query_as::<_, ContentGate>(
-            "SELECT * FROM content_gates WHERE profile_pda = $1 AND is_active = TRUE ORDER BY created_at DESC",
+            "SELECT * FROM content_gates WHERE profile_pda = $1 AND is_active = TRUE ORDER BY created_at DESC LIMIT 100",
         )
         .bind(profile_pda)
         .fetch_all(pool)
         .await
     } else {
         sqlx::query_as::<_, ContentGate>(
-            "SELECT * FROM content_gates WHERE profile_pda = $1 ORDER BY created_at DESC",
+            "SELECT * FROM content_gates WHERE profile_pda = $1 ORDER BY created_at DESC LIMIT 100",
         )
         .bind(profile_pda)
         .fetch_all(pool)

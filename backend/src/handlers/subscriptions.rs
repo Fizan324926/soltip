@@ -4,6 +4,8 @@ use uuid::Uuid;
 use crate::app_middleware::require_wallet_auth;
 use crate::error::ApiError;
 use crate::models::*;
+use crate::services;
+use crate::db;
 use crate::AppState;
 
 pub async fn create_subscription(
@@ -11,10 +13,21 @@ pub async fn create_subscription(
     state: web::Data<AppState>,
     body: web::Json<CreateSubscriptionRequest>,
 ) -> Result<HttpResponse, ApiError> {
+    // BE-26: Check platform pause
+    if db::platform::is_paused(&state.db).await? {
+        return Err(ApiError::BadRequest("Platform is currently paused".to_string()));
+    }
+
     let auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
     if auth.wallet_address != body.subscriber_address {
         return Err(ApiError::Unauthorized("Wallet does not match subscriber_address".to_string()));
     }
+
+    // BE-09: Validate Solana addresses
+    services::solana::validate_address(&body.subscriber_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid subscriber_address: {}", e)))?;
+    services::solana::validate_address(&body.recipient_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid recipient_address: {}", e)))?;
 
     if body.amount_per_interval <= 0 {
         return Err(ApiError::BadRequest("Amount must be positive".to_string()));
@@ -68,8 +81,9 @@ pub async fn get_by_subscriber(
 ) -> Result<HttpResponse, ApiError> {
     let address = path.into_inner();
 
+    // BE-14: Add pagination limit
     let subs: Vec<Subscription> = sqlx::query_as(
-        "SELECT * FROM subscriptions WHERE subscriber_address = $1 ORDER BY created_at DESC"
+        "SELECT * FROM subscriptions WHERE subscriber_address = $1 ORDER BY created_at DESC LIMIT 100"
     )
         .bind(&address)
         .fetch_all(&state.db)
@@ -84,19 +98,31 @@ pub async fn cancel_subscription(
     state: web::Data<AppState>,
     path: web::Path<String>,
 ) -> Result<HttpResponse, ApiError> {
-    let _auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
+    // BE-04: Actually use auth for ownership check
+    let auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
     let subscription_pda = path.into_inner();
 
-    let result = sqlx::query(
+    // Query subscription from DB to verify ownership
+    let subscription: Option<Subscription> = sqlx::query_as(
+        "SELECT * FROM subscriptions WHERE subscription_pda = $1"
+    )
+        .bind(&subscription_pda)
+        .fetch_optional(&state.db)
+        .await?;
+
+    let subscription = subscription.ok_or_else(|| ApiError::NotFound("Subscription not found".to_string()))?;
+
+    // Verify caller is the subscriber
+    if auth.wallet_address != subscription.subscriber_address {
+        return Err(ApiError::Unauthorized("Only the subscriber can cancel this subscription".to_string()));
+    }
+
+    sqlx::query(
         "UPDATE subscriptions SET is_active = false WHERE subscription_pda = $1"
     )
         .bind(&subscription_pda)
         .execute(&state.db)
         .await?;
-
-    if result.rows_affected() == 0 {
-        return Err(ApiError::NotFound("Subscription not found".to_string()));
-    }
 
     Ok(HttpResponse::Ok().json(TxResponse {
         success: true,

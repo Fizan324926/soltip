@@ -59,7 +59,12 @@ pub fn handler(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
     let platform_fee  = calculate_fee(total_fee, PLATFORM_FEE_BPS)?;
     let creator_share = amount.checked_sub(total_fee).ok_or(ErrorCode::MathUnderflow)?;
 
-    ctx.accounts.vault.withdraw(amount)?;
+    // Only deduct the amounts actually transferred out (creator_share + platform_fee)
+    // The remainder of total_fee (total_fee - platform_fee) stays in the vault
+    let actual_out = creator_share
+        .checked_add(platform_fee)
+        .ok_or(ErrorCode::MathOverflow)?;
+    ctx.accounts.vault.withdraw(actual_out)?;
 
     // Direct lamport manipulation for PDA accounts with data
     // (system_program::transfer requires 'from' to have no data)

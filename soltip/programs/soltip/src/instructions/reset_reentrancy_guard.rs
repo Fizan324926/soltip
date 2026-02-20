@@ -1,11 +1,11 @@
 use anchor_lang::prelude::*;
 use crate::state::TipProfile;
+use crate::instructions::initialize_platform::PlatformConfig;
 use crate::constants::*;
 use crate::error::ErrorCode;
-use crate::instructions::initialize_platform::PlatformConfig;
 
 #[derive(Accounts)]
-pub struct VerifyCreator<'info> {
+pub struct ResetReentrancyGuard<'info> {
     pub authority: Signer<'info>,
 
     #[account(
@@ -23,12 +23,12 @@ pub struct VerifyCreator<'info> {
     pub tip_profile: Account<'info, TipProfile>,
 }
 
-pub fn handler(ctx: Context<VerifyCreator>, verified: bool) -> Result<()> {
-    ctx.accounts.tip_profile.is_verified = verified;
+pub fn handler(ctx: Context<ResetReentrancyGuard>) -> Result<()> {
+    ctx.accounts.tip_profile.reentrancy_guard = false;
+
     msg!(
-        "Creator {} verification set to: {}",
+        "Reentrancy guard reset for profile: {}",
         ctx.accounts.tip_profile.username,
-        verified
     );
     Ok(())
 }

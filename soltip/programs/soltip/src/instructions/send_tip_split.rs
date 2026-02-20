@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::{program::invoke, system_instruction};
 use crate::state::{TipProfile, Vault, TipSplit, RateLimit};
 use crate::instructions::initialize_platform::PlatformConfig;
 use crate::constants::*;
@@ -66,8 +67,8 @@ pub struct SendTipSplit<'info> {
 
 /// Send a SOL tip distributed across recipients.
 /// Recipient wallets must be passed as remaining_accounts in order matching split config.
-pub fn handler(
-    ctx: Context<SendTipSplit>,
+pub fn handler<'info>(
+    ctx: Context<'_, '_, 'info, 'info, SendTipSplit<'info>>,
     amount: u64,
     message: Option<String>,
 ) -> Result<()> {
@@ -135,21 +136,20 @@ pub fn handler(
     // this is the first interaction.
     let is_new_tipper = is_new_rl;
 
-    // Debit tipper and credit each recipient via direct lamport manipulation
-    // (avoids remaining_accounts lifetime conflicts with CpiContext)
-    let mut tipper_lamports = ctx.accounts.tipper.lamports();
-    for (i, (_wallet, share)) in shares.iter().enumerate() {
+    // Transfer SOL from tipper to each recipient via system_program invoke
+    let tipper_key = ctx.accounts.tipper.key();
+    for (i, (wallet, share)) in shares.iter().enumerate() {
         if *share > 0 {
-            tipper_lamports = tipper_lamports
-                .checked_sub(*share)
-                .ok_or(ErrorCode::MathUnderflow)?;
-            **ctx.remaining_accounts[i].lamports.borrow_mut() = ctx.remaining_accounts[i]
-                .lamports()
-                .checked_add(*share)
-                .ok_or(ErrorCode::MathOverflow)?;
+            invoke(
+                &system_instruction::transfer(&tipper_key, wallet, *share),
+                &[
+                    ctx.accounts.tipper.to_account_info(),
+                    ctx.remaining_accounts[i].clone(),
+                    ctx.accounts.system_program.to_account_info(),
+                ],
+            )?;
         }
     }
-    **ctx.accounts.tipper.lamports.borrow_mut() = tipper_lamports;
 
     // Update profile stats
     ctx.accounts.recipient_profile.record_tip(

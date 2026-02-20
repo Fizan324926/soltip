@@ -7,6 +7,7 @@ use crate::error::ErrorCode;
 #[derive(Accounts)]
 pub struct CancelSubscription<'info> {
     /// The subscriber cancelling the subscription
+    #[account(mut)]
     pub subscriber: Signer<'info>,
 
     /// The recipient's tip profile
@@ -20,13 +21,14 @@ pub struct CancelSubscription<'info> {
     /// CHECK: This is validated by the PDA derivation of recipient_profile
     pub recipient_owner: UncheckedAccount<'info>,
 
-    /// The subscription to cancel
+    /// The subscription to cancel (closed and rent returned to subscriber)
     #[account(
         mut,
         seeds = [SUBSCRIPTION_SEED, subscriber.key().as_ref(), recipient_profile.key().as_ref()],
         bump = subscription.bump,
         has_one = subscriber @ ErrorCode::NotSubscriber,
         constraint = subscription.recipient_profile == recipient_profile.key() @ ErrorCode::InvalidAccountData,
+        close = subscriber,
     )]
     pub subscription: Account<'info, Subscription>,
 }

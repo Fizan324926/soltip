@@ -4,6 +4,8 @@ use uuid::Uuid;
 use crate::app_middleware::require_wallet_auth;
 use crate::error::ApiError;
 use crate::models::*;
+use crate::services;
+use crate::db;
 use crate::AppState;
 
 pub async fn list_goals(
@@ -13,7 +15,7 @@ pub async fn list_goals(
     let profile_pda = path.into_inner();
 
     let goals: Vec<Goal> = sqlx::query_as(
-        "SELECT * FROM goals WHERE profile_pda = $1 ORDER BY created_at DESC"
+        "SELECT * FROM goals WHERE profile_pda = $1 ORDER BY created_at DESC LIMIT 100"
     )
         .bind(&profile_pda)
         .fetch_all(&state.db)
@@ -32,6 +34,10 @@ pub async fn create_goal(
     if auth.wallet_address != body.owner_address {
         return Err(ApiError::Unauthorized("Wallet does not match owner_address".to_string()));
     }
+
+    // BE-09: Validate Solana addresses
+    services::solana::validate_address(&body.owner_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid owner_address: {}", e)))?;
 
     if body.title.is_empty() || body.title.len() > crate::config::MAX_GOAL_TITLE_LENGTH {
         return Err(ApiError::BadRequest("Invalid goal title length".to_string()));
@@ -93,11 +99,34 @@ pub async fn contribute_goal(
     path: web::Path<String>,
     body: web::Json<ContributeGoalRequest>,
 ) -> Result<HttpResponse, ApiError> {
-    let _auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
+    // BE-26: Check platform pause
+    if db::platform::is_paused(&state.db).await? {
+        return Err(ApiError::BadRequest("Platform is currently paused".to_string()));
+    }
+
+    let auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
+
+    // BE-05: Verify contributor identity
+    if auth.wallet_address != body.contributor_address {
+        return Err(ApiError::Unauthorized("Wallet does not match contributor_address".to_string()));
+    }
+
+    // BE-09: Validate Solana addresses
+    services::solana::validate_address(&body.contributor_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid contributor_address: {}", e)))?;
+
     let goal_pda = path.into_inner();
 
     if body.amount_lamports <= 0 {
         return Err(ApiError::BadRequest("Amount must be positive".to_string()));
+    }
+
+    // BE-01: Verify transaction on-chain
+    let tx_valid = services::solana::verify_transaction(&state.rpc_url, &body.tx_signature)
+        .await
+        .map_err(|e| ApiError::Solana(e))?;
+    if !tx_valid {
+        return Err(ApiError::BadRequest("Transaction not confirmed on-chain".to_string()));
     }
 
     let goal: Option<Goal> = sqlx::query_as("SELECT * FROM goals WHERE goal_pda = $1")

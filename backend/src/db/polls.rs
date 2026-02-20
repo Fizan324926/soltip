@@ -35,14 +35,14 @@ pub async fn find_polls_by_profile(
 ) -> Result<Vec<Poll>, sqlx::Error> {
     if active_only {
         sqlx::query_as::<_, Poll>(
-            "SELECT * FROM polls WHERE profile_pda = $1 AND is_active = TRUE ORDER BY created_at DESC",
+            "SELECT * FROM polls WHERE profile_pda = $1 AND is_active = TRUE ORDER BY created_at DESC LIMIT 100",
         )
         .bind(profile_pda)
         .fetch_all(pool)
         .await
     } else {
         sqlx::query_as::<_, Poll>(
-            "SELECT * FROM polls WHERE profile_pda = $1 ORDER BY created_at DESC",
+            "SELECT * FROM polls WHERE profile_pda = $1 ORDER BY created_at DESC LIMIT 100",
         )
         .bind(profile_pda)
         .fetch_all(pool)
@@ -118,7 +118,7 @@ pub async fn close_poll(pool: &PgPool, poll_pda: &str) -> Result<(), sqlx::Error
 
 pub async fn get_poll_votes(pool: &PgPool, poll_db_id: Uuid) -> Result<Vec<PollVote>, sqlx::Error> {
     sqlx::query_as::<_, PollVote>(
-        "SELECT * FROM poll_votes WHERE poll_id = $1 ORDER BY created_at DESC",
+        "SELECT * FROM poll_votes WHERE poll_id = $1 ORDER BY created_at DESC LIMIT 100",
     )
     .bind(poll_db_id)
     .fetch_all(pool)

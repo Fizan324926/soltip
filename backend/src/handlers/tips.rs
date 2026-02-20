@@ -4,6 +4,8 @@ use uuid::Uuid;
 use crate::app_middleware::require_wallet_auth;
 use crate::error::ApiError;
 use crate::models::*;
+use crate::services;
+use crate::db;
 use crate::AppState;
 
 pub async fn record_tip(
@@ -11,13 +13,38 @@ pub async fn record_tip(
     state: web::Data<AppState>,
     body: web::Json<SendTipRequest>,
 ) -> Result<HttpResponse, ApiError> {
+    // BE-26: Check platform pause
+    if db::platform::is_paused(&state.db).await? {
+        return Err(ApiError::BadRequest("Platform is currently paused".to_string()));
+    }
+
     let auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
     if auth.wallet_address != body.tipper_address {
         return Err(ApiError::Unauthorized("Wallet does not match tipper_address".to_string()));
     }
 
+    // BE-09: Validate Solana addresses
+    services::solana::validate_address(&body.tipper_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid tipper_address: {}", e)))?;
+    services::solana::validate_address(&body.recipient_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid recipient_address: {}", e)))?;
+
     if body.amount_lamports <= 0 {
         return Err(ApiError::BadRequest("Amount must be positive".to_string()));
+    }
+
+    // BE-18: Check duplicate tx_signature
+    let existing_tip = db::tips::find_by_tx(&state.db, &body.tx_signature).await?;
+    if existing_tip.is_some() {
+        return Err(ApiError::BadRequest("Transaction already recorded".to_string()));
+    }
+
+    // BE-01: Verify transaction on-chain
+    let tx_valid = services::solana::verify_transaction(&state.rpc_url, &body.tx_signature)
+        .await
+        .map_err(|e| ApiError::Solana(e))?;
+    if !tx_valid {
+        return Err(ApiError::BadRequest("Transaction not confirmed on-chain".to_string()));
     }
 
     let profile: Option<(String,)> = sqlx::query_as(
@@ -88,13 +115,40 @@ pub async fn record_tip_spl(
     state: web::Data<AppState>,
     body: web::Json<SendTipSplRequest>,
 ) -> Result<HttpResponse, ApiError> {
+    // BE-26: Check platform pause
+    if db::platform::is_paused(&state.db).await? {
+        return Err(ApiError::BadRequest("Platform is currently paused".to_string()));
+    }
+
     let auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
     if auth.wallet_address != body.tipper_address {
         return Err(ApiError::Unauthorized("Wallet does not match tipper_address".to_string()));
     }
 
+    // BE-09: Validate Solana addresses
+    services::solana::validate_address(&body.tipper_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid tipper_address: {}", e)))?;
+    services::solana::validate_address(&body.recipient_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid recipient_address: {}", e)))?;
+    services::solana::validate_address(&body.token_mint)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid token_mint: {}", e)))?;
+
     if body.amount <= 0 {
         return Err(ApiError::BadRequest("Amount must be positive".to_string()));
+    }
+
+    // BE-18: Check duplicate tx_signature
+    let existing_tip = db::tips::find_by_tx(&state.db, &body.tx_signature).await?;
+    if existing_tip.is_some() {
+        return Err(ApiError::BadRequest("Transaction already recorded".to_string()));
+    }
+
+    // BE-01: Verify transaction on-chain
+    let tx_valid = services::solana::verify_transaction(&state.rpc_url, &body.tx_signature)
+        .await
+        .map_err(|e| ApiError::Solana(e))?;
+    if !tx_valid {
+        return Err(ApiError::BadRequest("Transaction not confirmed on-chain".to_string()));
     }
 
     let profile: Option<(String,)> = sqlx::query_as(
@@ -145,9 +199,34 @@ pub async fn record_tip_split(
     state: web::Data<AppState>,
     body: web::Json<SendTipRequest>,
 ) -> Result<HttpResponse, ApiError> {
+    // BE-26: Check platform pause
+    if db::platform::is_paused(&state.db).await? {
+        return Err(ApiError::BadRequest("Platform is currently paused".to_string()));
+    }
+
     let auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
     if auth.wallet_address != body.tipper_address {
         return Err(ApiError::Unauthorized("Wallet does not match tipper_address".to_string()));
+    }
+
+    // BE-09: Validate Solana addresses
+    services::solana::validate_address(&body.tipper_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid tipper_address: {}", e)))?;
+    services::solana::validate_address(&body.recipient_address)
+        .map_err(|e| ApiError::BadRequest(format!("Invalid recipient_address: {}", e)))?;
+
+    // BE-18: Check duplicate tx_signature
+    let existing_tip = db::tips::find_by_tx(&state.db, &body.tx_signature).await?;
+    if existing_tip.is_some() {
+        return Err(ApiError::BadRequest("Transaction already recorded".to_string()));
+    }
+
+    // BE-01: Verify transaction on-chain
+    let tx_valid = services::solana::verify_transaction(&state.rpc_url, &body.tx_signature)
+        .await
+        .map_err(|e| ApiError::Solana(e))?;
+    if !tx_valid {
+        return Err(ApiError::BadRequest("Transaction not confirmed on-chain".to_string()));
     }
 
     // For split tips, record similarly but mark as split type

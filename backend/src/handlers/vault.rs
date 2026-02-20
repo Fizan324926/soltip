@@ -91,11 +91,14 @@ pub async fn withdraw(
         .and_then(|v| v.as_str())
         .ok_or_else(|| ApiError::BadRequest("tx_signature required".to_string()))?;
 
+    // BE-11: Use a database transaction with SELECT ... FOR UPDATE to prevent race conditions
+    let mut tx = state.db.begin().await.map_err(|e| ApiError::Database(e.to_string()))?;
+
     let vault: Option<Vault> = sqlx::query_as(
-        "SELECT * FROM vaults WHERE vault_pda = $1"
+        "SELECT * FROM vaults WHERE vault_pda = $1 FOR UPDATE"
     )
         .bind(vault_pda)
-        .fetch_optional(&state.db)
+        .fetch_optional(&mut *tx)
         .await?;
 
     let vault = vault.ok_or_else(|| ApiError::NotFound("Vault not found".to_string()))?;
@@ -113,8 +116,10 @@ pub async fn withdraw(
     )
         .bind(amount)
         .bind(vault_pda)
-        .execute(&state.db)
+        .execute(&mut *tx)
         .await?;
+
+    tx.commit().await.map_err(|e| ApiError::Database(e.to_string()))?;
 
     log::info!("Withdrawal of {} lamports from vault {} (tx: {})", amount, vault_pda, tx_signature);
 

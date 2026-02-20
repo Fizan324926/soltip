@@ -4,7 +4,8 @@ use crate::error::ErrorCode;
 
 /// Token-gated content: creator sets a minimum total tipped amount
 /// to unlock access to a content link. Tippers who have tipped >= required_amount
-/// can access the gated content.
+/// can access the gated content. The actual content URL is served off-chain;
+/// only its sha256 hash is stored on-chain for verification.
 ///
 /// **PDA seeds:** `[b"content_gate", profile.key(), gate_id.to_le_bytes()]`
 #[account]
@@ -15,8 +16,8 @@ pub struct ContentGate {
     pub gate_id: u64,
     /// Title/description of the gated content
     pub title: String,
-    /// The content URL (visible only to qualified tippers)
-    pub content_url: String,
+    /// SHA-256 hash of the content URL (actual URL served off-chain)
+    pub content_url_hash: [u8; 32],
     /// Minimum total amount tipped (lamports) to gain access
     pub required_amount: u64,
     /// Number of successful accesses
@@ -37,20 +38,19 @@ impl ContentGate {
         profile: Pubkey,
         gate_id: u64,
         title: String,
-        content_url: String,
+        content_url_hash: [u8; 32],
         required_amount: u64,
         timestamp: i64,
         bump: u8,
     ) -> Result<()> {
         require!(title.len() <= MAX_CONTENT_TITLE_LENGTH, ErrorCode::ContentTitleTooLong);
-        require!(content_url.len() <= MAX_CONTENT_URL_LENGTH, ErrorCode::ContentUrlTooLong);
         require!(required_amount > 0, ErrorCode::InvalidGoalAmount);
         require!(validate_text_content(&title), ErrorCode::UnsafeTextContent);
 
         self.profile = profile;
         self.gate_id = gate_id;
         self.title = title;
-        self.content_url = content_url;
+        self.content_url_hash = content_url_hash;
         self.required_amount = required_amount;
         self.access_count = 0;
         self.created_at = timestamp;

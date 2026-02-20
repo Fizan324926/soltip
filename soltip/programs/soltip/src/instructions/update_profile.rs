@@ -29,6 +29,17 @@ pub fn handler(
     withdrawal_fee_bps: Option<u16>,
     accept_anonymous: Option<bool>,
 ) -> Result<()> {
+    // Validate text content on all user-provided strings
+    if let Some(ref v) = display_name {
+        require!(validate_text_content(v), ErrorCode::UnsafeTextContent);
+    }
+    if let Some(ref v) = description {
+        require!(validate_text_content(v), ErrorCode::UnsafeTextContent);
+    }
+    if let Some(ref v) = image_url {
+        require!(validate_text_content(v), ErrorCode::UnsafeTextContent);
+    }
+
     let tip_profile = &mut ctx.accounts.tip_profile;
     let clock = Clock::get()?;
 

@@ -26,7 +26,7 @@ pub async fn find_referrals_by_referrer(
     referrer_address: &str,
 ) -> Result<Vec<Referral>, sqlx::Error> {
     sqlx::query_as::<_, Referral>(
-        "SELECT * FROM referrals WHERE referrer_address = $1 ORDER BY created_at DESC",
+        "SELECT * FROM referrals WHERE referrer_address = $1 ORDER BY created_at DESC LIMIT 100",
     )
     .bind(referrer_address)
     .fetch_all(pool)
@@ -38,7 +38,7 @@ pub async fn find_referrals_for_profile(
     referee_profile_pda: &str,
 ) -> Result<Vec<Referral>, sqlx::Error> {
     sqlx::query_as::<_, Referral>(
-        "SELECT * FROM referrals WHERE referee_profile_pda = $1 ORDER BY created_at DESC",
+        "SELECT * FROM referrals WHERE referee_profile_pda = $1 ORDER BY created_at DESC LIMIT 100",
     )
     .bind(referee_profile_pda)
     .fetch_all(pool)

@@ -84,14 +84,32 @@ let _walletAuthToken: string | null = null;
 export function setWalletAuthToken(token: string | null) {
   _walletAuthToken = token;
   if (token) {
-    localStorage.setItem('soltip_token', token);
+    sessionStorage.setItem('soltip_token', token);
   } else {
-    localStorage.removeItem('soltip_token');
+    sessionStorage.removeItem('soltip_token');
   }
 }
 
+/**
+ * Returns the current auth token only if it has not expired.
+ * Token format: `<signature>.<pubkey>.<timestamp>`
+ * Server enforces a 5-minute window; reject stale tokens client-side too.
+ */
 export function getWalletAuthToken(): string | null {
-  return _walletAuthToken || localStorage.getItem('soltip_token');
+  const token = _walletAuthToken || sessionStorage.getItem('soltip_token');
+  if (!token) return null;
+  // Validate timestamp is within 5 minutes
+  const parts = token.split('.');
+  if (parts.length >= 3) {
+    const ts = parseInt(parts[2], 10);
+    if (!isNaN(ts) && Date.now() / 1000 - ts > 300) {
+      // Token expired — clear it
+      _walletAuthToken = null;
+      sessionStorage.removeItem('soltip_token');
+      return null;
+    }
+  }
+  return token;
 }
 
 // ============================================================

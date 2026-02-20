@@ -50,6 +50,7 @@ pub use instructions::{
     CreatePoll, VotePoll, ClosePoll,
     CreateContentGate, VerifyContentAccess, CloseContentGate,
     RegisterReferral, UpdateProfileExtended,
+    WithdrawTreasury, ResetReentrancyGuard,
 };
 
 // Import events
@@ -91,6 +92,8 @@ pub(crate) use instructions::verify_content_access::__client_accounts_verify_con
 pub(crate) use instructions::close_content_gate::__client_accounts_close_content_gate;
 pub(crate) use instructions::register_referral::__client_accounts_register_referral;
 pub(crate) use instructions::update_profile_extended::__client_accounts_update_profile_extended;
+pub(crate) use instructions::withdraw_treasury::__client_accounts_withdraw_treasury;
+pub(crate) use instructions::reset_reentrancy_guard::__client_accounts_reset_reentrancy_guard;
 
 declare_id!("BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo");
 
@@ -160,8 +163,8 @@ pub mod soltip {
         instructions::configure_split::handler(ctx, recipients)
     }
 
-    pub fn send_tip_split(
-        ctx: Context<SendTipSplit>,
+    pub fn send_tip_split<'info>(
+        ctx: Context<'_, '_, 'info, 'info, SendTipSplit<'info>>,
         amount: u64,
         message: Option<String>,
     ) -> Result<()> {
@@ -267,15 +270,16 @@ pub mod soltip {
     // ---- v3: Token-Gated Content ───────────────────────────────────
 
     /// Create a content gate: tippers who have tipped >= required_amount
-    /// can access the gated content URL.
+    /// can access the gated content. The actual URL is served off-chain;
+    /// only a sha256 hash is stored on-chain for verification.
     pub fn create_content_gate(
         ctx: Context<CreateContentGate>,
         gate_id: u64,
         title: String,
-        content_url: String,
+        content_url_hash: [u8; 32],
         required_amount: u64,
     ) -> Result<()> {
-        instructions::create_content_gate::handler(ctx, gate_id, title, content_url, required_amount)
+        instructions::create_content_gate::handler(ctx, gate_id, title, content_url_hash, required_amount)
     }
 
     /// Verify if a viewer has tipped enough to access gated content.
@@ -297,5 +301,26 @@ pub mod soltip {
         fee_share_bps: u16,
     ) -> Result<()> {
         instructions::register_referral::handler(ctx, fee_share_bps)
+    }
+
+    // ---- Admin: Treasury Withdrawal ────────────────────────────────
+
+    /// Withdraw accumulated SOL from the platform treasury PDA.
+    /// Only the platform authority can call this.
+    pub fn withdraw_treasury(
+        ctx: Context<WithdrawTreasury>,
+        amount: u64,
+    ) -> Result<()> {
+        instructions::withdraw_treasury::handler(ctx, amount)
+    }
+
+    // ---- Admin: Reentrancy Guard Reset ─────────────────────────────
+
+    /// Reset a stuck reentrancy guard on a tip profile.
+    /// Only the platform authority can call this.
+    pub fn reset_reentrancy_guard(
+        ctx: Context<ResetReentrancyGuard>,
+    ) -> Result<()> {
+        instructions::reset_reentrancy_guard::handler(ctx)
     }
 }
