@@ -1,0 +1,9 @@
+soltip/target/
+backend/target/
+app/node_modules/
+app/dist/
+soltip/node_modules/
+.git
+*.log
+*.env
+*.env.local

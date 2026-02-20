@@ -1,0 +1,72 @@
+version: "3.9"
+
+services:
+  # ── PostgreSQL ─────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-soltip}
+      POSTGRES_USER: ${POSTGRES_USER:-soltip}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-soltip_dev}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-soltip}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Backend API ────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-soltip}:${POSTGRES_PASSWORD:-soltip_dev}@postgres:5432/${POSTGRES_DB:-soltip}
+      DB_MAX_CONNECTIONS: ${DB_MAX_CONNECTIONS:-10}
+      SOLANA_RPC_URL: ${SOLANA_RPC_URL:-https://api.devnet.solana.com}
+      PROGRAM_ID: ${PROGRAM_ID}
+      PLATFORM_AUTHORITY: ${PLATFORM_AUTHORITY:-}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      HOST: 0.0.0.0
+      PORT: 8080
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost}
+      AUTH_TOKEN_MAX_AGE_SECS: ${AUTH_TOKEN_MAX_AGE_SECS:-86400}
+      WEBHOOK_TIMEOUT_SECS: ${WEBHOOK_TIMEOUT_SECS:-10}
+      WEBHOOK_MAX_RETRIES: ${WEBHOOK_MAX_RETRIES:-3}
+      COINGECKO_API_KEY: ${COINGECKO_API_KEY:-}
+      PRICE_CACHE_TTL_SECS: ${PRICE_CACHE_TTL_SECS:-300}
+      RUST_LOG: ${RUST_LOG:-info}
+
+  # ── Frontend ───────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        VITE_SOLANA_NETWORK: ${VITE_SOLANA_NETWORK:-devnet}
+        VITE_SOLANA_RPC_URL: ${VITE_SOLANA_RPC_URL:-https://api.devnet.solana.com}
+        VITE_PROGRAM_ID: ${VITE_PROGRAM_ID:-${PROGRAM_ID}}
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+        VITE_FEATURE_POLLS: ${VITE_FEATURE_POLLS:-true}
+        VITE_FEATURE_CONTENT_GATES: ${VITE_FEATURE_CONTENT_GATES:-true}
+        VITE_FEATURE_REFERRALS: ${VITE_FEATURE_REFERRALS:-true}
+        VITE_FEATURE_ANALYTICS: ${VITE_FEATURE_ANALYTICS:-true}
+        VITE_FEATURE_WIDGET: ${VITE_FEATURE_WIDGET:-true}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+
+volumes:
+  pgdata:

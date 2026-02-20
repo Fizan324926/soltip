@@ -1,0 +1,5 @@
+# Backend uses stable Rust. No BPF constraints.
+# Requires 1.85+ for edition2024 support in transitive deps (time, etc).
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy"]

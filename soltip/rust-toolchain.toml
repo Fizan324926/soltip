@@ -1,0 +1,9 @@
+# Host compiler for Anchor 0.30.1 + Solana 1.18.x.
+# The on-chain BPF compiler is bundled with Solana Platform Tools and uses
+# its own rustc. This file pins the HOST compiler used by `anchor build`
+# and `cargo build-sbf` for metadata resolution.
+#
+# Requires 1.85+ for edition2024 support in transitive deps.
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy"]

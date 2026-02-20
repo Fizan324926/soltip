@@ -4,6 +4,8 @@ A full-stack decentralized tipping and creator monetization platform built on So
 
 > **Deployment Guide**: See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete instructions on deploying to devnet and mainnet, including how to get RPC keys, set up the database, and configure all environment variables.
 
+> **Version Matrix**: See [VERSIONS.md](./VERSIONS.md) for all pinned toolchain and dependency versions.
+
 ---
 
 ## Table of Contents
@@ -555,6 +557,27 @@ cd ../soltip && anchor build --skip-lint
 ```
 
 For production deployment, see **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
+
+### Docker Quick Start
+
+```bash
+# 1. Copy and configure environment
+cp .env.docker .env
+# Edit .env: set PROGRAM_ID, JWT_SECRET, POSTGRES_PASSWORD
+
+# 2. Run everything
+docker compose up -d
+
+# Frontend: http://localhost
+# Backend:  http://localhost:8080
+# Postgres: localhost:5432
+
+# View logs
+docker compose logs -f
+
+# Stop
+docker compose down
+```
 
 ---
 
