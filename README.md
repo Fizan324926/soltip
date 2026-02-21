@@ -1,5 +1,7 @@
 # SolTip - Decentralized Tipping Platform on Solana
 
+**Live Demo**: [http://45.8.225.219:3050](http://45.8.225.219:3050)
+
 A full-stack decentralized tipping and creator monetization platform built on Solana. Creators set up profiles, receive SOL/SPL token tips, run fundraising goals, accept recurring subscriptions, split tips across wallets, create community polls, gate exclusive content, earn referral commissions, and track analytics -- all enforced on-chain through an Anchor smart contract.
 
 > **Deployment Guide**: See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete instructions on deploying to devnet and mainnet, including how to get RPC keys, set up the database, and configure all environment variables.
