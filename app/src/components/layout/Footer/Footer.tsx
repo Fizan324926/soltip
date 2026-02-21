@@ -74,7 +74,7 @@ export const Footer: React.FC<FooterProps> = ({
               <ExternalLinkIcon />
             </a>
             <a
-              href="https://github.com/your-org/soltip"
+              href="https://github.com/Fizan324926/soltip"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-[#86868b] hover:text-[#1d1d1f] transition-colors"
