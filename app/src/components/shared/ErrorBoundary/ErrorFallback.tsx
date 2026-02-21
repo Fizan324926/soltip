@@ -69,8 +69,8 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
 
         {/* Heading */}
         <div className="space-y-2">
-          <h2 className="text-xl font-bold text-white">Something went wrong</h2>
-          <p className="text-slate-400 text-sm leading-relaxed">
+          <h2 className="text-xl font-bold text-[#1d1d1f]">Something went wrong</h2>
+          <p className="text-[#86868b] text-sm leading-relaxed">
             An unexpected error occurred while rendering this page. The error
             has been logged.
           </p>
@@ -78,8 +78,8 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
 
         {/* Error detail (collapsed) */}
         {error && (
-          <details className="text-left bg-surface-elevated border border-surface-border rounded-lg overflow-hidden">
-            <summary className="px-4 py-3 text-xs font-medium text-slate-400 cursor-pointer hover:text-white hover:bg-white/5 transition-colors select-none">
+          <details className="text-left bg-[#f5f5f7] border border-black/[0.08] rounded-lg overflow-hidden">
+            <summary className="px-4 py-3 text-xs font-medium text-[#86868b] cursor-pointer hover:text-[#1d1d1f] hover:bg-black/5 transition-colors select-none">
               Error details
             </summary>
             <div className="px-4 pb-4">
@@ -104,7 +104,7 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
           )}
           <Link
             to="/"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-surface-border text-slate-300 hover:text-white hover:border-slate-500 text-sm font-medium transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-black/[0.08] text-[#6e6e73] hover:text-[#1d1d1f] hover:border-black/20 text-sm font-medium transition-colors"
           >
             <HomeIcon />
             Go Home

@@ -106,10 +106,10 @@ export const TransactionToast: React.FC<TransactionToastProps> = ({
 
       {/* Content */}
       <div className="flex-1 min-w-0 space-y-1">
-        <p className="text-sm font-semibold text-white leading-snug">{title}</p>
+        <p className="text-sm font-semibold text-[#1d1d1f] leading-snug">{title}</p>
 
         {status === 'pending' && (
-          <p className="text-xs text-slate-400">Waiting for confirmation...</p>
+          <p className="text-xs text-[#86868b]">Waiting for confirmation...</p>
         )}
 
         {status === 'confirmed' && signature && (
@@ -129,7 +129,7 @@ export const TransactionToast: React.FC<TransactionToastProps> = ({
       {/* Dismiss button */}
       <button
         onClick={() => toast.dismiss(t.id)}
-        className="flex-shrink-0 mt-0.5 text-slate-500 hover:text-white transition-colors"
+        className="flex-shrink-0 mt-0.5 text-[#86868b] hover:text-[#1d1d1f] transition-colors"
         aria-label="Dismiss notification"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

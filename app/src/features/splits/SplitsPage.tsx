@@ -33,7 +33,7 @@ export default function SplitsPage() {
   return (
     <div className="py-8 max-w-[600px]">
       <h1 className="text-2xl font-extrabold mb-3">Tip Splits</h1>
-      <p className="text-white/45 text-sm mb-8 leading-relaxed">
+      <p className="text-[#86868b] text-sm mb-8 leading-relaxed">
         Automatically distribute tips across multiple wallets on-chain. 2-5 recipients, shares must total 100%.
       </p>
 
@@ -41,9 +41,9 @@ export default function SplitsPage() {
         <Card className="mb-6 !p-6">
           <h3 className="font-bold mb-4">Current Configuration</h3>
           {(sa.recipients ?? []).map((r: any, i: number) => (
-            <div key={i} className="flex gap-4 items-center py-2 border-b border-surface-border last:border-0">
+            <div key={i} className="flex gap-4 items-center py-2 border-b border-black/[0.08] last:border-0">
               <span className="font-semibold text-sm min-w-[120px]">{r.label}</span>
-              <span className="flex-1 font-mono text-xs text-white/40 truncate">{toStr(r.wallet)}</span>
+              <span className="flex-1 font-mono text-xs text-[#86868b] truncate">{toStr(r.wallet)}</span>
               <span className="font-bold text-solana-green min-w-[50px] text-right">{(r.shareBps / 100).toFixed(1)}%</span>
             </div>
           ))}
@@ -77,7 +77,7 @@ export default function SplitsPage() {
             />
           </div>
         ))}
-        <div className="flex justify-between items-center my-4 text-sm text-white/45">
+        <div className="flex justify-between items-center my-4 text-sm text-[#86868b]">
           <span>Total:</span>
           <span className={totalBps === 10000 ? 'text-solana-green font-bold' : 'text-red-500 font-bold'}>
             {(totalBps / 100).toFixed(1)}%

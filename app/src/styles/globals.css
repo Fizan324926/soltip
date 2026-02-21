@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ============================================================
-   CSS Custom Properties – Color System
+   CSS Custom Properties – Color System (Apple Light)
    ============================================================ */
 :root {
   /* Brand */
@@ -34,31 +34,31 @@
   --color-green-800: #04804f;
   --color-green-900: #015a38;
 
-  /* Neutral / surface */
-  --color-surface-base: #0a0a0f;
-  --color-surface-raised: #111118;
-  --color-surface-overlay: #18181f;
-  --color-surface-sunken: #07070c;
+  /* Neutral / surface (light) */
+  --color-surface-base: #ffffff;
+  --color-surface-raised: #f5f5f7;
+  --color-surface-overlay: #ffffff;
+  --color-surface-sunken: #f5f5f7;
 
-  /* Borders */
-  --color-border-subtle: rgba(255, 255, 255, 0.06);
-  --color-border-default: rgba(255, 255, 255, 0.10);
-  --color-border-strong: rgba(255, 255, 255, 0.18);
-  --color-border-brand: rgba(153, 69, 255, 0.40);
+  /* Borders (light) */
+  --color-border-subtle: rgba(0, 0, 0, 0.04);
+  --color-border-default: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.15);
+  --color-border-brand: rgba(153, 69, 255, 0.25);
 
-  /* Text */
-  --color-text-primary: rgba(255, 255, 255, 0.95);
-  --color-text-secondary: rgba(255, 255, 255, 0.65);
-  --color-text-tertiary: rgba(255, 255, 255, 0.40);
-  --color-text-disabled: rgba(255, 255, 255, 0.25);
+  /* Text (light) */
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #6e6e73;
+  --color-text-tertiary: #86868b;
+  --color-text-disabled: #aeaeb2;
   --color-text-brand: var(--color-solana-purple);
   --color-text-accent: var(--color-solana-green);
 
   /* Status */
-  --color-success: #14f195;
+  --color-success: #0dcb7e;
   --color-warning: #f5a623;
   --color-error: #ff4d4d;
-  --color-info: #60a5fa;
+  --color-info: #3b82f6;
 }
 
 /* ============================================================
@@ -141,52 +141,44 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(153, 69, 255, 0.30);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(153, 69, 255, 0.55);
+  background: rgba(0, 0, 0, 0.25);
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(153, 69, 255, 0.30) var(--color-surface-base);
+  scrollbar-color: rgba(0, 0, 0, 0.15) var(--color-surface-base);
 }
 
 /* ============================================================
    Text Selection
    ============================================================ */
 ::selection {
-  background-color: rgba(153, 69, 255, 0.35);
-  color: #ffffff;
+  background-color: rgba(153, 69, 255, 0.2);
+  color: #1d1d1f;
 }
 
 ::-moz-selection {
-  background-color: rgba(153, 69, 255, 0.35);
-  color: #ffffff;
+  background-color: rgba(153, 69, 255, 0.2);
+  color: #1d1d1f;
 }
 
 /* ============================================================
    Component Layer – Utility Classes
    ============================================================ */
 @layer components {
-  /* Glass card */
+  /* Glass card (light) */
   .card-glass {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--color-border-default);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 16px;
-  }
-
-  /* Light glass card (landing page) */
-  .landing-light .card-glass {
     background: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(0, 0, 0, 0.04);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
   }
 
   /* Brand gradient text */
@@ -205,7 +197,7 @@
 
   .glow-purple:hover,
   .glow-purple:focus {
-    box-shadow: 0 0 20px rgba(153, 69, 255, 0.35);
+    box-shadow: 0 0 20px rgba(153, 69, 255, 0.25);
   }
 
   /* Truncate helper */
@@ -214,30 +206,6 @@
     letter-spacing: 0.02em;
     font-size: 0.8125rem;
   }
-}
-
-/* ============================================================
-   Landing Page Light Theme Overrides
-   ============================================================ */
-.landing-light {
-  --color-surface-base: #ffffff;
-  --color-surface-raised: #f5f5f7;
-  --color-surface-overlay: #ffffff;
-  --color-surface-sunken: #f5f5f7;
-
-  --color-border-subtle: rgba(0, 0, 0, 0.04);
-  --color-border-default: rgba(0, 0, 0, 0.08);
-  --color-border-strong: rgba(0, 0, 0, 0.12);
-
-  --color-text-primary: #1d1d1f;
-  --color-text-secondary: #6e6e73;
-  --color-text-tertiary: #86868b;
-  --color-text-disabled: #aeaeb2;
-}
-
-.landing-light ::selection {
-  background-color: rgba(153, 69, 255, 0.2);
-  color: #1d1d1f;
 }
 
 /* ============================================================

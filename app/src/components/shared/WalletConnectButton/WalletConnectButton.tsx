@@ -118,7 +118,7 @@ export const WalletConnectButton: React.FC = () => {
             align="end"
           >
             {/* Address display */}
-            <div className="px-3 py-2 text-[11px] text-slate-500 font-mono break-all select-all leading-relaxed">
+            <div className="px-3 py-2 text-[11px] text-[#86868b] font-mono break-all select-all leading-relaxed">
               {publicKey.toBase58()}
             </div>
 

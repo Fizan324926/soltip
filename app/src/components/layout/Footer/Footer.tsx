@@ -51,11 +51,11 @@ export const Footer: React.FC<FooterProps> = ({
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-surface-border bg-surface/80 backdrop-blur-sm mt-auto">
+    <footer className="border-t border-black/[0.08] bg-white/80 backdrop-blur-sm mt-auto">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Left: copyright */}
-          <div className="flex items-center gap-4 text-sm text-slate-500">
+          <div className="flex items-center gap-4 text-sm text-[#86868b]">
             <span>
               &copy; {currentYear} SolTip. Built on{' '}
               <span className="text-[#9945FF] font-medium">Solana</span>.
@@ -68,7 +68,7 @@ export const Footer: React.FC<FooterProps> = ({
               href={explorerBaseUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-500 hover:text-[#14F195] transition-colors"
+              className="text-[#86868b] hover:text-[#14F195] transition-colors"
             >
               Solana Explorer
               <ExternalLinkIcon />
@@ -77,7 +77,7 @@ export const Footer: React.FC<FooterProps> = ({
               href="https://github.com/your-org/soltip"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-slate-500 hover:text-white transition-colors"
+              className="flex items-center gap-1.5 text-[#86868b] hover:text-[#1d1d1f] transition-colors"
             >
               <GitHubIcon />
               GitHub
@@ -87,7 +87,7 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Right: network badge */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-600">Network:</span>
+            <span className="text-xs text-[#86868b]">Network:</span>
             <NetworkBadge network={network} />
           </div>
         </div>

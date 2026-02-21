@@ -66,8 +66,8 @@ export const Progress: React.FC<ProgressProps> = ({
 
       {showLabel && (
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[0.75rem] text-white/55 font-medium">{displayLabel}</span>
-          <span className="text-[0.75rem] text-white/40 tabular-nums font-mono">
+          <span className="text-[0.75rem] text-[#6e6e73] font-medium">{displayLabel}</span>
+          <span className="text-[0.75rem] text-[#86868b] tabular-nums font-mono">
             {Math.round(clamped)}%
           </span>
         </div>
@@ -75,7 +75,7 @@ export const Progress: React.FC<ProgressProps> = ({
 
       <RadixProgress.Root
         className={cn(
-          'relative w-full overflow-hidden rounded-full bg-white/8',
+          'relative w-full overflow-hidden rounded-full bg-black/5',
           trackHeightMap[size],
         )}
         value={clamped}

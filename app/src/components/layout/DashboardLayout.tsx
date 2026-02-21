@@ -49,10 +49,10 @@ export const DashboardLayout: React.FC = () => {
 
           {/* Heading */}
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-[#1d1d1f]">
               Connect Your Wallet
             </h1>
-            <p className="text-slate-400 text-sm leading-relaxed">
+            <p className="text-[#86868b] text-sm leading-relaxed">
               Connect your Solana wallet to access your dashboard, manage your
               profile, set up goals, and track your tip history.
             </p>
@@ -64,7 +64,7 @@ export const DashboardLayout: React.FC = () => {
           </div>
 
           {/* Supported wallets hint */}
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-[#86868b]">
             Supports Phantom, Solflare, and other Solana wallets
           </p>
         </div>
@@ -76,7 +76,7 @@ export const DashboardLayout: React.FC = () => {
   if (connecting) {
     return (
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
-        <div className="flex items-center gap-3 text-slate-400">
+        <div className="flex items-center gap-3 text-[#86868b]">
           <svg
             className="animate-spin"
             width="20"
@@ -111,10 +111,10 @@ export const DashboardLayout: React.FC = () => {
       {/* Main content area */}
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Mobile header with hamburger (extra context above outlet) */}
-        <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-surface-border bg-surface-card/50">
+        <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-black/[0.08] bg-[#f5f5f7]/50">
           <button
             onClick={() => setMobileSidebarOpen((o) => !o)}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-2 rounded-lg text-[#86868b] hover:text-[#1d1d1f] hover:bg-black/5 transition-colors"
             aria-label="Toggle sidebar"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -123,7 +123,7 @@ export const DashboardLayout: React.FC = () => {
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <span className="text-sm font-semibold text-white">Dashboard</span>
+          <span className="text-sm font-semibold text-[#1d1d1f]">Dashboard</span>
           <div className="w-9" aria-hidden="true" />
         </div>
 

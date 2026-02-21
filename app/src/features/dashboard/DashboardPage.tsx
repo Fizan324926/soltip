@@ -28,7 +28,7 @@ export default function DashboardPage() {
     return (
       <div className="text-center py-16 max-w-[480px] mx-auto">
         <h2 className="text-2xl font-extrabold mb-3">Set up your creator profile</h2>
-        <p className="text-white/45 mb-8 leading-relaxed">You don't have a SolTip profile yet. Create one to start accepting tips!</p>
+        <p className="text-[#86868b] mb-8 leading-relaxed">You don't have a SolTip profile yet. Create one to start accepting tips!</p>
         <Link to="/onboarding"><Button size="lg">Create Profile</Button></Link>
       </div>
     );
@@ -67,16 +67,16 @@ export default function DashboardPage() {
             {a.displayName}
           </span>
         </h1>
-        <p className="text-white/45">@{a.username}</p>
+        <p className="text-[#86868b]">@{a.username}</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         {statCards.map((s) => (
-          <div key={s.label} className="p-6 bg-surface-card border border-surface-border rounded-2xl text-center hover:border-solana-purple transition-colors">
+          <div key={s.label} className="p-6 bg-[#f5f5f7] border border-black/[0.08] rounded-2xl text-center hover:border-solana-purple transition-colors">
             <div className="text-3xl mb-3">{s.icon}</div>
             <div className="text-xl font-extrabold text-solana-green mb-1">{s.value}</div>
-            <div className="text-xs text-white/40">{s.label}</div>
+            <div className="text-xs text-[#86868b]">{s.label}</div>
           </div>
         ))}
       </div>
@@ -88,7 +88,7 @@ export default function DashboardPage() {
           <Link
             key={act.to}
             to={act.to}
-            className="flex flex-col items-center gap-3 p-6 bg-surface-card border border-surface-border rounded-2xl no-underline text-white/45 font-semibold text-sm hover:border-solana-purple hover:text-solana-purple hover:-translate-y-0.5 transition-all"
+            className="flex flex-col items-center gap-3 p-6 bg-[#f5f5f7] border border-black/[0.08] rounded-2xl no-underline text-[#86868b] font-semibold text-sm hover:border-solana-purple hover:text-solana-purple hover:-translate-y-0.5 transition-all"
           >
             <span className="text-2xl">{act.icon}</span>
             <span>{act.label}</span>

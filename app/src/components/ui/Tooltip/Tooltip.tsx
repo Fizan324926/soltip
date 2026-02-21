@@ -41,7 +41,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
               // Base
               'z-[100] max-w-[220px]',
               'px-2.5 py-1.5 rounded-lg',
-              'text-[0.75rem] font-medium leading-snug text-white/90',
+              'text-[0.75rem] font-medium leading-snug text-[#1d1d1f]',
               // Glass background
               'bg-[rgba(26,26,48,0.95)] backdrop-blur-sm',
               'border border-[rgba(153,69,255,0.25)]',

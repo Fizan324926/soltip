@@ -24,7 +24,7 @@ export default function WithdrawPage() {
       <h1 className="text-2xl font-extrabold mb-6">Withdraw Funds</h1>
 
       <Card className="text-center mb-6 !p-8 bg-gradient-to-r from-solana-purple/10 to-solana-green/5 !border-solana-purple/25">
-        <div className="text-sm text-white/45 mb-2">Available Balance</div>
+        <div className="text-sm text-[#86868b] mb-2">Available Balance</div>
         <div className="text-3xl font-black text-solana-green">{balanceSolStr} SOL</div>
       </Card>
 
@@ -43,7 +43,7 @@ export default function WithdrawPage() {
             Max
           </Button>
         </div>
-        <p className="text-xs text-white/40 mb-5">A 1% platform fee will be deducted from your withdrawal.</p>
+        <p className="text-xs text-[#86868b] mb-5">A 1% platform fee will be deducted from your withdrawal.</p>
         <Button
           fullWidth
           onClick={handleWithdraw}

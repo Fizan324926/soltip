@@ -42,7 +42,7 @@ export const Separator: React.FC<SeparatorProps> = ({
           orientation="horizontal"
           className={cn('flex-1 h-px', lineClass)}
         />
-        <span className="text-[0.75rem] font-medium text-white/35 whitespace-nowrap flex-shrink-0">
+        <span className="text-[0.75rem] font-medium text-[#aeaeb2] whitespace-nowrap flex-shrink-0">
           {label}
         </span>
         <RadixSeparator.Root

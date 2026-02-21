@@ -43,7 +43,7 @@ export default function TipModal({ open, onOpenChange, recipientAddress, recipie
       <div className="min-w-[320px] pt-2">
         {!connected ? (
           <div className="text-center py-8 flex flex-col items-center gap-4">
-            <p className="text-white/45">Connect your wallet to send a tip</p>
+            <p className="text-[#86868b]">Connect your wallet to send a tip</p>
             <WalletConnectButton />
           </div>
         ) : (
@@ -56,7 +56,7 @@ export default function TipModal({ open, onOpenChange, recipientAddress, recipie
                     className={`px-4 py-1.5 rounded-lg border text-sm transition-all ${
                       amount === String(p)
                         ? 'bg-solana-purple border-solana-purple text-white'
-                        : 'border-surface-border text-white/45 hover:border-solana-purple hover:text-solana-purple'
+                        : 'border-black/[0.08] text-[#86868b] hover:border-solana-purple hover:text-solana-purple'
                     }`}
                     onClick={() => setAmount(String(p))}
                   >
@@ -92,7 +92,7 @@ export default function TipModal({ open, onOpenChange, recipientAddress, recipie
             </TabsContent>
 
             <TabsContent value="token" className="mt-4">
-              <p className="text-sm text-white/40 mb-4">
+              <p className="text-sm text-[#86868b] mb-4">
                 SPL token tipping (USDC, USDT) - select token and enter amount.
               </p>
               <Input type="number" placeholder="Amount (USDC)" className="mb-3" />

@@ -44,7 +44,7 @@ export default function ProfilePage() {
     return (
       <div className="max-w-[900px] mx-auto px-6 py-16 text-center">
         <h2 className="text-2xl font-extrabold mb-2">Creator not found</h2>
-        <p className="text-white/45">This wallet does not have a SolTip profile yet.</p>
+        <p className="text-[#86868b]">This wallet does not have a SolTip profile yet.</p>
       </div>
     );
   }
@@ -82,13 +82,13 @@ export default function ProfilePage() {
             <h1 className="text-3xl font-extrabold">{a.displayName}</h1>
             {a.isVerified && <Badge variant="success">Verified</Badge>}
           </div>
-          <p className="text-white/45 mb-2">@{a.username}</p>
+          <p className="text-[#86868b] mb-2">@{a.username}</p>
           {username && (
             <SolanaExplorerLink address={username} className="text-xs text-solana-blue mb-3 inline-block">
               {shortAddr(username)}
             </SolanaExplorerLink>
           )}
-          {a.description && <p className="text-white/45 leading-relaxed max-w-[480px]">{a.description}</p>}
+          {a.description && <p className="text-[#86868b] leading-relaxed max-w-[480px]">{a.description}</p>}
         </div>
         <div className="flex flex-col gap-3 items-end">
           {!isOwner && (
@@ -105,21 +105,21 @@ export default function ProfilePage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        <div className="p-5 bg-surface-card border border-surface-border rounded-2xl text-center">
+        <div className="p-5 bg-[#f5f5f7] border border-black/[0.08] rounded-2xl text-center">
           <div className="text-xl font-extrabold text-solana-green">{lamportsToSol(a.totalAmountReceivedLamports ?? 0n)} SOL</div>
-          <div className="text-xs text-white/40 mt-1">Total Earned</div>
+          <div className="text-xs text-[#86868b] mt-1">Total Earned</div>
         </div>
-        <div className="p-5 bg-surface-card border border-surface-border rounded-2xl text-center">
+        <div className="p-5 bg-[#f5f5f7] border border-black/[0.08] rounded-2xl text-center">
           <div className="text-xl font-extrabold">{(a.totalTipsReceived ?? 0n).toString()}</div>
-          <div className="text-xs text-white/40 mt-1">Tips Received</div>
+          <div className="text-xs text-[#86868b] mt-1">Tips Received</div>
         </div>
-        <div className="p-5 bg-surface-card border border-surface-border rounded-2xl text-center">
+        <div className="p-5 bg-[#f5f5f7] border border-black/[0.08] rounded-2xl text-center">
           <div className="text-xl font-extrabold">{a.totalUniqueTippers ?? leaderboard.length}</div>
-          <div className="text-xs text-white/40 mt-1">Supporters</div>
+          <div className="text-xs text-[#86868b] mt-1">Supporters</div>
         </div>
-        <div className="p-5 bg-surface-card border border-surface-border rounded-2xl text-center">
+        <div className="p-5 bg-[#f5f5f7] border border-black/[0.08] rounded-2xl text-center">
           <div className="text-xl font-extrabold">{goalsList.filter((g: any) => !(g.account ?? g).completed).length}</div>
-          <div className="text-xs text-white/40 mt-1">Active Goals</div>
+          <div className="text-xs text-[#86868b] mt-1">Active Goals</div>
         </div>
       </div>
 
@@ -136,7 +136,7 @@ export default function ProfilePage() {
                 const current = ga.currentAmount ?? 0n;
                 const pct = target > 0n ? Number((current * 100n) / target) : 0;
                 return (
-                  <div key={toStr(goal.publicKey)} className="p-6 bg-surface-card border border-surface-border rounded-2xl">
+                  <div key={toStr(goal.publicKey)} className="p-6 bg-[#f5f5f7] border border-black/[0.08] rounded-2xl">
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="font-bold">{ga.title}</h3>
                       {ga.completed ? (
@@ -146,12 +146,12 @@ export default function ProfilePage() {
                       )}
                     </div>
                     {ga.description && (
-                      <p className="text-sm text-white/45 mb-3 leading-relaxed">{ga.description}</p>
+                      <p className="text-sm text-[#86868b] mb-3 leading-relaxed">{ga.description}</p>
                     )}
                     <Progress value={pct} className="mb-3" />
                     <div className="flex gap-2 items-baseline">
                       <span className="font-bold text-solana-green">{lamportsToSol(current)} SOL</span>
-                      <span className="text-xs text-white/40">of {lamportsToSol(target)} SOL</span>
+                      <span className="text-xs text-[#86868b]">of {lamportsToSol(target)} SOL</span>
                     </div>
                   </div>
                 );
@@ -168,11 +168,11 @@ export default function ProfilePage() {
               {leaderboard.map((entry: any, i: number) => {
                 const medals = ['\uD83E\uDD47', '\uD83E\uDD48', '\uD83E\uDD49'];
                 return (
-                  <div key={i} className="flex items-center gap-4 p-4 bg-surface-card border border-surface-border rounded-xl">
+                  <div key={i} className="flex items-center gap-4 p-4 bg-[#f5f5f7] border border-black/[0.08] rounded-xl">
                     <span className="text-xl w-8 text-center">{medals[i] ?? `#${i + 1}`}</span>
                     <div className="flex-1 min-w-0">
                       <span className="font-mono text-sm">{shortAddr(entry.tipper)}</span>
-                      <span className="text-xs text-white/40 ml-2">{(entry.tipCount ?? 0).toString()} tips</span>
+                      <span className="text-xs text-[#86868b] ml-2">{(entry.tipCount ?? 0).toString()} tips</span>
                     </div>
                     <span className="font-bold text-solana-green">{lamportsToSol(entry.totalAmount ?? 0n)} SOL</span>
                   </div>

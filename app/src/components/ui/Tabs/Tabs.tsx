@@ -92,7 +92,7 @@ const TabTrigger: React.FC<TabTriggerProps> = ({ tab, isActive }) => {
         'transition-colors duration-150',
         'outline-none focus-visible:ring-2 focus-visible:ring-solana-purple',
         'disabled:opacity-40 disabled:cursor-not-allowed',
-        isActive ? 'text-white' : 'text-white/45 hover:text-white/75',
+        isActive ? 'text-[#1d1d1f]' : 'text-[#86868b] hover:text-[#1d1d1f]',
       )}
     >
       {/* Active background pill — animated via framer-motion layoutId */}
@@ -121,7 +121,7 @@ const TabTrigger: React.FC<TabTriggerProps> = ({ tab, isActive }) => {
               'text-[0.625rem] font-bold rounded-full',
               isActive
                 ? 'bg-solana-purple text-white'
-                : 'bg-white/12 text-white/60',
+                : 'bg-black/8 text-[#6e6e73]',
             )}
           >
             {tab.badge}

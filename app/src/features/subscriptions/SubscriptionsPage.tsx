@@ -33,7 +33,7 @@ export default function SubscriptionsPage() {
                 <div className="flex justify-between items-center">
                   <div>
                     <div className="font-bold mb-1">{lamportsToSol(sa.amountPerInterval ?? 0n)} SOL / interval</div>
-                    <div className="text-xs text-white/40">
+                    <div className="text-xs text-[#86868b]">
                       {sa.isActive ? 'Active' : 'Inactive'} &middot; Payments: {(sa.paymentCount ?? 0).toString()}
                     </div>
                   </div>

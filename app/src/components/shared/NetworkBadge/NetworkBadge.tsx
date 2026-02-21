@@ -20,7 +20,7 @@ const NETWORK_CONFIG: Record<
   localnet: {
     label: 'Localnet',
     dotClass: 'bg-slate-400',
-    badgeClass: 'bg-slate-500/15 text-slate-400 border-slate-500/30',
+    badgeClass: 'bg-black/5 text-[#86868b] border-slate-500/30',
   },
   devnet: {
     label: 'Devnet',

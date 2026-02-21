@@ -53,7 +53,7 @@ export default function OnboardingPage() {
   return (
     <div className="max-w-[520px] mx-auto px-6 py-12">
       <h1 className="text-3xl font-extrabold text-center mb-2">Get Started on SolTip</h1>
-      <p className="text-white/45 text-center mb-10">Set up your creator profile in 3 easy steps</p>
+      <p className="text-[#86868b] text-center mb-10">Set up your creator profile in 3 easy steps</p>
 
       {/* Progress */}
       <div className="flex justify-between mb-10">
@@ -65,12 +65,12 @@ export default function OnboardingPage() {
                   ? 'bg-solana-purple text-white'
                   : steps.indexOf(s) < steps.findIndex(x => x.key === step)
                     ? 'bg-solana-green/20 text-solana-green'
-                    : 'bg-surface-card text-white/30'
+                    : 'bg-[#f5f5f7] text-[#aeaeb2]'
               }`}
             >
               {steps.indexOf(s) < steps.findIndex(x => x.key === step) ? '\u2713' : steps.indexOf(s) + 1}
             </div>
-            <span className="text-xs text-white/40">{s.label}</span>
+            <span className="text-xs text-[#86868b]">{s.label}</span>
           </div>
         ))}
       </div>
@@ -79,7 +79,7 @@ export default function OnboardingPage() {
       {step === 'connect' && (
         <Card className="!p-8 text-center">
           <h2 className="font-bold text-lg mb-4">Connect Your Wallet</h2>
-          <p className="text-white/45 text-sm mb-6">Connect your Solana wallet to get started.</p>
+          <p className="text-[#86868b] text-sm mb-6">Connect your Solana wallet to get started.</p>
           <WalletConnectButton />
         </Card>
       )}
@@ -130,7 +130,7 @@ export default function OnboardingPage() {
       {step === 'vault' && (
         <Card className="!p-8 text-center">
           <h2 className="font-bold text-lg mb-4">Initialize Your Vault</h2>
-          <p className="text-white/45 text-sm mb-6">
+          <p className="text-[#86868b] text-sm mb-6">
             Your vault is a secure on-chain account where tips accumulate before you withdraw them.
           </p>
           <Button
@@ -149,7 +149,7 @@ export default function OnboardingPage() {
         <Card className="!p-8 text-center">
           <div className="text-5xl mb-4">{'\uD83C\uDF89'}</div>
           <h2 className="font-bold text-xl mb-3">You're all set!</h2>
-          <p className="text-white/45 text-sm mb-6">Your SolTip profile is ready. Share your link to start receiving tips.</p>
+          <p className="text-[#86868b] text-sm mb-6">Your SolTip profile is ready. Share your link to start receiving tips.</p>
           <Button fullWidth onClick={() => navigate('/dashboard')}>
             Go to Dashboard
           </Button>

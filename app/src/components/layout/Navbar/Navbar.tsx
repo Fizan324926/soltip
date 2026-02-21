@@ -130,8 +130,8 @@ export const Navbar: React.FC = () => {
                       styles.navLink,
                       'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
                       isActive(to)
-                        ? clsx(styles.active, 'text-white bg-white/5')
-                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        ? clsx(styles.active, 'text-[#1d1d1f] bg-black/5')
+                        : 'text-[#86868b] hover:text-[#1d1d1f] hover:bg-black/5'
                     )}
                   >
                     {label}
@@ -145,7 +145,7 @@ export const Navbar: React.FC = () => {
               {/* Theme toggle */}
               <button
                 onClick={toggleTheme}
-                className="hidden sm:flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                className="hidden sm:flex items-center justify-center w-9 h-9 rounded-lg text-[#86868b] hover:text-[#1d1d1f] hover:bg-black/5 transition-colors"
                 aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               >
                 {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
@@ -156,7 +156,7 @@ export const Navbar: React.FC = () => {
 
               {/* Hamburger for mobile */}
               <button
-                className="flex md:hidden items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                className="flex md:hidden items-center justify-center w-9 h-9 rounded-lg text-[#86868b] hover:text-[#1d1d1f] hover:bg-black/5 transition-colors"
                 onClick={() => setMobileOpen((prev) => !prev)}
                 aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={mobileOpen}
@@ -183,8 +183,8 @@ export const Navbar: React.FC = () => {
                   className={clsx(
                     'block px-4 py-3 text-sm font-medium rounded-lg transition-colors',
                     isActive(to)
-                      ? 'text-white bg-[#9945FF]/20 border border-[#9945FF]/30'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      ? 'text-[#1d1d1f] bg-[#9945FF]/10 border border-[#9945FF]/20'
+                      : 'text-[#86868b] hover:text-[#1d1d1f] hover:bg-black/5'
                   )}
                 >
                   {label}
@@ -193,7 +193,7 @@ export const Navbar: React.FC = () => {
               {/* Theme toggle in mobile menu */}
               <button
                 onClick={() => { toggleTheme(); setMobileOpen(false); }}
-                className="w-full text-left px-4 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                className="w-full text-left px-4 py-3 text-sm font-medium text-[#86868b] hover:text-[#1d1d1f] hover:bg-black/5 rounded-lg transition-colors"
               >
                 {theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               </button>

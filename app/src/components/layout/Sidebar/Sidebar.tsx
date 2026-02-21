@@ -194,18 +194,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         )}
       >
         {/* User profile section */}
-        <div className={clsx(styles.avatarSection, 'flex items-center gap-3 px-4 py-5 border-b border-surface-border')}>
+        <div className={clsx(styles.avatarSection, 'flex items-center gap-3 px-4 py-5 border-b border-black/[0.08]')}>
           {/* Avatar */}
           <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-[#9945FF] to-[#14F195] flex items-center justify-center text-white text-sm font-bold">
             {publicKey ? publicKey.toBase58().slice(0, 2).toUpperCase() : '??'}
           </div>
           {/* User info */}
           <div className={clsx('userInfo', 'min-w-0')}>
-            <div className="text-sm font-semibold text-white truncate">
+            <div className="text-sm font-semibold text-[#1d1d1f] truncate">
               My Profile
             </div>
             {shortAddress && (
-              <div className="text-xs text-slate-500 font-mono truncate">
+              <div className="text-xs text-[#86868b] font-mono truncate">
                 {shortAddress}
               </div>
             )}
@@ -216,7 +216,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         <nav className="flex-1 px-2 py-4 space-y-4 overflow-y-auto" aria-label="Dashboard navigation">
           {NAV_SECTIONS.map((section) => (
             <div key={section.title} className="space-y-0.5">
-              <div className={clsx('sectionTitle', 'px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-600')}>
+              <div className={clsx('sectionTitle', 'px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-[#86868b]')}>
                 {collapsed ? '' : section.title}
               </div>
               {section.items.map(({ label, to, icon, exact }) => {
@@ -230,8 +230,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                       styles.navItem,
                       'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium',
                       active
-                        ? 'text-white bg-[#9945FF]/20 border border-[#9945FF]/30'
-                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        ? 'text-[#1d1d1f] bg-[#9945FF]/10 border border-[#9945FF]/20'
+                        : 'text-[#86868b] hover:text-[#1d1d1f] hover:bg-black/5'
                     )}
                   >
                     <span className={clsx('flex-shrink-0', active ? 'text-[#9945FF]' : '')}>
@@ -253,7 +253,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
           <button
             onClick={() => setCollapsed((prev) => !prev)}
             className={clsx(
-              'w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-500 hover:text-white hover:bg-white/5 transition-colors',
+              'w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm text-[#86868b] hover:text-[#1d1d1f] hover:bg-black/5 transition-colors',
               collapsed && 'justify-center'
             )}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -277,7 +277,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                 to={to}
                 className={clsx(
                   'flex flex-col items-center justify-center gap-1 flex-1 px-1 text-[10px] font-medium transition-colors',
-                  active ? 'text-[#9945FF]' : 'text-slate-500 hover:text-slate-300'
+                  active ? 'text-[#9945FF]' : 'text-[#86868b] hover:text-[#6e6e73]'
                 )}
               >
                 <span className={active ? 'text-[#9945FF]' : ''}>{icon}</span>

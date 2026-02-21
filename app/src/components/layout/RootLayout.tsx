@@ -47,7 +47,7 @@ export const RootLayout: React.FC = () => {
   }, [setConfig, setPaused]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface text-white antialiased">
+    <div className="min-h-screen flex flex-col bg-white text-[#1d1d1f] antialiased">
       <Navbar />
       <main className="flex-1">
         <Outlet />

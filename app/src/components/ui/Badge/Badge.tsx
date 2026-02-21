@@ -53,7 +53,7 @@ const variantConfig: Record<BadgeVariant, VariantConfig> = {
     base: 'bg-[rgba(255,68,68,0.12)] text-[#FF4444] border-[rgba(255,68,68,0.25)]',
   },
   default: {
-    base: 'bg-white/8 text-white/60 border-white/12',
+    base: 'bg-black/5 text-[#6e6e73] border-black/8',
   },
 };
 

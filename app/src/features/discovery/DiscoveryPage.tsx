@@ -32,7 +32,7 @@ export default function DiscoveryPage() {
     <div className="max-w-[1200px] mx-auto px-6 py-8 pb-16">
       <div className="text-center mb-10">
         <h1 className="text-4xl font-extrabold mb-2">Discover Creators</h1>
-        <p className="text-white/45 text-lg">Find and support creators building on Solana</p>
+        <p className="text-[#86868b] text-lg">Find and support creators building on Solana</p>
       </div>
 
       <div className="flex flex-col gap-4 mb-10">
@@ -50,7 +50,7 @@ export default function DiscoveryPage() {
               className={`px-4 py-1.5 rounded-full border text-sm transition-all ${
                 category === cat
                   ? 'bg-solana-purple border-solana-purple text-white'
-                  : 'border-surface-border text-white/45 hover:border-solana-purple hover:text-solana-purple'
+                  : 'border-black/[0.08] text-[#86868b] hover:border-solana-purple hover:text-solana-purple'
               }`}
             >
               {cat}

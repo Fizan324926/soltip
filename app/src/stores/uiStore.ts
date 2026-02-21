@@ -23,7 +23,7 @@ interface UiState {
 // ============================================================
 const persistedStore = persist<UiState>(
   (set) => ({
-    theme: 'dark',
+    theme: 'light',
     sidebarOpen: false,
     activeTipModal: null,
 

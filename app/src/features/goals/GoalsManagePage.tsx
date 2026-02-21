@@ -50,18 +50,18 @@ export default function GoalsManagePage() {
             const current = ga.currentAmount ?? 0n;
             const pct = target > 0n ? Number((current * 100n) / target) : 0;
             return (
-              <div key={toStr(goal.publicKey)} className="p-6 bg-surface-card border border-surface-border rounded-2xl">
+              <div key={toStr(goal.publicKey)} className="p-6 bg-[#f5f5f7] border border-black/[0.08] rounded-2xl">
                 <div className="flex justify-between items-start mb-3">
                   <h3 className="font-bold">{ga.title}</h3>
                   {ga.completed ? <Badge variant="success">Completed</Badge> : <Badge variant="default">{pct}%</Badge>}
                 </div>
                 {ga.description && (
-                  <p className="text-sm text-white/45 mb-4 leading-relaxed">{ga.description}</p>
+                  <p className="text-sm text-[#86868b] mb-4 leading-relaxed">{ga.description}</p>
                 )}
                 <Progress value={pct} className="mb-3" />
                 <div className="flex gap-2 items-baseline mb-4">
                   <span className="font-bold text-solana-green">{lamportsToSol(current)} SOL</span>
-                  <span className="text-xs text-white/40">/ {lamportsToSol(target)} SOL</span>
+                  <span className="text-xs text-[#86868b]">/ {lamportsToSol(target)} SOL</span>
                 </div>
                 {ga.completed && (
                   <Button

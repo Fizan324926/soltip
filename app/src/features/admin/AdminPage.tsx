@@ -35,7 +35,7 @@ export default function AdminPage() {
     return (
       <div className="max-w-[600px] mx-auto px-6 py-16 text-center">
         <h2 className="text-2xl font-extrabold mb-2">Access Denied</h2>
-        <p className="text-white/45">Only the platform authority can access the admin panel.</p>
+        <p className="text-[#86868b]">Only the platform authority can access the admin panel.</p>
       </div>
     );
   }
@@ -53,13 +53,13 @@ export default function AdminPage() {
           </Badge>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-white/45 text-sm">Pause all tipping activity</span>
+          <span className="text-[#86868b] text-sm">Pause all tipping activity</span>
           <div className="flex items-center gap-3">
             <Switch
               checked={cfg?.paused ?? false}
               onCheckedChange={(checked: boolean) => pausePlatform.mutateAsync(checked)}
             />
-            {pausePlatform.isPending && <span className="text-xs text-white/40">Updating...</span>}
+            {pausePlatform.isPending && <span className="text-xs text-[#86868b]">Updating...</span>}
           </div>
         </div>
       </Card>
@@ -103,11 +103,11 @@ export default function AdminPage() {
         <h2 className="font-bold text-lg mb-4">Configuration</h2>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-white/45">Authority</span>
+            <span className="text-[#86868b]">Authority</span>
             <span className="font-mono text-xs">{toStr(cfg?.authority).slice(0, 8)}...</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-white/45">Platform Fee</span>
+            <span className="text-[#86868b]">Platform Fee</span>
             <span>{cfg?.platformFeeBps ?? 100} bps ({((cfg?.platformFeeBps ?? 100) / 100).toFixed(0)}%)</span>
           </div>
         </div>

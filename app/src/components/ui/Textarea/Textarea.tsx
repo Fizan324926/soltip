@@ -65,7 +65,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
         <label
           htmlFor={id}
           className={cn(
-            'text-[0.8125rem] font-medium text-white/70',
+            'text-[0.8125rem] font-medium text-[#6e6e73]',
             required && "after:content-['_*'] after:text-accent-error",
           )}
         >
@@ -95,9 +95,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
           aria-describedby={describedBy}
           className={cn(
             'w-full bg-transparent border-none outline-none resize-y',
-            'text-white text-[0.9375rem] leading-relaxed',
+            'text-[#1d1d1f] text-[0.9375rem] leading-relaxed',
             'px-3.5 py-[0.5625rem]',
-            'placeholder:text-white/30',
+            'placeholder:text-[#aeaeb2]',
             'disabled:opacity-45 disabled:cursor-not-allowed',
             'min-h-[5rem]',
             className,
@@ -110,7 +110,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
             <span
               className={cn(
                 'text-[0.7rem] font-mono tabular-nums',
-                isOverLimit ? 'text-accent-error' : 'text-white/35',
+                isOverLimit ? 'text-accent-error' : 'text-[#aeaeb2]',
               )}
             >
               {currentLength}/{maxLength}
@@ -131,7 +131,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
       )}
 
       {hint && !hasError && (
-        <p id={hintId} className="text-[0.75rem] text-white/45">
+        <p id={hintId} className="text-[0.75rem] text-[#86868b]">
           {hint}
         </p>
       )}

@@ -18,7 +18,7 @@
 .connectBtn:hover {
   opacity: 0.92;
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(153, 69, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(153, 69, 255, 0.25);
 }
 
 .connectBtn:active {
@@ -40,9 +40,9 @@
   gap: 8px;
   padding: 7px 14px;
   border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(153, 69, 255, 0.3);
-  color: #e2e8f0;
+  background-color: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #1d1d1f;
   font-size: 13px;
   font-weight: 500;
   font-family: 'JetBrains Mono', 'ui-monospace', monospace;
@@ -52,8 +52,8 @@
 }
 
 .addressChip:hover {
-  background-color: rgba(153, 69, 255, 0.12);
-  border-color: rgba(153, 69, 255, 0.5);
+  background-color: rgba(153, 69, 255, 0.06);
+  border-color: rgba(153, 69, 255, 0.2);
 }
 
 /* Dot indicator */
@@ -61,19 +61,19 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #14F195;
+  background: #0dcb7e;
   flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(20, 241, 149, 0.7);
+  box-shadow: 0 0 6px rgba(13, 203, 126, 0.5);
 }
 
 /* Dropdown content */
 .dropdownContent {
-  background: #1A1A30;
-  border: 1px solid rgba(42, 42, 74, 0.8);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 12px;
   padding: 6px;
   min-width: 200px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 16px 48px rgba(0, 0, 0, 0.12);
   animation: dropdownIn 0.15s ease;
 }
 
@@ -90,7 +90,7 @@
   padding: 9px 12px;
   border-radius: 8px;
   font-size: 13px;
-  color: #94a3b8;
+  color: #6e6e73;
   background: none;
   border: none;
   cursor: pointer;
@@ -99,18 +99,18 @@
 }
 
 .dropdownItem:hover {
-  background-color: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
+  background-color: rgba(0, 0, 0, 0.04);
+  color: #1d1d1f;
 }
 
 .dropdownItem.danger:hover {
-  background-color: rgba(255, 68, 68, 0.1);
+  background-color: rgba(255, 68, 68, 0.08);
   color: #ff6b6b;
 }
 
 .dropdownSeparator {
   height: 1px;
-  background-color: rgba(42, 42, 74, 0.6);
+  background-color: rgba(0, 0, 0, 0.06);
   margin: 4px 0;
 }
 
@@ -118,8 +118,8 @@
 .spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #ffffff;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #9945ff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;

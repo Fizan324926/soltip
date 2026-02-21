@@ -41,7 +41,7 @@ const SingleSkeleton: React.FC<Omit<SkeletonProps, 'lines'>> = ({
       <span
         aria-hidden="true"
         className={cn(
-          'block bg-white/8',
+          'block bg-black/5',
           circle ? 'rounded-full' : 'rounded-lg',
           !height && 'h-4',
           !width && 'w-full',

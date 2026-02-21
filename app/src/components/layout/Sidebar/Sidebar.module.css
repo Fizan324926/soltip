@@ -1,8 +1,8 @@
 .sidebar {
   width: 240px;
   min-height: 100%;
-  background-color: rgba(19, 19, 37, 0.95);
-  border-right: 1px solid rgba(42, 42, 74, 0.6);
+  background-color: rgba(255, 255, 255, 0.95);
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
   transition: width 0.25s ease, transform 0.25s ease;
   overflow: hidden;
   flex-shrink: 0;
@@ -76,7 +76,7 @@
   z-index: 40;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background-color: rgba(13, 13, 26, 0.95);
-  border-top: 1px solid rgba(42, 42, 74, 0.6);
+  background-color: rgba(255, 255, 255, 0.95);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }

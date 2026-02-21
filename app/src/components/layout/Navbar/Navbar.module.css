@@ -4,13 +4,13 @@
   z-index: 50;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background-color: rgba(13, 13, 26, 0.8);
-  border-bottom: 1px solid rgba(42, 42, 74, 0.6);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .navbar:hover {
-  background-color: rgba(13, 13, 26, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .pausedBanner {
@@ -26,8 +26,8 @@
 .mobileMenu {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background-color: rgba(13, 13, 26, 0.97);
-  border-bottom: 1px solid rgba(42, 42, 74, 0.8);
+  background-color: rgba(255, 255, 255, 0.97);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .hamburger {
@@ -42,7 +42,7 @@
   display: block;
   width: 22px;
   height: 2px;
-  background-color: #e2e8f0;
+  background-color: #1d1d1f;
   border-radius: 2px;
   transition: transform 0.25s ease, opacity 0.25s ease;
   transform-origin: center;

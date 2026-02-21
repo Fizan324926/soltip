@@ -162,7 +162,7 @@ export const TokenAmount: React.FC<TokenAmountProps> = ({
 
       {/* Symbol */}
       {showSymbol && (
-        <span className={clsx(sizeClasses.symbol, 'text-slate-400 font-sans')}>
+        <span className={clsx(sizeClasses.symbol, 'text-[#86868b] font-sans')}>
           {token}
         </span>
       )}
