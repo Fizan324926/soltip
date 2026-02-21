@@ -228,6 +228,70 @@
   animation: slide-in-right 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* ── Apple-style Reveal Up (landing page sections) ─────────── */
+@keyframes apple-reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-apple-reveal-up {
+  animation: apple-reveal-up 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* ── Apple Fade Scale (hero entrance) ──────────────────────── */
+@keyframes apple-fade-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-apple-fade-scale {
+  animation: apple-fade-scale 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* ── Counter Roll (stats entrance with blur) ───────────────── */
+@keyframes counter-roll {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.animate-counter-roll {
+  animation: counter-roll 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* ── Breathe (subtle float for decorative elements) ─────────── */
+@keyframes breathe {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-breathe {
+  animation: breathe 5s ease-in-out infinite;
+}
+
 /* ── Reduced motion overrides ────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .animate-shimmer,
@@ -248,9 +312,14 @@
   .animate-gradient-shift,
   .animate-ping-brand,
   .animate-scale-in,
-  .animate-slide-in-right {
+  .animate-slide-in-right,
+  .animate-apple-reveal-up,
+  .animate-apple-fade-scale,
+  .animate-counter-roll,
+  .animate-breathe {
     animation: none;
     opacity: 1;
     transform: none;
+    filter: none;
   }
 }

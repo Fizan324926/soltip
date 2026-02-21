@@ -28,6 +28,13 @@ const config: Config = {
           error: '#FF4444',
           info: '#00C2FF',
         },
+        apple: {
+          white: '#ffffff',
+          offwhite: '#f5f5f7',
+          heading: '#1d1d1f',
+          body: '#6e6e73',
+          caption: '#86868b',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'Inter fallback', 'system-ui', '-apple-system', 'sans-serif'],
@@ -40,6 +47,7 @@ const config: Config = {
         'gradient-card': 'linear-gradient(135deg, rgba(153,69,255,0.08) 0%, rgba(20,241,149,0.05) 100%)',
         'gradient-glow-purple': 'radial-gradient(circle at center, rgba(153,69,255,0.15) 0%, transparent 70%)',
         'gradient-glow-green': 'radial-gradient(circle at center, rgba(20,241,149,0.15) 0%, transparent 70%)',
+        'gradient-apple-section': 'linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%)',
       },
       boxShadow: {
         'glow-purple': '0 0 20px rgba(153, 69, 255, 0.35)',
@@ -48,6 +56,8 @@ const config: Config = {
         'card': '0 4px 24px rgba(0, 0, 0, 0.4)',
         'card-hover': '0 8px 40px rgba(153, 69, 255, 0.2)',
         'inner-glow': 'inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+        'apple-card': '0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.06)',
+        'apple-card-hover': '0 4px 12px rgba(0, 0, 0, 0.08), 0 16px 48px rgba(0, 0, 0, 0.1)',
       },
       animation: {
         'glow-pulse': 'glow-pulse 2s ease-in-out infinite',

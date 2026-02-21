@@ -181,6 +181,14 @@
     border-radius: 16px;
   }
 
+  /* Light glass card (landing page) */
+  .landing-light .card-glass {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
   /* Brand gradient text */
   .text-gradient {
     background: linear-gradient(135deg, var(--color-solana-purple), var(--color-solana-green));
@@ -206,6 +214,30 @@
     letter-spacing: 0.02em;
     font-size: 0.8125rem;
   }
+}
+
+/* ============================================================
+   Landing Page Light Theme Overrides
+   ============================================================ */
+.landing-light {
+  --color-surface-base: #ffffff;
+  --color-surface-raised: #f5f5f7;
+  --color-surface-overlay: #ffffff;
+  --color-surface-sunken: #f5f5f7;
+
+  --color-border-subtle: rgba(0, 0, 0, 0.04);
+  --color-border-default: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.12);
+
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #6e6e73;
+  --color-text-tertiary: #86868b;
+  --color-text-disabled: #aeaeb2;
+}
+
+.landing-light ::selection {
+  background-color: rgba(153, 69, 255, 0.2);
+  color: #1d1d1f;
 }
 
 /* ============================================================
