@@ -63,7 +63,7 @@ echo ""
 
 # Step 3: Build frontend
 echo -e "${YELLOW}Step 3: Building frontend...${NC}"
-npm run build 2>&1 || true
+npx vite build
 
 if [ ! -d "dist" ]; then
     echo -e "${RED}Error: Frontend build failed - dist directory not created${NC}"

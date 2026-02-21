@@ -24,7 +24,7 @@ echo -e "${YELLOW}Rebuilding frontend...${NC}"
 cd "$APP_DIR"
 
 npm install --silent 2>/dev/null
-npm run build 2>&1 || true
+npx vite build
 
 if [ ! -d "dist" ]; then
     echo -e "${RED}Error: Frontend build failed${NC}"
