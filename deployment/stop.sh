@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # SolTip Stop Script
-# Removes the Nginx config and stops serving the project
+# Stops the backend service and removes the Nginx site config
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -15,7 +15,18 @@ echo "SolTip Stop Script"
 echo "=================================="
 echo ""
 
-# Step 1: Remove Nginx site config
+# Step 1: Stop backend service
+echo -e "${YELLOW}Stopping backend service...${NC}"
+
+if systemctl is-active --quiet soltip-backend.service; then
+    systemctl stop soltip-backend.service
+    echo -e "${GREEN}✓ Backend service stopped${NC}"
+else
+    echo -e "${YELLOW}Backend service was not running${NC}"
+fi
+echo ""
+
+# Step 2: Remove Nginx site config
 echo -e "${YELLOW}Removing Nginx configuration...${NC}"
 
 if [ -f "/etc/nginx/sites-enabled/$NGINX_CONF" ]; then
@@ -24,16 +35,13 @@ if [ -f "/etc/nginx/sites-enabled/$NGINX_CONF" ]; then
 else
     echo -e "${YELLOW}Site was not enabled${NC}"
 fi
-
-# Keep the config in sites-available for easy re-deploy
 echo ""
 
-# Step 2: Reload Nginx
+# Step 3: Reload Nginx
 echo -e "${YELLOW}Reloading Nginx...${NC}"
-nginx -t 2>/dev/null
 
 if systemctl is-active --quiet nginx; then
-    systemctl reload nginx
+    nginx -t 2>/dev/null && systemctl reload nginx
     echo -e "${GREEN}✓ Nginx reloaded${NC}"
 else
     echo -e "${YELLOW}Nginx is not running${NC}"
@@ -44,7 +52,7 @@ echo -e "${GREEN}=================================="
 echo "SolTip Stopped"
 echo "==================================${NC}"
 echo ""
-echo "The site is no longer being served."
+echo "Both frontend and backend are stopped."
 echo "Config preserved at: /etc/nginx/sites-available/$NGINX_CONF"
 echo "To redeploy: bash /root/domain-catcher/soltip/deployment/deploy.sh"
 echo ""

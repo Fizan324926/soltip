@@ -1,0 +1,16 @@
+{
+  "name": "SolTip",
+  "short_name": "SolTip",
+  "description": "Tip Creators on Solana",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#9945FF",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
