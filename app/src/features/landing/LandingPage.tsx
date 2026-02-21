@@ -98,41 +98,12 @@ export default function LandingPage() {
   const heroY = useTransform(scrollYProgress, [0, 0.8], [0, 60]);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* ── Navbar ─────────────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/[0.04]">
-        <div className="max-w-[1200px] mx-auto flex items-center justify-between h-12 px-6">
-          <Link
-            to="/"
-            className="text-lg font-bold tracking-tight text-apple-heading hover:text-apple-heading"
-          >
-            <span className="bg-gradient-to-r from-solana-purple to-solana-green bg-clip-text text-transparent">
-              Sol
-            </span>
-            Tip
-          </Link>
-          <div className="flex items-center gap-6">
-            <Link
-              to="/discover"
-              className="text-[13px] font-medium text-apple-body hover:text-apple-heading transition-colors"
-            >
-              Discover
-            </Link>
-            <Link
-              to="/onboarding"
-              className="inline-flex items-center justify-center h-8 px-4 text-[13px] font-medium rounded-full bg-apple-heading text-white hover:bg-[#424245] transition-colors"
-            >
-              Get Started
-            </Link>
-          </div>
-        </div>
-      </nav>
-
+    <div className="bg-white">
       {/* ── Hero ───────────────────────────────────────────── */}
       <div ref={heroRef} className="relative">
         <motion.section
           style={{ opacity: heroOpacity, y: heroY }}
-          className="relative flex flex-col items-center text-center pt-40 pb-28 px-6 overflow-hidden"
+          className="relative flex flex-col items-center text-center pt-24 pb-28 px-6 overflow-hidden"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
@@ -292,29 +263,6 @@ export default function LandingPage() {
           Create Your Profile
         </Link>
       </AnimatedSection>
-
-      {/* ── Footer ─────────────────────────────────────────── */}
-      <footer className="bg-apple-offwhite py-10 px-6 border-t border-black/[0.04]">
-        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-apple-caption">
-            &copy; {new Date().getFullYear()} SolTip. All rights reserved.
-          </div>
-          <div className="flex items-center gap-6">
-            <Link
-              to="/discover"
-              className="text-sm text-apple-body hover:text-apple-heading transition-colors"
-            >
-              Discover
-            </Link>
-            <Link
-              to="/onboarding"
-              className="text-sm text-apple-body hover:text-apple-heading transition-colors"
-            >
-              Get Started
-            </Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
