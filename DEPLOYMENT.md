@@ -126,13 +126,13 @@ anchor build --skip-lint
 
 # Get the program ID from your keypair
 anchor keys list
-# Output: soltip: BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo
+# Output: soltip: 2f9k2E5eCDM1JMgva878FfLo5vXPVWb1SSmACm5tur77
 
 # Deploy
 anchor deploy --provider.cluster devnet
 
 # Verify deployment
-solana program show BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo
+solana program show 2f9k2E5eCDM1JMgva878FfLo5vXPVWb1SSmACm5tur77
 ```
 
 ### 3b. Deploy to Mainnet

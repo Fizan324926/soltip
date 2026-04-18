@@ -114,7 +114,7 @@ anchor deploy
 
 Verify deployment:
 ```bash
-solana program show BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo
+solana program show 2f9k2E5eCDM1JMgva878FfLo5vXPVWb1SSmACm5tur77
 ```
 
 ### Step 4: Initialize Platform Config
@@ -160,7 +160,7 @@ cluster = "devnet"
 wallet = '~\.config\solana\id.json'
 
 [programs.devnet]
-soltip = "BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo"
+soltip = "2f9k2E5eCDM1JMgva878FfLo5vXPVWb1SSmACm5tur77"
 ```
 
 ### Program Constants
