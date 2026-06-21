@@ -206,3 +206,20 @@
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
 }
+
+/* OUTLINE — bordered, transparent */
+.outline {
+  background: transparent;
+  color: #9945FF;
+  border-color: #9945FF;
+}
+
+.outline:not(:disabled):not(.loading):hover {
+  background: rgba(153, 69, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.outline:not(:disabled):not(.loading):active {
+  transform: translateY(0);
+  background: rgba(153, 69, 255, 0.04);
+}

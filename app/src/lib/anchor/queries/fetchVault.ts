@@ -16,12 +16,13 @@ export async function fetchVault(
 ): Promise<Vault | null> {
   try {
     const [vaultPda] = findVaultPDA(profilePda);
-    const account = await (
-      program.account as Record<
-        string,
-        { fetchNullable: (pda: PublicKey) => Promise<Vault | null> }
-      >
-    )['vault'].fetchNullable(vaultPda);
+    const accountNamespace = program.account as Record<
+      string,
+      { fetchNullable: (pda: PublicKey) => Promise<Vault | null> }
+    >;
+    const vaultAccount = accountNamespace['vault'];
+    if (!vaultAccount) throw new Error('vault account not found in program');
+    const account = await vaultAccount.fetchNullable(vaultPda);
     return account ?? null;
   } catch (err) {
     console.warn('[fetchVault] Failed:', err);

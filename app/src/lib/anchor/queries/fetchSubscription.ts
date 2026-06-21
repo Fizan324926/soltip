@@ -17,12 +17,13 @@ export async function fetchSubscription(
 ): Promise<Subscription | null> {
   try {
     const [subscriptionPda] = findSubscriptionPDA(subscriber, profilePda);
-    const account = await (
-      program.account as Record<
-        string,
-        { fetchNullable: (pda: PublicKey) => Promise<Subscription | null> }
-      >
-    )['subscription'].fetchNullable(subscriptionPda);
+    const accountNamespace = program.account as Record<
+      string,
+      { fetchNullable: (pda: PublicKey) => Promise<Subscription | null> }
+    >;
+    const subscriptionAccount = accountNamespace['subscription'];
+    if (!subscriptionAccount) throw new Error('subscription account not found in program');
+    const account = await subscriptionAccount.fetchNullable(subscriptionPda);
     return account ?? null;
   } catch (err) {
     console.warn('[fetchSubscription] Failed:', err);

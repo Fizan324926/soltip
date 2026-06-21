@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, type FC } from 'react';
+import { Suspense, lazy, type FC } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useWalletAuth } from './hooks/useWalletAuth';
 
@@ -21,6 +21,9 @@ const DashboardGoals         = lazy(() => import('./pages/dashboard/DashboardGoa
 const DashboardSubscriptions = lazy(() => import('./pages/dashboard/DashboardSubscriptions'));
 const DashboardSplits        = lazy(() => import('./pages/dashboard/DashboardSplits'));
 const DashboardTransactions  = lazy(() => import('./pages/dashboard/DashboardTransactions'));
+
+// Withdraw page
+const DashboardWithdraw      = lazy(() => import('./pages/dashboard/DashboardWithdraw'));
 
 // New v3 pages
 const DashboardPolls         = lazy(() => import('./pages/dashboard/DashboardPolls'));
@@ -98,6 +101,7 @@ const App: FC = () => {
             <Route path="referrals"     element={<DashboardReferrals />} />
             <Route path="analytics"     element={<DashboardAnalytics />} />
             <Route path="settings"      element={<DashboardSettings />} />
+            <Route path="withdraw"      element={<DashboardWithdraw />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
 

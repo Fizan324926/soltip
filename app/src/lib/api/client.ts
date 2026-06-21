@@ -100,8 +100,9 @@ export function getWalletAuthToken(): string | null {
   if (!token) return null;
   // Validate timestamp is within 5 minutes
   const parts = token.split('.');
-  if (parts.length >= 3) {
-    const ts = parseInt(parts[2], 10);
+  const tsPart = parts[2];
+  if (parts.length >= 3 && tsPart) {
+    const ts = parseInt(tsPart, 10);
     if (!isNaN(ts) && Date.now() / 1000 - ts > 300) {
       // Token expired — clear it
       _walletAuthToken = null;

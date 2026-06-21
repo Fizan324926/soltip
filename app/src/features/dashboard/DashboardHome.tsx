@@ -1,11 +1,10 @@
-import React from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Navigate, Link } from "react-router-dom";
 import { useMyProfile } from "@/api/profile";
 import { useMyVault } from "@/api/vault";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
-import { lamportsToSol } from "@/lib/solana/utils";
+import { lamportsToSol, lamportsToSolNumber } from "@/lib/solana/utils";
 import styles from "./DashboardHome.module.css";
 
 export default function DashboardHome() {
@@ -46,8 +45,8 @@ export default function DashboardHome() {
 
       <div className={styles.grid}>
         {[
-          { icon:"💰", val:`${lamportsToSol(acc.totalTipsReceived??0n).toFixed(4)} SOL`, lbl:"Total Earned" },
-          { icon:"🏦", val:`${lamportsToSol(vaultBal).toFixed(4)} SOL`, lbl:"Vault Balance" },
+          { icon:"💰", val:`${lamportsToSol(acc.totalTipsReceived??0n, 4)} SOL`, lbl:"Total Earned" },
+          { icon:"🏦", val:`${lamportsToSol(vaultBal, 4)} SOL`, lbl:"Vault Balance" },
           { icon:"🎁", val:(acc.totalTipCount??0n).toString(), lbl:"Tips Received" },
           { icon:"👥", val:(acc.totalUniqueTippers??0).toString(), lbl:"Unique Supporters" },
         ].map((s)=>(
@@ -80,7 +79,7 @@ export default function DashboardHome() {
         <div className={styles.vault}>
           <div>
             <h3>Your Vault</h3>
-            <p className={styles.vaultBal}>{lamportsToSol(vaultBal).toFixed(4)} SOL available</p>
+            <p className={styles.vaultBal}>{lamportsToSol(vaultBal, 4)} SOL available</p>
           </div>
           <Link to="/dashboard/withdraw"><Button variant="outline">Withdraw →</Button></Link>
         </div>

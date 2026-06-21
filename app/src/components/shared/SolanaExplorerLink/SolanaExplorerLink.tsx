@@ -38,6 +38,8 @@ interface SolanaExplorerLinkProps {
   address?: string;
   /** Display label (defaults to shortened signature/address) */
   label?: string;
+  /** Children can be used instead of label */
+  children?: React.ReactNode;
   /** Solana cluster */
   network?: Network;
   /** Tailwind className override */
@@ -84,6 +86,7 @@ export const SolanaExplorerLink: React.FC<SolanaExplorerLinkProps> = ({
   signature,
   address,
   label,
+  children,
   network = (import.meta.env['VITE_NETWORK'] as Network) ?? 'devnet',
   className,
   iconSize = 12,
@@ -94,7 +97,7 @@ export const SolanaExplorerLink: React.FC<SolanaExplorerLinkProps> = ({
   const value = (signature ?? address) as string;
   const type = isSignature ? 'tx' : 'address';
   const href = buildExplorerUrl(type, value, network);
-  const displayLabel = label ?? shortenStr(value, 4);
+  const displayLabel = children ?? label ?? shortenStr(value, 4);
 
   return (
     <a

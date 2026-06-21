@@ -44,21 +44,22 @@ export async function buildCreateSubscriptionTx(
   const [subscriptionPda, bump] = findSubscriptionPDA(subscriber, profilePda);
   const [platformConfigPda] = findPlatformConfigPDA();
 
-  const tx = await (
-    program.methods as Record<
-      string,
-      (
-        amountPerInterval: BN,
-        intervalSeconds: BN,
-        isSpl: boolean,
-        bump: number
-      ) => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          transaction: () => Promise<Transaction>;
-        };
-      }
-    >
-  )['createSubscription'](amountPerInterval, intervalSeconds, isSpl, bump)
+  const methodsNamespace = program.methods as Record<
+    string,
+    (
+      amountPerInterval: BN,
+      intervalSeconds: BN,
+      isSpl: boolean,
+      bump: number
+    ) => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        transaction: () => Promise<Transaction>;
+      };
+    }
+  >;
+  const createMethod = methodsNamespace['createSubscription'];
+  if (!createMethod) throw new Error('createSubscription method not found in program');
+  const tx = await createMethod(amountPerInterval, intervalSeconds, isSpl, bump)
     .accounts({
       subscriber,
       recipientProfile: profilePda,

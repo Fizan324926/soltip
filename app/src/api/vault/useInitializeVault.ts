@@ -14,11 +14,11 @@ export function useInitializeVault() {
   return useMutation({
     mutationFn: async () => {
       if (!client || !publicKey) throw new Error("Wallet not connected");
-      const tx = await initializeVault(client, publicKey);
-      return tx;
+      const txPromise = initializeVault(client, publicKey);
+      void showTxToast(txPromise, { confirmedTitle: "Vault initialized!" });
+      return txPromise;
     },
-    onSuccess: (tx) => {
-      showTxToast(tx, "Vault initialized!");
+    onSuccess: () => {
       const [pda] = findTipProfilePDA(publicKey!);
       qc.invalidateQueries({ queryKey: queryKeys.vault.byProfile(pda.toBase58()) });
     },

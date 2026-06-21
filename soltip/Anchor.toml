@@ -4,21 +4,23 @@
 resolution = true
 skip-lint = false
 
-[programs.localnet]
-soltip = "BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo"
-
 [programs.devnet]
-soltip = "BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo"
+soltip = "AWmTVfzXCHNwBcCvg25JrY54L9ZfJQmYAEVc72YcR8PW"
+
+[programs.localnet]
+soltip = "2f9k2E5eCDM1JMgva878FfLo5vXPVWb1SSmACm5tur77"
 
 [programs.mainnet]
-soltip = "BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo"
-
-[registry]
-url = "https://api.apr.dev"
+soltip = "2f9k2E5eCDM1JMgva878FfLo5vXPVWb1SSmACm5tur77"
 
 [provider]
-cluster = "Localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+[hooks]
+
+[test.validator]
+startup_wait = 5000

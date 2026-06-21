@@ -152,6 +152,10 @@ export const queryKeys = {
     all: ['polls'] as const,
     byProfile: (profilePda: string) =>
       [...queryKeys.polls.all, 'byProfile', profilePda] as const,
+    byOwner: (ownerAddress: string) =>
+      [...queryKeys.polls.all, 'byOwner', ownerAddress] as const,
+    detail: (pollAddress: string) =>
+      [...queryKeys.polls.all, 'detail', pollAddress] as const,
   },
 
   // ----------------------------------------------------------
@@ -161,6 +165,10 @@ export const queryKeys = {
     all: ['contentGates'] as const,
     byProfile: (profilePda: string) =>
       [...queryKeys.contentGates.all, 'byProfile', profilePda] as const,
+    byOwner: (ownerAddress: string) =>
+      [...queryKeys.contentGates.all, 'byOwner', ownerAddress] as const,
+    detail: (gateAddress: string) =>
+      [...queryKeys.contentGates.all, 'detail', gateAddress] as const,
   },
 
   // ----------------------------------------------------------

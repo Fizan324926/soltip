@@ -26,16 +26,17 @@ export async function buildCancelSubscriptionTx(
   const [profilePda]      = findTipProfilePDA(recipientOwner);
   const [subscriptionPda] = findSubscriptionPDA(subscriber, profilePda);
 
-  const tx = await (
-    program.methods as Record<
-      string,
-      () => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          transaction: () => Promise<Transaction>;
-        };
-      }
-    >
-  )['cancelSubscription']()
+  const methodsNamespace = program.methods as Record<
+    string,
+    () => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        transaction: () => Promise<Transaction>;
+      };
+    }
+  >;
+  const cancelMethod = methodsNamespace['cancelSubscription'];
+  if (!cancelMethod) throw new Error('cancelSubscription method not found in program');
+  const tx = await cancelMethod()
     .accounts({
       subscriber,
       recipientProfile: profilePda,

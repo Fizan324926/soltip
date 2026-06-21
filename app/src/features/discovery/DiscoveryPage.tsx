@@ -5,27 +5,42 @@ import CreatorCard from './CreatorCard';
 
 const CATEGORIES = ['All', 'Gaming', 'Music', 'Art', 'Dev', 'Education', 'Crypto'];
 
-// Helper to safely get string from a value that might be a PublicKey or string
+// Keywords to match each category against username/displayName/description
+const CATEGORY_KEYWORDS: Record<string, string[]> = {
+  Gaming:    ['gaming', 'gamer', 'game', 'stream', 'twitch', 'esport'],
+  Music:     ['music', 'musician', 'producer', 'dj', 'beat', 'artist', 'sound'],
+  Art:       ['art', 'artist', 'design', 'creative', 'illustrat', 'pixel'],
+  Dev:       ['dev', 'developer', 'code', 'engineer', 'build', 'web3', 'solana', 'rust'],
+  Education: ['educat', 'teach', 'tutor', 'learn', 'course', 'tutorial'],
+  Crypto:    ['crypto', 'nft', 'defi', 'web3', 'blockchain', 'token', 'trade'],
+};
+
 const toStr = (v: any): string => (typeof v === 'string' ? v : v?.toBase58?.() ?? String(v ?? ''));
+
+function matchesCategory(creator: any, category: string): boolean {
+  if (category === 'All') return true;
+  const keywords = CATEGORY_KEYWORDS[category] ?? [];
+  const a = creator.account ?? creator;
+  const text = [a.username, a.displayName, a.description].join(' ').toLowerCase();
+  return keywords.some((kw) => text.includes(kw));
+}
 
 export default function DiscoveryPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
   const { data: creatorsData, isLoading } = useCreatorList();
 
-  // useCreatorList returns paginated { items, ... } or flat array
   const creators: any[] = Array.isArray(creatorsData)
     ? creatorsData
     : creatorsData?.items ?? [];
 
   const filtered = creators.filter((c: any) => {
-    if (!search) return true;
     const a = c.account ?? c;
-    const s = search.toLowerCase();
-    return (
-      a.username?.toLowerCase().includes(s) ||
-      a.displayName?.toLowerCase().includes(s)
+    const matchSearch = !search || (
+      a.username?.toLowerCase().includes(search.toLowerCase()) ||
+      a.displayName?.toLowerCase().includes(search.toLowerCase())
     );
+    return matchSearch && matchesCategory(c, category);
   });
 
   return (
@@ -68,7 +83,13 @@ export default function DiscoveryPage() {
       ) : filtered.length === 0 ? (
         <EmptyState
           title="No creators found"
-          description={search ? `No results for "${search}"` : 'No creators yet. Be the first!'}
+          description={
+            search
+              ? `No results for "${search}"${category !== 'All' ? ` in ${category}` : ''}`
+              : category !== 'All'
+              ? `No creators tagged as ${category} yet.`
+              : 'No creators yet. Be the first!'
+          }
         />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

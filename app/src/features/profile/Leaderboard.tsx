@@ -1,7 +1,7 @@
 import React from "react";
 import { Avatar } from "@/components/ui/Avatar";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { formatPublicKey, lamportsToSol } from "@/lib/solana/utils";
+import { formatPublicKey, lamportsToSolNumber } from "@/lib/solana/utils";
 import styles from "./Leaderboard.module.css";
 
 const MEDALS = ["🥇","🥈","🥉"];
@@ -22,7 +22,7 @@ export default function Leaderboard({ entries }: any) {
               <span className={styles.addr}>{formatPublicKey(addr)}</span>
               <span className={styles.count}>{(e.tipCount ?? e.tip_count ?? 0).toString()} tips</span>
             </div>
-            <span className={styles.amount}>{lamportsToSol(e.totalAmount ?? e.total_amount ?? 0n).toFixed(3)} SOL</span>
+            <span className={styles.amount}>{lamportsToSolNumber(e.totalAmount ?? e.total_amount ?? 0n).toFixed(3)} SOL</span>
           </div>
         );
       })}

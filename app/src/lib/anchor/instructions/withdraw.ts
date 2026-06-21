@@ -31,16 +31,17 @@ export async function buildWithdrawTx(
   const [platformConfigPda] = findPlatformConfigPDA();
   const [treasuryPda]       = findPlatformTreasuryPDA();
 
-  const tx = await (
-    program.methods as Record<
-      string,
-      (amount: BN) => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          transaction: () => Promise<Transaction>;
-        };
-      }
-    >
-  )['withdraw'](amount)
+  const methodsNamespace = program.methods as Record<
+    string,
+    (amount: BN) => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        transaction: () => Promise<Transaction>;
+      };
+    }
+  >;
+  const withdrawMethod = methodsNamespace['withdraw'];
+  if (!withdrawMethod) throw new Error('withdraw method not found in program');
+  const tx = await withdrawMethod(amount)
     .accounts({
       owner,
       profile: profilePda,

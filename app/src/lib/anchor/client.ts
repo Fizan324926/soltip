@@ -7,7 +7,7 @@ import { SOLTIP_IDL } from './idl';
 // Constants
 // ============================================================
 export const PROGRAM_ID = new PublicKey(
-  import.meta.env['VITE_PROGRAM_ID'] ?? 'BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo'
+  import.meta.env['VITE_PROGRAM_ID'] ?? '2f9k2E5eCDM1JMgva878FfLo5vXPVWb1SSmACm5tur77'
 );
 
 const DEFAULT_COMMITMENT: Commitment = 'confirmed';
@@ -42,7 +42,7 @@ export class AnchorClient {
 
   constructor(connection: Connection, wallet: AnchorWallet) {
     this.provider = new AnchorProvider(connection, wallet, PROVIDER_OPTS);
-    this.program  = new Program(SOLTIP_IDL as Idl, this.provider);
+    this.program  = new Program(SOLTIP_IDL as unknown as Idl, this.provider);
   }
 
   // ── Program accessor ──────────────────────────────────────

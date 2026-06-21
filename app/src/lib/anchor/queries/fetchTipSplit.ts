@@ -16,12 +16,13 @@ export async function fetchTipSplit(
 ): Promise<TipSplit | null> {
   try {
     const [tipSplitPda] = findTipSplitPDA(profilePda);
-    const account = await (
-      program.account as Record<
-        string,
-        { fetchNullable: (pda: PublicKey) => Promise<TipSplit | null> }
-      >
-    )['tipSplit'].fetchNullable(tipSplitPda);
+    const accountNamespace = program.account as Record<
+      string,
+      { fetchNullable: (pda: PublicKey) => Promise<TipSplit | null> }
+    >;
+    const tipSplitAccount = accountNamespace['tipSplit'];
+    if (!tipSplitAccount) throw new Error('tipSplit account not found in program');
+    const account = await tipSplitAccount.fetchNullable(tipSplitPda);
     return account ?? null;
   } catch (err) {
     console.warn('[fetchTipSplit] Failed:', err);

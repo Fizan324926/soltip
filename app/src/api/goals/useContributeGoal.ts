@@ -20,10 +20,11 @@ export function useContributeGoal() {
   return useMutation({
     mutationFn: async ({ goalAddress, recipientAddress, amount, message }: ContributeGoalArgs) => {
       if (!client || !publicKey) throw new Error("Wallet not connected");
-      return contributeGoal(client, publicKey, goalAddress, recipientAddress, amount, message);
+      const txPromise = contributeGoal(client, publicKey, goalAddress, recipientAddress, amount, message);
+      void showTxToast(txPromise, { confirmedTitle: "Contributed to goal! 🎯" });
+      return txPromise;
     },
-    onSuccess: (tx, { recipientAddress }) => {
-      showTxToast(tx, "Contributed to goal! 🎯");
+    onSuccess: (_sig, { recipientAddress }) => {
       qc.invalidateQueries({ queryKey: queryKeys.goals.byProfile(recipientAddress) });
     },
   });

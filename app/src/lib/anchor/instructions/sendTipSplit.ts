@@ -61,18 +61,19 @@ export async function buildSendTipSplitTx(
     isSigner: false,
   }));
 
-  const tx = await (
-    program.methods as Record<
-      string,
-      (amount: BN, message: string | null) => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          remainingAccounts: (accounts: AccountMeta[]) => {
-            transaction: () => Promise<Transaction>;
-          };
+  const methodsNamespace = program.methods as Record<
+    string,
+    (amount: BN, message: string | null) => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        remainingAccounts: (accounts: AccountMeta[]) => {
+          transaction: () => Promise<Transaction>;
         };
-      }
-    >
-  )['sendTipSplit'](amount, message)
+      };
+    }
+  >;
+  const sendMethod = methodsNamespace['sendTipSplit'];
+  if (!sendMethod) throw new Error('sendTipSplit method not found in program');
+  const tx = await sendMethod(amount, message)
     .accounts({
       tipper,
       recipientProfile: profilePda,

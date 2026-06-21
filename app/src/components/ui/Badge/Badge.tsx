@@ -8,6 +8,8 @@ export type BadgeVariant =
   | 'success'
   | 'warning'
   | 'error'
+  | 'danger'
+  | 'outline'
   | 'default';
 
 export interface BadgeProps {
@@ -51,6 +53,12 @@ const variantConfig: Record<BadgeVariant, VariantConfig> = {
   },
   error: {
     base: 'bg-[rgba(255,68,68,0.12)] text-[#FF4444] border-[rgba(255,68,68,0.25)]',
+  },
+  danger: {
+    base: 'bg-[rgba(255,68,68,0.12)] text-[#FF4444] border-[rgba(255,68,68,0.25)]',
+  },
+  outline: {
+    base: 'bg-transparent text-[#6e6e73] border-[#6e6e73]/30',
   },
   default: {
     base: 'bg-black/5 text-[#6e6e73] border-black/8',

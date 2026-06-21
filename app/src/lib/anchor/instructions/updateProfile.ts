@@ -43,23 +43,24 @@ export async function buildUpdateProfileTx(
   const [profilePda] = findTipProfilePDA(owner);
 
   // Convert undefined → null for Anchor's Option<T> serialisation.
-  const tx = await (
-    program.methods as Record<
-      string,
-      (
-        displayName: string | null,
-        description: string | null,
-        imageUrl: string | null,
-        minTipAmount: BN | null,
-        withdrawalFeeBps: number | null,
-        acceptAnonymous: boolean | null
-      ) => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          transaction: () => Promise<Transaction>;
-        };
-      }
-    >
-  )['updateProfile'](
+  const methodsNamespace = program.methods as Record<
+    string,
+    (
+      displayName: string | null,
+      description: string | null,
+      imageUrl: string | null,
+      minTipAmount: BN | null,
+      withdrawalFeeBps: number | null,
+      acceptAnonymous: boolean | null
+    ) => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        transaction: () => Promise<Transaction>;
+      };
+    }
+  >;
+  const updateMethod = methodsNamespace['updateProfile'];
+  if (!updateMethod) throw new Error('updateProfile method not found in program');
+  const tx = await updateMethod(
     displayName ?? null,
     description ?? null,
     imageUrl ?? null,

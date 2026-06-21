@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useProfile } from '@/api/profile';
+import { useQuery } from '@tanstack/react-query';
 import { useGoals } from '@/api/goals';
 import { Avatar, Badge, Button, Skeleton, Tabs, TabsContent, EmptyState, Progress } from '@/components/ui';
 import { SolanaExplorerLink } from '@/components/shared/SolanaExplorerLink/SolanaExplorerLink';
 import { lamportsToSol } from '@/lib/solana/utils';
 import { findTipProfilePDA } from '@/lib/solana/pda';
+import { profileApi } from '@/lib/api';
 import { PublicKey } from '@solana/web3.js';
 import TipModal from '@/features/tip/TipModal';
 import type { TabItem } from '@/components/ui';
@@ -16,20 +17,54 @@ export default function ProfilePage() {
   const { publicKey } = useWallet();
   const [tipOpen, setTipOpen] = useState(false);
 
-  // username is the wallet address in the route /:username
-  const { data: profile, isLoading } = useProfile(username ?? null);
+  // username may be a wallet address (base58) or a text username.
+  // Try to detect: base58 addresses are 32–44 chars, alphanumeric only (no underscores/hyphens etc)
+  const looksLikeAddress = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(username ?? '');
+
+  // If it looks like an address, fetch by address. Otherwise fetch by username via list search.
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ['profile', username],
+    queryFn: async () => {
+      if (!username) throw new Error('No username');
+      if (looksLikeAddress) {
+        return profileApi.getProfile(username);
+      }
+      // Text username: search profiles and find exact match
+      const list = await profileApi.listProfiles({ search: username, page_size: 10 });
+      const items: any[] = Array.isArray(list) ? list : list?.items ?? [];
+      const match = items.find((p: any) => {
+        const a = p.account ?? p;
+        return a.username?.toLowerCase() === username.toLowerCase();
+      });
+      if (!match) throw new Error('Profile not found');
+      return match;
+    },
+    enabled: !!username,
+    staleTime: 30_000,
+  });
+
+  // Derive the owner wallet address from profile data (for PDA computation)
+  const ownerAddress: string | undefined = (() => {
+    if (!profile) return undefined;
+    const p: any = profile;
+    if (looksLikeAddress && username) return username;
+    // Backend returns ownerAddress or publicKey field
+    return p.ownerAddress ?? p.owner_address ?? (typeof p.publicKey === 'string' ? p.publicKey : p.publicKey?.toBase58?.());
+  })();
 
   let profilePda: string | undefined;
   try {
-    if (username) {
-      const [pda] = findTipProfilePDA(new PublicKey(username));
+    if (ownerAddress) {
+      const [pda] = findTipProfilePDA(new PublicKey(ownerAddress));
       profilePda = pda.toBase58();
     }
-  } catch {}
+  } catch {
+    // ignore invalid address
+  }
 
   const { data: goals } = useGoals(profilePda ?? null);
 
-  const isOwner = publicKey?.toBase58() === username;
+  const isOwner = publicKey?.toBase58() === ownerAddress;
 
   if (isLoading) {
     return (
@@ -44,13 +79,12 @@ export default function ProfilePage() {
     return (
       <div className="max-w-[900px] mx-auto px-6 py-16 text-center">
         <h2 className="text-2xl font-extrabold mb-2">Creator not found</h2>
-        <p className="text-[#86868b]">This wallet does not have a SolTip profile yet.</p>
+        <p className="text-[#86868b]">No SolTip profile found for "{username}".</p>
       </div>
     );
   }
 
-  // Backend returns { publicKey, account: { ... } } after camelCase transform
-  const a = profile.account ?? profile;
+  const a = (profile as any).account ?? profile;
   const leaderboard: any[] = a.leaderboard ?? [];
   const goalsList: any[] = goals ?? [];
 
@@ -59,9 +93,7 @@ export default function ProfilePage() {
     { value: 'leaderboard', label: 'Top Supporters' },
   ];
 
-  // Helper to safely get string from a value that might be a PublicKey or string
   const toStr = (v: any): string => (typeof v === 'string' ? v : v?.toBase58?.() ?? String(v ?? ''));
-  // Helper to safely shorten an address string
   const shortAddr = (v: any): string => {
     const s = toStr(v);
     return s.length > 11 ? `${s.slice(0, 4)}...${s.slice(-4)}` : s;
@@ -83,10 +115,8 @@ export default function ProfilePage() {
             {a.isVerified && <Badge variant="success">Verified</Badge>}
           </div>
           <p className="text-[#86868b] mb-2">@{a.username}</p>
-          {username && (
-            <SolanaExplorerLink address={username} className="text-xs text-solana-blue mb-3 inline-block">
-              {shortAddr(username)}
-            </SolanaExplorerLink>
+          {ownerAddress && (
+            <SolanaExplorerLink address={ownerAddress} label={shortAddr(ownerAddress)} className="text-xs text-solana-blue mb-3 inline-block" />
           )}
           {a.description && <p className="text-[#86868b] leading-relaxed max-w-[480px]">{a.description}</p>}
         </div>
@@ -184,12 +214,14 @@ export default function ProfilePage() {
       </Tabs>
 
       {/* Tip Modal */}
-      <TipModal
-        open={tipOpen}
-        onOpenChange={setTipOpen}
-        recipientAddress={username ?? ''}
-        recipientName={a.username ?? ''}
-      />
+      {ownerAddress && (
+        <TipModal
+          open={tipOpen}
+          onOpenChange={setTipOpen}
+          recipientAddress={ownerAddress}
+          recipientName={a.username ?? ''}
+        />
+      )}
     </div>
   );
 }

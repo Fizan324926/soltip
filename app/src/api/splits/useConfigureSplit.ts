@@ -20,10 +20,11 @@ export function useConfigureSplit() {
   return useMutation({
     mutationFn: async (recipients: SplitRecipient[]) => {
       if (!client || !publicKey) throw new Error("Wallet not connected");
-      return configureSplit(client, publicKey, recipients);
+      const txPromise = configureSplit(client, publicKey, recipients);
+      void showTxToast(txPromise, { confirmedTitle: "Split configured! ✂️" });
+      return txPromise;
     },
-    onSuccess: (tx) => {
-      showTxToast(tx, "Split configured! ✂️");
+    onSuccess: () => {
       const [pda] = findTipProfilePDA(publicKey!);
       qc.invalidateQueries({ queryKey: queryKeys.tipSplit.byProfile(pda.toBase58()) });
     },

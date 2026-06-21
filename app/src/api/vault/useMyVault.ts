@@ -1,7 +1,6 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useVault } from "./useVault";
 import { findTipProfilePDA } from "@/lib/solana/pda";
-import { PublicKey } from "@solana/web3.js";
 
 export function useMyVault() {
   const { publicKey } = useWallet();

@@ -20,10 +20,11 @@ export function useCreateProfile() {
   return useMutation({
     mutationFn: async (args: CreateProfileArgs) => {
       if (!client || !wallet.publicKey) throw new Error("Wallet not connected");
-      return createProfile(client, wallet, args);
+      const txPromise = createProfile(client, wallet, args);
+      void showTxToast(txPromise, { confirmedTitle: "Profile created!" });
+      return txPromise;
     },
-    onSuccess: (sig) => {
-      showTxToast(sig, "Profile created!");
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.profile.all });
     },
   });

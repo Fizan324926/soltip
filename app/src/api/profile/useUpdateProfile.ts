@@ -22,10 +22,11 @@ export function useUpdateProfile() {
   return useMutation({
     mutationFn: async (args: UpdateProfileArgs) => {
       if (!client || !wallet.publicKey) throw new Error("Wallet not connected");
-      return updateProfile(client, wallet, args);
+      const txPromise = updateProfile(client, wallet, args);
+      void showTxToast(txPromise, { confirmedTitle: "Profile updated!" });
+      return txPromise;
     },
-    onSuccess: (sig) => {
-      showTxToast(sig, "Profile updated!");
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.profile.byOwner(wallet.publicKey?.toBase58() ?? "") });
     },
   });

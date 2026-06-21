@@ -5,7 +5,7 @@ import type { CreatorFilters } from "@/types/common";
 
 export function useCreatorList(filters?: CreatorFilters) {
   return useQuery({
-    queryKey: queryKeys.profile.list(filters),
+    queryKey: queryKeys.profile.list(filters as Record<string, unknown> | undefined),
     queryFn: async () => {
       const data = await profileApi.listProfiles({
         search: filters?.search,

@@ -1,12 +1,12 @@
 import React from "react";
-import { lamportsToSol } from "@/lib/solana/utils";
+import { lamportsToSol, lamportsToSolNumber } from "@/lib/solana/utils";
 import styles from "./ProfileStats.module.css";
 
 export default function ProfileStats({ profile, vault }: any) {
   return (
     <div className={styles.grid}>
       <div className={styles.card}>
-        <div className={styles.val}>{lamportsToSol(profile.totalTipsReceived ?? 0n).toFixed(4)} SOL</div>
+        <div className={styles.val}>{lamportsToSolNumber(profile.totalTipsReceived ?? 0n).toFixed(4)} SOL</div>
         <div className={styles.lbl}>Total Earned</div>
       </div>
       <div className={styles.card}>
@@ -14,7 +14,7 @@ export default function ProfileStats({ profile, vault }: any) {
         <div className={styles.lbl}>Tips Received</div>
       </div>
       <div className={styles.card}>
-        <div className={styles.val}>{vault ? `${lamportsToSol(vault.balance ?? 0n).toFixed(4)} SOL` : "—"}</div>
+        <div className={styles.val}>{vault ? `${lamportsToSolNumber(vault.balance ?? 0n).toFixed(4)} SOL` : "—"}</div>
         <div className={styles.lbl}>Vault Balance</div>
       </div>
       <div className={styles.card}>

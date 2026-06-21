@@ -46,19 +46,20 @@ export async function buildConfigureSplitTx(
     shareBps: r.shareBps,
   }));
 
-  const tx = await (
-    program.methods as Record<
-      string,
-      (
-        recipients: { wallet: PublicKey; shareBps: number }[],
-        bump: number
-      ) => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          transaction: () => Promise<Transaction>;
-        };
-      }
-    >
-  )['configureSplit'](recipientArgs, bump)
+  const methodsNamespace = program.methods as Record<
+    string,
+    (
+      recipients: { wallet: PublicKey; shareBps: number }[],
+      bump: number
+    ) => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        transaction: () => Promise<Transaction>;
+      };
+    }
+  >;
+  const configureMethod = methodsNamespace['configureSplit'];
+  if (!configureMethod) throw new Error('configureSplit method not found in program');
+  const tx = await configureMethod(recipientArgs, bump)
     .accounts({
       owner,
       profile: profilePda,

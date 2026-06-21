@@ -3,14 +3,14 @@
 //
 // Program:  soltip
 // Version:  0.1.0
-// Address:  BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo
+// Address:  2f9k2E5eCDM1JMgva878FfLo5vXPVWb1SSmACm5tur77
 //
 // Derived from programs/soltip/src/ source. Keep in sync with
 // the on-chain deployment when the program is upgraded.
 // ============================================================
 
 export const SOLTIP_IDL = {
-  address: 'BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo',
+  address: '2f9k2E5eCDM1JMgva878FfLo5vXPVWb1SSmACm5tur77',
   metadata: {
     name: 'soltip',
     version: '0.1.0',

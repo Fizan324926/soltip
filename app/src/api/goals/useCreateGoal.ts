@@ -23,10 +23,11 @@ export function useCreateGoal() {
   return useMutation({
     mutationFn: async (args: CreateGoalArgs) => {
       if (!client || !publicKey) throw new Error("Wallet not connected");
-      return createGoal(client, publicKey, args);
+      const txPromise = createGoal(client, publicKey, args);
+      void showTxToast(txPromise, { confirmedTitle: "Goal created! 🎯" });
+      return txPromise;
     },
-    onSuccess: (tx) => {
-      showTxToast(tx, "Goal created! 🎯");
+    onSuccess: () => {
       const [pda] = findTipProfilePDA(publicKey!);
       qc.invalidateQueries({ queryKey: queryKeys.goals.byProfile(pda.toBase58()) });
     },

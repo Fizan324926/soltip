@@ -15,12 +15,13 @@ export async function fetchPlatformConfig(
 ): Promise<PlatformConfig | null> {
   try {
     const [configPda] = findPlatformConfigPDA();
-    const account = await (
-      program.account as Record<
-        string,
-        { fetchNullable: (pda: PublicKey) => Promise<PlatformConfig | null> }
-      >
-    )['platformConfig'].fetchNullable(configPda);
+    const accountNamespace = program.account as Record<
+      string,
+      { fetchNullable: (pda: PublicKey) => Promise<PlatformConfig | null> }
+    >;
+    const platformConfigAccount = accountNamespace['platformConfig'];
+    if (!platformConfigAccount) throw new Error('platformConfig account not found in program');
+    const account = await platformConfigAccount.fetchNullable(configPda);
     return account ?? null;
   } catch (err) {
     console.warn('[fetchPlatformConfig] Failed:', err);

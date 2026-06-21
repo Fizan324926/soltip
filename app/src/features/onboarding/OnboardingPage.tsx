@@ -32,8 +32,6 @@ export default function OnboardingPage() {
       displayName,
       description,
       imageUrl,
-      withdrawalFeeBps: 200,
-      acceptAnonymous: true,
     });
     setStep('vault');
   };

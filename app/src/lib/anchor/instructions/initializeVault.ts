@@ -22,16 +22,17 @@ export async function buildInitializeVaultTx(
   const [profilePda] = findTipProfilePDA(owner);
   const [vaultPda, bump] = findVaultPDA(profilePda);
 
-  const tx = await (
-    program.methods as Record<
-      string,
-      (bump: number) => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          transaction: () => Promise<Transaction>;
-        };
-      }
-    >
-  )['initializeVault'](bump)
+  const methodsNamespace = program.methods as Record<
+    string,
+    (bump: number) => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        transaction: () => Promise<Transaction>;
+      };
+    }
+  >;
+  const initMethod = methodsNamespace['initializeVault'];
+  if (!initMethod) throw new Error('initializeVault method not found in program');
+  const tx = await initMethod(bump)
     .accounts({
       owner,
       profile: profilePda,

@@ -8,7 +8,9 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface ModalProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange?: (open: boolean) => void;
+  /** Alias for onOpenChange(false) — for convenience */
+  onClose?: () => void;
   title?: string;
   description?: string;
   children: React.ReactNode;
@@ -46,6 +48,7 @@ const contentVariants = {
 export const Modal: React.FC<ModalProps> = ({
   open,
   onOpenChange,
+  onClose,
   title,
   description,
   children,
@@ -53,8 +56,13 @@ export const Modal: React.FC<ModalProps> = ({
   showClose = true,
   className,
 }) => {
+  const handleOpenChange = (isOpen: boolean) => {
+    onOpenChange?.(isOpen);
+    if (!isOpen) onClose?.();
+  };
+
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <AnimatePresence>
         {open && (
           <Dialog.Portal forceMount>

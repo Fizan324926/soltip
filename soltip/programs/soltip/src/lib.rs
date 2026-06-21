@@ -95,7 +95,7 @@ pub(crate) use instructions::update_profile_extended::__client_accounts_update_p
 pub(crate) use instructions::withdraw_treasury::__client_accounts_withdraw_treasury;
 pub(crate) use instructions::reset_reentrancy_guard::__client_accounts_reset_reentrancy_guard;
 
-declare_id!("BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo");
+declare_id!("AWmTVfzXCHNwBcCvg25JrY54L9ZfJQmYAEVc72YcR8PW");
 
 #[program]
 pub mod soltip {

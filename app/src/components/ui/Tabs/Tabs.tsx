@@ -1,4 +1,4 @@
-import React, { useRef, useState, useLayoutEffect } from 'react';
+import React, { useState } from 'react';
 import * as RadixTabs from '@radix-ui/react-tabs';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/cn';
@@ -142,7 +142,10 @@ const TabTrigger: React.FC<TabTriggerProps> = ({ tab, isActive }) => {
   );
 };
 
-// Re-export Radix TabsContent for convenience
+// Re-export Radix primitives for direct usage
 export const TabsContent = RadixTabs.Content;
+export const TabsList = RadixTabs.List;
+export const TabsTrigger = RadixTabs.Trigger;
+export const TabsRoot = RadixTabs.Root;
 
 export default Tabs;

@@ -44,12 +44,13 @@ pub struct SendTip<'info> {
     pub tipper: Signer<'info>,
 
     /// Recipient profile – validated via PDA seeds
+    /// Boxed to avoid stack overflow (TipProfile is ~1.7KB)
     #[account(
         mut,
         seeds = [TIP_PROFILE_SEED, recipient_owner.key().as_ref()],
         bump  = recipient_profile.bump,
     )]
-    pub recipient_profile: Account<'info, TipProfile>,
+    pub recipient_profile: Box<Account<'info, TipProfile>>,
 
     /// Creator wallet – validated by PDA derivation above
     /// CHECK: verified implicitly by PDA constraint on recipient_profile

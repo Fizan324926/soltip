@@ -16,12 +16,13 @@ export async function fetchTipProfile(
 ): Promise<TipProfile | null> {
   try {
     const [profilePda] = findTipProfilePDA(owner);
-    const account = await (
-      program.account as Record<
-        string,
-        { fetchNullable: (pda: PublicKey) => Promise<TipProfile | null> }
-      >
-    )['tipProfile'].fetchNullable(profilePda);
+    const accountNamespace = program.account as Record<
+      string,
+      { fetchNullable: (pda: PublicKey) => Promise<TipProfile | null> }
+    >;
+    const tipProfileAccount = accountNamespace['tipProfile'];
+    if (!tipProfileAccount) throw new Error('tipProfile account not found in program');
+    const account = await tipProfileAccount.fetchNullable(profilePda);
     return account ?? null;
   } catch (err) {
     console.warn('[fetchTipProfile] Failed:', err);

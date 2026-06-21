@@ -15,7 +15,7 @@ pub struct CancelSubscription<'info> {
         seeds = [TIP_PROFILE_SEED, recipient_owner.key().as_ref()],
         bump = recipient_profile.bump,
     )]
-    pub recipient_profile: Account<'info, TipProfile>,
+    pub recipient_profile: Box<Account<'info, TipProfile>>,
 
     /// The recipient's wallet (profile owner)
     /// CHECK: This is validated by the PDA derivation of recipient_profile

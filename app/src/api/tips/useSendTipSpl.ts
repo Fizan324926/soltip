@@ -19,11 +19,13 @@ export function useSendTipSpl() {
   return useMutation({
     mutationFn: async ({ recipientAddress, tokenMint, amount, message }: SendTipSplArgs) => {
       if (!client || !publicKey) throw new Error("Wallet not connected");
-      const tx = await sendTipSpl(client, publicKey, recipientAddress, tokenMint, amount, message);
+      const txPromise = sendTipSpl(client, publicKey, recipientAddress, tokenMint, amount, message);
+      void showTxToast(txPromise, { confirmedTitle: "Token tip sent! 🎉" });
+      const sig = await txPromise;
 
       try {
         await tipsApi.recordTipSpl({
-          tx_signature: tx,
+          tx_signature: sig,
           tipper_address: publicKey.toBase58(),
           recipient_address: recipientAddress,
           token_mint: tokenMint,
@@ -34,10 +36,7 @@ export function useSendTipSpl() {
         console.warn("Failed to index SPL tip in backend:", e);
       }
 
-      return tx;
-    },
-    onSuccess: (tx) => {
-      showTxToast(tx, "Token tip sent!");
+      return sig;
     },
   });
 }

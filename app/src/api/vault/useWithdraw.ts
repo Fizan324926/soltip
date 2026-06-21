@@ -14,10 +14,11 @@ export function useWithdraw() {
   return useMutation({
     mutationFn: async (amount: bigint) => {
       if (!client || !publicKey) throw new Error("Wallet not connected");
-      return withdraw(client, publicKey, amount);
+      const txPromise = withdraw(client, publicKey, amount);
+      void showTxToast(txPromise, { confirmedTitle: "Withdrawal successful!" });
+      return txPromise;
     },
-    onSuccess: (tx) => {
-      showTxToast(tx, "Withdrawal successful!");
+    onSuccess: () => {
       const [pda] = findTipProfilePDA(publicKey!);
       qc.invalidateQueries({ queryKey: queryKeys.vault.byProfile(pda.toBase58()) });
     },

@@ -31,6 +31,15 @@ export function lamportsToSol(
 }
 
 /**
+ * Convert lamports to a number (for arithmetic/display).
+ * Warning: precision loss for very large amounts.
+ */
+export function lamportsToSolNumber(lamports: bigint | number): number {
+  const amount = typeof lamports === 'number' ? BigInt(lamports) : lamports;
+  return Number(amount) / 1_000_000_000;
+}
+
+/**
  * Convert a SOL amount (float) to lamports as bigint.
  */
 export function solToLamports(sol: number): bigint {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useGoals, useCloseGoal } from "@/api/goals";
 import { Button } from "@/components/ui/Button";
@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Progress } from "@/components/ui/Progress";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { lamportsToSol } from "@/lib/solana/utils";
+import { lamportsToSol, lamportsToSolNumber } from "@/lib/solana/utils";
 import { findTipProfilePDA } from "@/lib/solana/pda";
 import CreateGoalModal from "./CreateGoalModal";
 import styles from "./GoalsView.module.css";
@@ -44,8 +44,8 @@ export default function GoalsView() {
                 {g.account.description && <p className={styles.desc}>{g.account.description}</p>}
                 <Progress value={pct} className={styles.bar} />
                 <div className={styles.amts}>
-                  <span className={styles.cur}>{lamportsToSol(g.account.currentAmount??0n).toFixed(3)} SOL</span>
-                  <span className={styles.tgt}>/ {lamportsToSol(g.account.targetAmount??0n).toFixed(3)} SOL</span>
+                  <span className={styles.cur}>{lamportsToSol(g.account.currentAmount??0n, 3)} SOL</span>
+                  <span className={styles.tgt}>/ {lamportsToSol(g.account.targetAmount??0n, 3)} SOL</span>
                 </div>
                 {g.account.completed && (
                   <Button variant="ghost" size="sm" onClick={() => closeGoal.mutateAsync({ goalAddress: g.publicKey.toBase58(), goalId: g.account.goalId })} loading={closeGoal.isPending}>
@@ -57,7 +57,7 @@ export default function GoalsView() {
           })}
         </div>
       )}
-      <CreateGoalModal open={open} onClose={() => setOpen(false)} />
+      <CreateGoalModal open={open} onOpenChange={setOpen} />
     </div>
   );
 }

@@ -22,16 +22,17 @@ export async function buildCloseGoalTx(
 ): Promise<Transaction> {
   const [profilePda] = findTipProfilePDA(owner);
 
-  const tx = await (
-    program.methods as Record<
-      string,
-      () => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          transaction: () => Promise<Transaction>;
-        };
-      }
-    >
-  )['closeGoal']()
+  const methodsNamespace = program.methods as Record<
+    string,
+    () => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        transaction: () => Promise<Transaction>;
+      };
+    }
+  >;
+  const closeMethod = methodsNamespace['closeGoal'];
+  if (!closeMethod) throw new Error('closeGoal method not found in program');
+  const tx = await closeMethod()
     .accounts({
       owner,
       profile: profilePda,

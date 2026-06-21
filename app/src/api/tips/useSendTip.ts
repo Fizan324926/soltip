@@ -20,12 +20,13 @@ export function useSendTip() {
   return useMutation({
     mutationFn: async ({ recipientAddress, amount, message }: SendTipArgs) => {
       if (!client || !publicKey) throw new Error("Wallet not connected");
-      const tx = await sendTip(client, publicKey, recipientAddress, amount, message);
+      const txPromise = sendTip(client, publicKey, recipientAddress, amount, message);
+      void showTxToast(txPromise, { confirmedTitle: "Tip sent! 🎉" });
+      const sig = await txPromise;
 
-      // Index in backend
       try {
         await tipsApi.recordTip({
-          tx_signature: tx,
+          tx_signature: sig,
           tipper_address: publicKey.toBase58(),
           recipient_address: recipientAddress,
           amount_lamports: Number(amount),
@@ -35,10 +36,9 @@ export function useSendTip() {
         console.warn("Failed to index tip in backend:", e);
       }
 
-      return tx;
+      return sig;
     },
-    onSuccess: (tx, { recipientAddress }) => {
-      showTxToast(tx, "Tip sent!");
+    onSuccess: (_sig, { recipientAddress }) => {
       qc.invalidateQueries({ queryKey: queryKeys.profile.byOwner(recipientAddress) });
     },
   });

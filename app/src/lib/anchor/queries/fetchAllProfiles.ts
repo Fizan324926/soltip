@@ -22,12 +22,13 @@ export async function fetchAllProfiles(
   program: Program<Idl>
 ): Promise<ProfileWithPubkey[]> {
   try {
-    const accounts = await (
-      program.account as Record<
-        string,
-        { all: () => Promise<{ publicKey: PublicKey; account: TipProfile }[]> }
-      >
-    )['tipProfile'].all();
+    const accountNamespace = program.account as Record<
+      string,
+      { all: () => Promise<{ publicKey: PublicKey; account: TipProfile }[]> }
+    >;
+    const tipProfileAccount = accountNamespace['tipProfile'];
+    if (!tipProfileAccount) throw new Error('tipProfile account not found in program');
+    const accounts = await tipProfileAccount.all();
 
     return accounts.map((a) => ({
       pubkey: a.publicKey,

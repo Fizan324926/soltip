@@ -13,10 +13,11 @@ export function useCancelSubscription() {
   return useMutation({
     mutationFn: async (subscriptionAddress: string) => {
       if (!client || !publicKey) throw new Error("Wallet not connected");
-      return cancelSubscription(client, publicKey, subscriptionAddress);
+      const txPromise = cancelSubscription(client, publicKey, subscriptionAddress);
+      void showTxToast(txPromise, { confirmedTitle: "Subscription cancelled." });
+      return txPromise;
     },
-    onSuccess: (tx) => {
-      showTxToast(tx, "Subscription cancelled.");
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.subscription.all });
     },
   });

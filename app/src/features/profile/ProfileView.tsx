@@ -8,7 +8,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
+import { TabsRoot, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
 import { SolanaExplorerLink } from "@/components/shared/SolanaExplorerLink/SolanaExplorerLink";
 import { lamportsToSol, formatPublicKey } from "@/lib/solana/utils";
 import { findTipProfilePDA } from "@/lib/solana/pda";
@@ -87,7 +87,7 @@ export default function ProfileView() {
 
       <ProfileStats profile={acc} vault={vault?.account} />
 
-      <Tabs defaultValue="goals" className={styles.tabs}>
+      <TabsRoot defaultValue="goals" className={styles.tabs}>
         <TabsList>
           <TabsTrigger value="goals">Goals ({goals?.length ?? 0})</TabsTrigger>
           <TabsTrigger value="leaderboard">Top Supporters</TabsTrigger>
@@ -98,7 +98,7 @@ export default function ProfileView() {
         <TabsContent value="leaderboard">
           <Leaderboard entries={acc.topTippers ?? []} />
         </TabsContent>
-      </Tabs>
+      </TabsRoot>
 
       {tipOpen && (
         <TipPanel

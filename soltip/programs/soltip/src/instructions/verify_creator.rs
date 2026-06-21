@@ -20,7 +20,7 @@ pub struct VerifyCreator<'info> {
         seeds = [TIP_PROFILE_SEED, tip_profile.owner.as_ref()],
         bump  = tip_profile.bump,
     )]
-    pub tip_profile: Account<'info, TipProfile>,
+    pub tip_profile: Box<Account<'info, TipProfile>>,
 }
 
 pub fn handler(ctx: Context<VerifyCreator>, verified: bool) -> Result<()> {

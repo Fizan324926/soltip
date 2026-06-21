@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal, Button, Input, Textarea } from '@/components/ui';
 import { useCreateGoal } from '@/api/goals';
 import { solToLamports } from '@/lib/solana/utils';

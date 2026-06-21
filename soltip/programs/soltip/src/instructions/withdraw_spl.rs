@@ -47,7 +47,7 @@ pub struct WithdrawSpl<'info> {
         bump    = tip_profile.bump,
         has_one = owner @ ErrorCode::NotProfileOwner,
     )]
-    pub tip_profile: Account<'info, TipProfile>,
+    pub tip_profile: Box<Account<'info, TipProfile>>,
 
     /// Creator's SPL token account (source of withdrawal).
     /// Must be owned by `owner` and hold the correct mint.

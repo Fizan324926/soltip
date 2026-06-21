@@ -23,14 +23,14 @@ pub struct RegisterReferral<'info> {
         bump = referrer_profile.bump,
         constraint = referrer_profile.owner == referrer.key() @ ErrorCode::NotProfileOwner,
     )]
-    pub referrer_profile: Account<'info, TipProfile>,
+    pub referrer_profile: Box<Account<'info, TipProfile>>,
 
     /// The referred creator's profile
     #[account(
         seeds = [TIP_PROFILE_SEED, referee_owner.key().as_ref()],
         bump = referee_profile.bump,
     )]
-    pub referee_profile: Account<'info, TipProfile>,
+    pub referee_profile: Box<Account<'info, TipProfile>>,
 
     /// CHECK: validated by PDA derivation of referee_profile
     pub referee_owner: UncheckedAccount<'info>,

@@ -14,10 +14,11 @@ export function useCloseGoal() {
   return useMutation({
     mutationFn: async ({ goalAddress, goalId }: { goalAddress: string; goalId: bigint }) => {
       if (!client || !publicKey) throw new Error("Wallet not connected");
-      return closeGoal(client, publicKey, goalAddress, goalId);
+      const txPromise = closeGoal(client, publicKey, goalAddress, goalId);
+      void showTxToast(txPromise, { confirmedTitle: "Goal closed!" });
+      return txPromise;
     },
-    onSuccess: (tx) => {
-      showTxToast(tx, "Goal closed!");
+    onSuccess: () => {
       const [pda] = findTipProfilePDA(publicKey!);
       qc.invalidateQueries({ queryKey: queryKeys.goals.byProfile(pda.toBase58()) });
     },

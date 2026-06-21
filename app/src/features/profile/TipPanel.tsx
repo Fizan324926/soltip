@@ -4,7 +4,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
+import { TabsRoot, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
 import { WalletConnectButton } from "@/components/shared/WalletConnectButton/WalletConnectButton";
 import { useSendTip } from "@/api/tips/useSendTip";
 import { useSendTipSpl } from "@/api/tips/useSendTipSpl";
@@ -43,7 +43,7 @@ export default function TipPanel({ open, onClose, recipientAddress, recipientNam
             <WalletConnectButton />
           </div>
         ) : (
-          <Tabs defaultValue="sol">
+          <TabsRoot defaultValue="sol">
             <TabsList>
               <TabsTrigger value="sol">◎ SOL</TabsTrigger>
               <TabsTrigger value="token">🪙 USDC</TabsTrigger>
@@ -68,7 +68,7 @@ export default function TipPanel({ open, onClose, recipientAddress, recipientNam
               <Textarea placeholder="Add a message (optional)" rows={3} className={styles.msg} />
               <Button fullWidth disabled className={styles.sendBtn}>Send USDC Tip</Button>
             </TabsContent>
-          </Tabs>
+          </TabsRoot>
         )}
       </div>
     </Modal>

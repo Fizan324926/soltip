@@ -2,7 +2,7 @@ import React from "react";
 import { Progress } from "@/components/ui/Progress";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { lamportsToSol } from "@/lib/solana/utils";
+import { lamportsToSol, lamportsToSolNumber } from "@/lib/solana/utils";
 import styles from "./GoalsList.module.css";
 
 export default function GoalsList({ goals, isOwner }: any) {
@@ -22,8 +22,8 @@ export default function GoalsList({ goals, isOwner }: any) {
             {g.account.description && <p className={styles.desc}>{g.account.description}</p>}
             <Progress value={pct} className={styles.bar} />
             <div className={styles.amounts}>
-              <span className={styles.current}>{lamportsToSol(g.account.currentAmount ?? 0n).toFixed(3)} SOL</span>
-              <span className={styles.target}>of {lamportsToSol(g.account.targetAmount ?? 0n).toFixed(3)} SOL</span>
+              <span className={styles.current}>{lamportsToSolNumber(g.account.currentAmount ?? 0n).toFixed(3)} SOL</span>
+              <span className={styles.target}>of {lamportsToSolNumber(g.account.targetAmount ?? 0n).toFixed(3)} SOL</span>
             </div>
           </div>
         );

@@ -54,16 +54,17 @@ export async function buildSendTipSplTx(
   const [platformConfigPda] = findPlatformConfigPDA();
   const [treasuryPda]       = findPlatformTreasuryPDA();
 
-  const tx = await (
-    program.methods as Record<
-      string,
-      (amount: BN, message: string | null) => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          transaction: () => Promise<Transaction>;
-        };
-      }
-    >
-  )['sendTipSpl'](amount, message)
+  const methodsNamespace = program.methods as Record<
+    string,
+    (amount: BN, message: string | null) => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        transaction: () => Promise<Transaction>;
+      };
+    }
+  >;
+  const sendMethod = methodsNamespace['sendTipSpl'];
+  if (!sendMethod) throw new Error('sendTipSpl method not found in program');
+  const tx = await sendMethod(amount, message)
     .accounts({
       tipper,
       tipperTokenAccount,

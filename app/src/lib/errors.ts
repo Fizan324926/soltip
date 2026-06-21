@@ -165,7 +165,7 @@ export function parseAnchorError(err: unknown): string {
 
   // 1. Try to match Anchor custom error code pattern: "custom program error: 0x..."
   const hexMatch = message.match(/custom program error:\s*0x([0-9a-fA-F]+)/i);
-  if (hexMatch) {
+  if (hexMatch && hexMatch[1]) {
     const code = parseInt(hexMatch[1], 16);
     const info = ANCHOR_ERROR_MAP[code];
     if (info) return info.message;
@@ -176,7 +176,7 @@ export function parseAnchorError(err: unknown): string {
 
   // 2. Try to match decimal error code in anchor error JSON
   const errorCodeMatch = message.match(/"errorCode"[^}]*"number":\s*(\d+)/);
-  if (errorCodeMatch) {
+  if (errorCodeMatch && errorCodeMatch[1]) {
     const code = parseInt(errorCodeMatch[1], 10);
     const info = ANCHOR_ERROR_MAP[code];
     if (info) return info.message;
@@ -184,14 +184,14 @@ export function parseAnchorError(err: unknown): string {
 
   // 3. Try matching the error name directly
   const nameMatch = message.match(/"name":\s*"([A-Za-z]+)"/);
-  if (nameMatch) {
+  if (nameMatch && nameMatch[1]) {
     const info = ANCHOR_ERROR_BY_NAME[nameMatch[1]];
     if (info) return info.message;
   }
 
   // 4. Try matching error number inline: "Error Number: XXXX"
   const numberMatch = message.match(/Error Number:\s*(\d+)/i);
-  if (numberMatch) {
+  if (numberMatch && numberMatch[1]) {
     const code = parseInt(numberMatch[1], 10);
     const info = ANCHOR_ERROR_MAP[code];
     if (info) return info.message;

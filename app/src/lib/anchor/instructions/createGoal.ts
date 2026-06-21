@@ -34,23 +34,24 @@ export async function buildCreateGoalTx(
   const [profilePda] = findTipProfilePDA(owner);
   const [goalPda, bump] = findGoalPDA(profilePda, goalId);
 
-  const tx = await (
-    program.methods as Record<
-      string,
-      (
-        goalId: BN,
-        title: string,
-        description: string,
-        targetAmount: BN,
-        deadline: BN | null,
-        bump: number
-      ) => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          transaction: () => Promise<Transaction>;
-        };
-      }
-    >
-  )['createGoal'](goalId, title, description, targetAmount, deadline, bump)
+  const methodsNamespace = program.methods as Record<
+    string,
+    (
+      goalId: BN,
+      title: string,
+      description: string,
+      targetAmount: BN,
+      deadline: BN | null,
+      bump: number
+    ) => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        transaction: () => Promise<Transaction>;
+      };
+    }
+  >;
+  const createMethod = methodsNamespace['createGoal'];
+  if (!createMethod) throw new Error('createGoal method not found in program');
+  const tx = await createMethod(goalId, title, description, targetAmount, deadline, bump)
     .accounts({
       owner,
       profile: profilePda,

@@ -3,7 +3,7 @@ import { cn } from '@/lib/cn';
 import { Spinner } from '../Spinner/Spinner';
 import styles from './Button.module.css';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 type AsProp<C extends ElementType> = {
@@ -34,6 +34,7 @@ const spinnerColorMap: Record<ButtonVariant, string> = {
   ghost: 'rgba(255,255,255,0.75)',
   danger: '#ffffff',
   success: '#0D0D1A',
+  outline: '#9945FF',
 };
 
 const spinnerSizeMap: Record<ButtonSize, 'xs' | 'sm' | 'md'> = {

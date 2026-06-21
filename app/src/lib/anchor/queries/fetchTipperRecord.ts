@@ -17,12 +17,13 @@ export async function fetchTipperRecord(
 ): Promise<TipperRecord | null> {
   try {
     const [tipperRecordPda] = findTipperRecordPDA(tipper, profilePda);
-    const account = await (
-      program.account as Record<
-        string,
-        { fetchNullable: (pda: PublicKey) => Promise<TipperRecord | null> }
-      >
-    )['tipperRecord'].fetchNullable(tipperRecordPda);
+    const accountNamespace = program.account as Record<
+      string,
+      { fetchNullable: (pda: PublicKey) => Promise<TipperRecord | null> }
+    >;
+    const tipperRecordAccount = accountNamespace['tipperRecord'];
+    if (!tipperRecordAccount) throw new Error('tipperRecord account not found in program');
+    const account = await tipperRecordAccount.fetchNullable(tipperRecordPda);
     return account ?? null;
   } catch (err) {
     console.warn('[fetchTipperRecord] Failed:', err);

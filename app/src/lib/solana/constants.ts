@@ -4,7 +4,7 @@ import { PublicKey } from '@solana/web3.js';
 // Program ID
 // ============================================================
 export const PROGRAM_ID = new PublicKey(
-  import.meta.env['VITE_PROGRAM_ID'] ?? 'BhynwWdN5g5S5FfCEgDovajaYQDq925S2Xs8vXas58uo'
+  import.meta.env['VITE_PROGRAM_ID'] ?? '2f9k2E5eCDM1JMgva878FfLo5vXPVWb1SSmACm5tur77'
 );
 
 // ============================================================
@@ -30,6 +30,9 @@ export const SEEDS = {
   RATE_LIMIT: 'rate_limit',
   PLATFORM_CONFIG: 'platform_config',
   SPL_VAULT: 'spl_vault',
+  TIP_POLL: 'tip_poll',
+  CONTENT_GATE: 'content_gate',
+  REFERRAL: 'referral',
 } as const;
 
 export type SeedKey = keyof typeof SEEDS;

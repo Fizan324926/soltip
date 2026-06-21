@@ -23,7 +23,7 @@ pub struct CreateProfile<'info> {
         seeds = [TIP_PROFILE_SEED, owner.key().as_ref()],
         bump
     )]
-    pub tip_profile: Account<'info, TipProfile>,
+    pub tip_profile: Box<Account<'info, TipProfile>>,
 
     /// System program for account creation
     pub system_program: Program<'info, System>,

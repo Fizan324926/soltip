@@ -13,7 +13,7 @@ pub struct ConfigureSplit<'info> {
         bump    = tip_profile.bump,
         has_one = owner @ ErrorCode::NotProfileOwner,
     )]
-    pub tip_profile: Account<'info, TipProfile>,
+    pub tip_profile: Box<Account<'info, TipProfile>>,
 
     #[account(
         init_if_needed,

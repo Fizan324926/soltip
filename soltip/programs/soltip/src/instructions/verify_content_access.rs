@@ -21,7 +21,7 @@ pub struct VerifyContentAccess<'info> {
         seeds = [TIP_PROFILE_SEED, profile_owner.key().as_ref()],
         bump = recipient_profile.bump,
     )]
-    pub recipient_profile: Account<'info, TipProfile>,
+    pub recipient_profile: Box<Account<'info, TipProfile>>,
 
     /// CHECK: validated by PDA derivation
     pub profile_owner: UncheckedAccount<'info>,

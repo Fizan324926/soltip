@@ -1,1 +1,15 @@
-export { profileApi, vaultApi, tipsApi, goalsApi, subscriptionsApi, splitsApi, adminApi, healthApi } from './client';
+export {
+  profileApi,
+  vaultApi,
+  tipsApi,
+  goalsApi,
+  subscriptionsApi,
+  splitsApi,
+  adminApi,
+  healthApi,
+  pollsApi,
+  contentGatesApi,
+  referralsApi,
+  analyticsApi,
+  widgetApi,
+} from './client';

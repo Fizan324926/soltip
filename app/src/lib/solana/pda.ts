@@ -143,3 +143,49 @@ export function findSplVaultPDA(
     PROGRAM_ID
   );
 }
+
+// ============================================================
+// TipPoll PDA (v3)
+// Seeds: [b"tip_poll", profile_pda, poll_id_le_bytes]
+// ============================================================
+export function findTipPollPDA(
+  profilePda: PublicKey,
+  pollId: bigint
+): [PublicKey, number] {
+  const idBuf = Buffer.alloc(8);
+  new BN(pollId.toString()).toArrayLike(Buffer, 'le', 8).copy(idBuf);
+  return PublicKey.findProgramAddressSync(
+    [strSeed(SEEDS.TIP_POLL), profilePda.toBuffer(), idBuf],
+    PROGRAM_ID
+  );
+}
+
+// ============================================================
+// ContentGate PDA (v3)
+// Seeds: [b"content_gate", profile_pda, gate_id_le_bytes]
+// ============================================================
+export function findContentGatePDA(
+  profilePda: PublicKey,
+  gateId: bigint
+): [PublicKey, number] {
+  const idBuf = Buffer.alloc(8);
+  new BN(gateId.toString()).toArrayLike(Buffer, 'le', 8).copy(idBuf);
+  return PublicKey.findProgramAddressSync(
+    [strSeed(SEEDS.CONTENT_GATE), profilePda.toBuffer(), idBuf],
+    PROGRAM_ID
+  );
+}
+
+// ============================================================
+// Referral PDA (v3)
+// Seeds: [b"referral", referrer, referee_profile]
+// ============================================================
+export function findReferralPDA(
+  referrer: PublicKey,
+  refereeProfile: PublicKey
+): [PublicKey, number] {
+  return PublicKey.findProgramAddressSync(
+    [strSeed(SEEDS.REFERRAL), referrer.toBuffer(), refereeProfile.toBuffer()],
+    PROGRAM_ID
+  );
+}

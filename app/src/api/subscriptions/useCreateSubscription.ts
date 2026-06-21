@@ -21,10 +21,11 @@ export function useCreateSubscription() {
   return useMutation({
     mutationFn: async (args: CreateSubArgs) => {
       if (!client || !publicKey) throw new Error("Wallet not connected");
-      return createSubscription(client, publicKey, args);
+      const txPromise = createSubscription(client, publicKey, args);
+      void showTxToast(txPromise, { confirmedTitle: "Subscription created! 🔄" });
+      return txPromise;
     },
-    onSuccess: (tx) => {
-      showTxToast(tx, "Subscription created! 🔄");
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.subscription.all });
     },
   });

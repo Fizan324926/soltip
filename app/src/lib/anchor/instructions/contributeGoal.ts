@@ -39,16 +39,17 @@ export async function buildContributeGoalTx(
   const [platformConfigPda] = findPlatformConfigPDA();
   const [treasuryPda]       = findPlatformTreasuryPDA();
 
-  const tx = await (
-    program.methods as Record<
-      string,
-      (amount: BN, message: string | null) => {
-        accounts: (accounts: Record<string, PublicKey>) => {
-          transaction: () => Promise<Transaction>;
-        };
-      }
-    >
-  )['contributeGoal'](amount, message)
+  const methodsNamespace = program.methods as Record<
+    string,
+    (amount: BN, message: string | null) => {
+      accounts: (accounts: Record<string, PublicKey>) => {
+        transaction: () => Promise<Transaction>;
+      };
+    }
+  >;
+  const contributeMethod = methodsNamespace['contributeGoal'];
+  if (!contributeMethod) throw new Error('contributeGoal method not found in program');
+  const tx = await contributeMethod(amount, message)
     .accounts({
       contributor,
       recipientProfile: profilePda,

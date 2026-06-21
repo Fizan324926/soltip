@@ -18,16 +18,17 @@ export async function fetchGoals(
   try {
     type GoalAccount = { publicKey: PublicKey; account: TipGoal };
 
-    const accounts = await (
-      program.account as Record<
-        string,
-        {
-          all: (filters: {
-            memcmp: { offset: number; bytes: string };
-          }[]) => Promise<GoalAccount[]>;
-        }
-      >
-    )['tipGoal'].all([
+    const accountNamespace = program.account as Record<
+      string,
+      {
+        all: (filters: {
+          memcmp: { offset: number; bytes: string };
+        }[]) => Promise<GoalAccount[]>;
+      }
+    >;
+    const tipGoalAccount = accountNamespace['tipGoal'];
+    if (!tipGoalAccount) throw new Error('tipGoal account not found in program');
+    const accounts = await tipGoalAccount.all([
       {
         memcmp: {
           // 8-byte discriminator prefix, then the `profile` field (PublicKey)

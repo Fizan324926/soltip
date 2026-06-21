@@ -29,33 +29,34 @@ pub struct SendTipSpl<'info> {
     #[account(mut)]
     pub tipper: Signer<'info>,
 
-    /// Tipper's token account (source)
+    /// Tipper's token account (source) - boxed to reduce stack usage
     #[account(
         mut,
         constraint = tipper_token_account.owner == tipper.key() @ ErrorCode::TokenAccountOwnerMismatch,
     )]
-    pub tipper_token_account: Account<'info, TokenAccount>,
+    pub tipper_token_account: Box<Account<'info, TokenAccount>>,
 
     /// Recipient profile
+    /// Boxed to avoid stack overflow (TipProfile is ~1.7KB)
     #[account(
         mut,
         seeds = [TIP_PROFILE_SEED, recipient_owner.key().as_ref()],
         bump  = recipient_profile.bump,
     )]
-    pub recipient_profile: Account<'info, TipProfile>,
+    pub recipient_profile: Box<Account<'info, TipProfile>>,
 
     /// CHECK: validated by PDA derivation of recipient_profile
     pub recipient_owner: UncheckedAccount<'info>,
 
-    /// Recipient's token account (destination)
+    /// Recipient's token account (destination) - boxed to reduce stack usage
     #[account(
         mut,
         constraint = recipient_token_account.owner    == recipient_owner.key()          @ ErrorCode::TokenAccountOwnerMismatch,
         constraint = recipient_token_account.mint     == tipper_token_account.mint      @ ErrorCode::TokenMintMismatch,
     )]
-    pub recipient_token_account: Account<'info, TokenAccount>,
+    pub recipient_token_account: Box<Account<'info, TokenAccount>>,
 
-    /// Per-(tipper, profile) record: init if first tip, else mut
+    /// Per-(tipper, profile) record: init if first tip, else mut - boxed
     #[account(
         init_if_needed,
         payer  = tipper,
@@ -63,9 +64,9 @@ pub struct SendTipSpl<'info> {
         seeds  = [TIPPER_RECORD_SEED, tipper.key().as_ref(), recipient_profile.key().as_ref()],
         bump,
     )]
-    pub tipper_record: Account<'info, TipperRecord>,
+    pub tipper_record: Box<Account<'info, TipperRecord>>,
 
-    /// Rate-limit PDA
+    /// Rate-limit PDA - boxed
     #[account(
         init_if_needed,
         payer = tipper,
@@ -73,7 +74,7 @@ pub struct SendTipSpl<'info> {
         seeds = [RATE_LIMIT_SEED, tipper.key().as_ref(), recipient_profile.key().as_ref()],
         bump,
     )]
-    pub rate_limit: Account<'info, RateLimit>,
+    pub rate_limit: Box<Account<'info, RateLimit>>,
 
     /// Global platform config – checked for pause state.
     #[account(
