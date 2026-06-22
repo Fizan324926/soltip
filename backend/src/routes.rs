@@ -5,8 +5,9 @@ use crate::handlers;
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/api/v1")
-            // Health
+            // Health & Metrics
             .route("/health", web::get().to(handlers::health::health_check))
+            .route("/metrics", web::get().to(handlers::metrics::get_metrics))
 
             // Profiles
             .route("/profiles", web::get().to(handlers::profiles::list_profiles))

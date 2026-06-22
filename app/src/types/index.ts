@@ -2,4 +2,35 @@
 // Types barrel – re-exports from anchor.ts and common.ts
 // ============================================================
 export * from './anchor';
-export * from './common';
+export type {
+  Network,
+  SortOrder,
+  TokenType,
+  TipType,
+  GoalStatus,
+  CreatorFilters,
+  PaginationOptions,
+  PaginatedResult,
+  TransactionStatus,
+  TransactionState,
+  SendTipInput,
+  CreateGoalInput,
+  CreateSubscriptionInput,
+  SplitRecipientInput,
+  UpdateProfileInput,
+  LeaderboardDisplayEntry,
+  ProfileResponse,
+  VaultResponse,
+  SplBalance,
+  TipResponse,
+  GoalResponse,
+  PollResponse,
+  ContentGateResponse,
+  ReferralResponse,
+  AnalyticsResponse,
+  DailyAnalytics,
+  PlatformConfigResponse,
+  AnchorAccountWrapper,
+  CreatorAccount,
+  GoalAccount,
+} from './common';

@@ -11,6 +11,7 @@ mod config;
 mod db;
 mod error;
 mod handlers;
+mod metrics;
 mod models;
 mod routes;
 mod services;
@@ -117,6 +118,10 @@ async fn main() -> std::io::Result<()> {
         price_cache_ttl_secs,
         auth_token_max_age_secs,
     });
+
+    // Initialize Prometheus metrics
+    metrics::register_metrics();
+    info!("Prometheus metrics initialized");
 
     info!("RPC endpoint: {}", rpc_url);
     info!("Program ID: {}", program_id);

@@ -3,6 +3,7 @@ pub mod analytics;
 pub mod content_gates;
 pub mod goals;
 pub mod health;
+pub mod metrics;
 pub mod polls;
 pub mod profiles;
 pub mod referrals;

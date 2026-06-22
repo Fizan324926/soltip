@@ -3,12 +3,23 @@ import { Link } from 'react-router-dom';
 import { Avatar, Badge } from '@/components/ui';
 import { lamportsToSol } from '@/lib/solana/utils';
 
+interface CreatorData {
+  owner?: string;
+  username?: string;
+  displayName?: string;
+  description?: string;
+  imageUrl?: string;
+  isVerified?: boolean;
+  totalAmountReceivedLamports?: bigint | number;
+  totalTipsReceived?: bigint | number;
+}
+
 interface Props {
-  creator: any;
+  creator: { account?: CreatorData; publicKey?: { toBase58(): string } } | CreatorData;
 }
 
 const CreatorCard = memo(function CreatorCard({ creator }: Props) {
-  const a = creator.account ?? creator;
+  const a = ('account' in creator && creator.account) ? creator.account : creator as CreatorData;
 
   return (
     <Link
