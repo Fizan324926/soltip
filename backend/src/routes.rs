@@ -19,6 +19,7 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
             .route("/vault/{profile_pda}", web::get().to(handlers::vault::get_vault))
             .route("/vault/initialize", web::post().to(handlers::vault::initialize_vault))
             .route("/vault/withdraw", web::post().to(handlers::vault::withdraw))
+            .route("/vault/withdraw-spl", web::post().to(handlers::vault::withdraw_spl))
 
             // Tips
             .route("/tips", web::post().to(handlers::tips::record_tip))

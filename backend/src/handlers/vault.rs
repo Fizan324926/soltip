@@ -128,3 +128,62 @@ pub async fn withdraw(
         message: "Withdrawal recorded".to_string(),
     }))
 }
+
+/// Withdraw SPL tokens from vault
+pub async fn withdraw_spl(
+    req: HttpRequest,
+    state: web::Data<AppState>,
+    body: web::Json<serde_json::Value>,
+) -> Result<HttpResponse, ApiError> {
+    let auth = require_wallet_auth(&req).map_err(|_| ApiError::Unauthorized("Wallet auth required".to_string()))?;
+
+    let profile_pda = body.get("profile_pda")
+        .and_then(|v| v.as_str())
+        .ok_or_else(|| ApiError::BadRequest("profile_pda required".to_string()))?;
+
+    let token_mint = body.get("token_mint")
+        .and_then(|v| v.as_str())
+        .ok_or_else(|| ApiError::BadRequest("token_mint required".to_string()))?;
+
+    let amount = body.get("amount")
+        .and_then(|v| v.as_i64())
+        .ok_or_else(|| ApiError::BadRequest("amount required".to_string()))?;
+
+    let tx_signature = body.get("tx_signature")
+        .and_then(|v| v.as_str())
+        .ok_or_else(|| ApiError::BadRequest("tx_signature required".to_string()))?;
+
+    // Verify ownership via profile
+    let profile: Option<Profile> = sqlx::query_as(
+        "SELECT * FROM profiles WHERE profile_pda = $1"
+    )
+        .bind(profile_pda)
+        .fetch_optional(&state.db)
+        .await?;
+
+    let profile = profile.ok_or_else(|| ApiError::NotFound("Profile not found".to_string()))?;
+
+    if auth.wallet_address != profile.owner_address {
+        return Err(ApiError::Unauthorized("Wallet does not match profile owner".to_string()));
+    }
+
+    // Record SPL withdrawal in database
+    let id = uuid::Uuid::new_v4();
+    sqlx::query(
+        "INSERT INTO spl_withdrawals (id, profile_pda, token_mint, amount, tx_signature, created_at) VALUES ($1, $2, $3, $4, $5, NOW())"
+    )
+        .bind(id)
+        .bind(profile_pda)
+        .bind(token_mint)
+        .bind(amount)
+        .bind(tx_signature)
+        .execute(&state.db)
+        .await?;
+
+    log::info!("SPL withdrawal of {} tokens (mint: {}) from profile {} (tx: {})", amount, token_mint, profile_pda, tx_signature);
+
+    Ok(HttpResponse::Ok().json(TxResponse {
+        success: true,
+        message: "SPL withdrawal recorded".to_string(),
+    }))
+}

@@ -5,6 +5,7 @@ export { buildSendTipTx }             from './sendTip';
 export { buildSendTipSplTx }          from './sendTipSpl';
 export { buildSendTipSplitTx }        from './sendTipSplit';
 export { buildWithdrawTx }            from './withdraw';
+export { buildWithdrawSplTx }         from './withdrawSpl';
 export { buildCreateProfileTx }       from './createProfile';
 export { buildUpdateProfileTx }       from './updateProfile';
 export { buildInitializeVaultTx }     from './initializeVault';
@@ -31,6 +32,7 @@ import { buildSendTipTx } from './sendTip';
 import { buildSendTipSplTx } from './sendTipSpl';
 import { buildSendTipSplitTx } from './sendTipSplit';
 import { buildWithdrawTx } from './withdraw';
+import { buildWithdrawSplTx } from './withdrawSpl';
 import { buildCreateProfileTx } from './createProfile';
 import { buildUpdateProfileTx } from './updateProfile';
 import { buildInitializeVaultTx } from './initializeVault';
@@ -111,6 +113,21 @@ export async function withdraw(
 ): Promise<string> {
   const tx = await buildWithdrawTx(client.getProgram(), {
     owner: publicKey,
+    amount: new BN(amount.toString()),
+  });
+  return client.provider.sendAndConfirm(tx);
+}
+
+// ── Withdraw SPL ──────────────────────────────────────────────
+export async function withdrawSpl(
+  client: AnchorClient,
+  publicKey: PublicKey,
+  tokenMint: string,
+  amount: bigint
+): Promise<string> {
+  const tx = await buildWithdrawSplTx(client.getProgram(), {
+    owner: publicKey,
+    tokenMint: new PublicKey(tokenMint),
     amount: new BN(amount.toString()),
   });
   return client.provider.sendAndConfirm(tx);

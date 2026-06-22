@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Navigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { usePlatformConfig, usePausePlatform, useVerifyCreator } from '@/api/admin';
 import { Button, Input, Card, Switch, Badge, Skeleton } from '@/components/ui';
+import { queryKeys } from '@/api/queryKeys';
 
 // Helper to safely get string from a value that might be a PublicKey or string
 const toStr = (v: any): string => (typeof v === 'string' ? v : v?.toBase58?.() ?? String(v ?? ''));
@@ -98,6 +100,29 @@ export default function AdminPage() {
         </div>
       </Card>
 
+      {/* Platform Stats */}
+      <Card className="!p-6 mb-6">
+        <h2 className="font-bold text-lg mb-4">Platform Statistics</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-[var(--color-bg-secondary)] rounded-lg p-4 text-center">
+            <div className="text-2xl font-black text-solana-purple">--</div>
+            <div className="text-xs text-[#86868b]">Total Profiles</div>
+          </div>
+          <div className="bg-[var(--color-bg-secondary)] rounded-lg p-4 text-center">
+            <div className="text-2xl font-black text-solana-green">--</div>
+            <div className="text-xs text-[#86868b]">Total Tips</div>
+          </div>
+          <div className="bg-[var(--color-bg-secondary)] rounded-lg p-4 text-center">
+            <div className="text-2xl font-black text-[#f5a623]">--</div>
+            <div className="text-xs text-[#86868b]">Volume (SOL)</div>
+          </div>
+          <div className="bg-[var(--color-bg-secondary)] rounded-lg p-4 text-center">
+            <div className="text-2xl font-black text-[#5856d6]">--</div>
+            <div className="text-xs text-[#86868b]">Treasury (SOL)</div>
+          </div>
+        </div>
+      </Card>
+
       {/* Platform Config Info */}
       <Card className="!p-6">
         <h2 className="font-bold text-lg mb-4">Configuration</h2>
@@ -109,6 +134,10 @@ export default function AdminPage() {
           <div className="flex justify-between">
             <span className="text-[#86868b]">Platform Fee</span>
             <span>{cfg?.platformFeeBps ?? 100} bps ({((cfg?.platformFeeBps ?? 100) / 100).toFixed(0)}%)</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-[#86868b]">Treasury</span>
+            <span className="font-mono text-xs">{toStr(cfg?.treasury).slice(0, 8)}...</span>
           </div>
         </div>
       </Card>

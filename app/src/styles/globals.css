@@ -233,3 +233,67 @@
     background-color: var(--color-surface-overlay);
   }
 }
+
+/* ============================================================
+   Mobile-First Responsive Utilities
+   ============================================================ */
+@media (max-width: 640px) {
+  /* Stack buttons vertically on mobile */
+  .btn-group-mobile {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Full-width cards on mobile */
+  .card {
+    border-radius: 12px;
+  }
+
+  /* Smaller headings on mobile */
+  h1 {
+    font-size: 1.75rem !important;
+  }
+
+  h2 {
+    font-size: 1.375rem !important;
+  }
+
+  /* Adjust padding for mobile */
+  .mobile-px {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Hide on mobile */
+  .hide-mobile {
+    display: none !important;
+  }
+
+  /* Full width buttons */
+  .mobile-full {
+    width: 100%;
+  }
+}
+
+/* Tablet */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Safe area insets for iOS */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Touch-friendly tap targets */
+@media (pointer: coarse) {
+  button, a, input, select, textarea {
+    min-height: 44px;
+  }
+}

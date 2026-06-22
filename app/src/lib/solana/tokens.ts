@@ -36,6 +36,25 @@ export const KNOWN_TOKENS: TokenDescriptor[] = [
     logoUrl:
       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.svg',
   },
+  {
+    name: 'Bonk',
+    symbol: 'BONK',
+    // BONK doesn't have an official devnet mint, use mainnet for both
+    mintDevnet: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+    mintMainnet: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+    decimals: 5,
+    logoUrl:
+      'https://arweave.net/hQiPZOsRZXGXBJd_82PhVdlM_hACsT_q6wqwf5cSY7I',
+  },
+  {
+    name: 'Jupiter',
+    symbol: 'JUP',
+    mintDevnet: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
+    mintMainnet: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
+    decimals: 6,
+    logoUrl:
+      'https://static.jup.ag/jup/icon.png',
+  },
 ];
 
 // ============================================================
