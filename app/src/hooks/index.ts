@@ -19,3 +19,12 @@ export {
   type ConfirmationResult,
   type UseTransactionConfirmationReturn,
 }                                                            from './useTransactionConfirmation';
+export {
+  useErrorHandler,
+  getErrorMessage,
+  isRetryableError,
+}                                                            from './useErrorHandler';
+export {
+  useRateLimitedAction,
+  useDebouncedCallback,
+}                                                            from './useRateLimitedAction';

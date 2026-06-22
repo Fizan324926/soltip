@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import * as RadixTabs from '@radix-ui/react-tabs';
-import { motion } from 'framer-motion';
 import { cn } from '@/lib/cn';
 
 export interface TabItem {
@@ -35,12 +34,11 @@ export const Tabs: React.FC<TabsProps> = ({
   const firstTab = tabs[0]?.value ?? '';
   const [activeTab, setActiveTab] = useState(value ?? defaultValue ?? firstTab);
 
-  const handleChange = (val: string) => {
+  const handleChange = useCallback((val: string) => {
     setActiveTab(val);
     onChange?.(val);
-  };
+  }, [onChange]);
 
-  // Keep internal state in sync with controlled `value` prop
   React.useEffect(() => {
     if (value !== undefined) setActiveTab(value);
   }, [value]);
@@ -53,9 +51,7 @@ export const Tabs: React.FC<TabsProps> = ({
     >
       <RadixTabs.List
         className={cn(
-          'relative flex items-center gap-1',
-          'bg-surface-card border border-surface-border',
-          'rounded-xl p-1',
+          'flex items-center gap-8 border-b border-[rgba(0,0,0,0.06)]',
           listClassName,
         )}
         aria-label="Tabs"
@@ -66,83 +62,56 @@ export const Tabs: React.FC<TabsProps> = ({
       </RadixTabs.List>
 
       {children && (
-        <div className={cn('mt-4', contentClassName)}>{children}</div>
+        <div className={cn(contentClassName)}>{children}</div>
       )}
     </RadixTabs.Root>
   );
 };
 
-// ---------------------------------------------------------------------------
-// TabTrigger — individual tab button with animated underline via layoutId
-// ---------------------------------------------------------------------------
 interface TabTriggerProps {
   tab: TabItem;
   isActive: boolean;
 }
 
-const TabTrigger: React.FC<TabTriggerProps> = ({ tab, isActive }) => {
+const TabTrigger = memo(function TabTrigger({ tab, isActive }: TabTriggerProps) {
   return (
     <RadixTabs.Trigger
       value={tab.value}
       disabled={tab.disabled}
       className={cn(
-        'relative flex-1 flex items-center justify-center gap-1.5',
-        'px-3 py-1.5 rounded-lg',
-        'text-[0.8125rem] font-semibold leading-none',
+        'relative flex items-center gap-2',
+        'pb-3 -mb-px',
+        'text-[14px] font-medium',
         'transition-colors duration-150',
-        'outline-none focus-visible:ring-2 focus-visible:ring-solana-purple',
+        'outline-none',
         'disabled:opacity-40 disabled:cursor-not-allowed',
-        isActive ? 'text-[#1d1d1f]' : 'text-[#86868b] hover:text-[#1d1d1f]',
+        isActive
+          ? 'text-[#1d1d1f] border-b-2 border-[#1d1d1f]'
+          : 'text-[#86868b] hover:text-[#1d1d1f] border-b-2 border-transparent',
       )}
     >
-      {/* Active background pill — animated via framer-motion layoutId */}
-      {isActive && (
-        <motion.span
-          layoutId="tab-active-bg"
-          className="absolute inset-0 rounded-lg bg-surface-elevated"
-          transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-          style={{ zIndex: 0 }}
-        />
+      {tab.icon && (
+        <span className="inline-flex">{tab.icon}</span>
       )}
-
-      {/* Content above the animated background */}
-      <span className="relative z-10 flex items-center gap-1.5">
-        {tab.icon && (
-          <span className={cn('inline-flex', isActive ? 'text-solana-purple' : 'text-current')}>
-            {tab.icon}
-          </span>
-        )}
-        {tab.label}
-        {tab.badge !== undefined && (
-          <span
-            className={cn(
-              'inline-flex items-center justify-center',
-              'min-w-[1.1rem] h-[1.1rem] px-1',
-              'text-[0.625rem] font-bold rounded-full',
-              isActive
-                ? 'bg-solana-purple text-white'
-                : 'bg-black/8 text-[#6e6e73]',
-            )}
-          >
-            {tab.badge}
-          </span>
-        )}
-      </span>
-
-      {/* Animated underline */}
-      {isActive && (
-        <motion.span
-          layoutId="tab-active-underline"
-          className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-solana-purple"
-          transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-          style={{ zIndex: 1 }}
-        />
+      {tab.label}
+      {tab.badge !== undefined && (
+        <span
+          className={cn(
+            'inline-flex items-center justify-center',
+            'min-w-[18px] h-[18px] px-1.5',
+            'text-[11px] font-medium rounded-full',
+            isActive
+              ? 'bg-[#1d1d1f] text-white'
+              : 'bg-[#f5f5f7] text-[#86868b]',
+          )}
+        >
+          {tab.badge}
+        </span>
       )}
     </RadixTabs.Trigger>
   );
-};
+});
 
-// Re-export Radix primitives for direct usage
 export const TabsContent = RadixTabs.Content;
 export const TabsList = RadixTabs.List;
 export const TabsTrigger = RadixTabs.Trigger;

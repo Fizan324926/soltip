@@ -1,6 +1,60 @@
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
 
 // ============================================================
+// Error Types
+// ============================================================
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly code: string,
+    public readonly status?: number,
+    public readonly retryable: boolean = false,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+export class NetworkError extends ApiError {
+  constructor(message = 'Network request failed. Check your connection.') {
+    super(message, 'NETWORK_ERROR', undefined, true);
+    this.name = 'NetworkError';
+  }
+}
+
+export class AuthError extends ApiError {
+  constructor(message = 'Authentication required. Please reconnect your wallet.') {
+    super(message, 'AUTH_ERROR', 401, false);
+    this.name = 'AuthError';
+  }
+}
+
+export class RateLimitError extends ApiError {
+  constructor(
+    message = 'Too many requests. Please wait a moment.',
+    public readonly retryAfter?: number,
+  ) {
+    super(message, 'RATE_LIMIT', 429, true);
+    this.name = 'RateLimitError';
+  }
+}
+
+export class ValidationError extends ApiError {
+  constructor(message: string, public readonly field?: string) {
+    super(message, 'VALIDATION_ERROR', 400, false);
+    this.name = 'ValidationError';
+  }
+}
+
+export class ServerError extends ApiError {
+  constructor(message = 'Server error. Please try again later.') {
+    super(message, 'SERVER_ERROR', 500, true);
+    this.name = 'ServerError';
+  }
+}
+
+// ============================================================
 // snake_case → camelCase deep transform
 // ============================================================
 
@@ -149,15 +203,41 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch(url, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch (err) {
+    // Network failure (offline, DNS, etc.)
+    throw new NetworkError(
+      err instanceof Error ? err.message : 'Network request failed',
+    );
+  }
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error(err.message || `API error: ${res.status}`);
+    const errBody = await res.json().catch(() => ({ message: res.statusText }));
+    const message = errBody.message || `Request failed: ${res.status}`;
+
+    switch (res.status) {
+      case 401:
+        // Clear stale token on auth failure
+        setWalletAuthToken(null);
+        throw new AuthError(message);
+      case 429: {
+        const retryAfter = parseInt(res.headers.get('Retry-After') ?? '', 10);
+        throw new RateLimitError(message, isNaN(retryAfter) ? undefined : retryAfter);
+      }
+      case 400:
+        throw new ValidationError(message, errBody.field);
+      default:
+        if (res.status >= 500) {
+          throw new ServerError(message);
+        }
+        throw new ApiError(message, `HTTP_${res.status}`, res.status);
+    }
   }
 
   const json = await res.json();

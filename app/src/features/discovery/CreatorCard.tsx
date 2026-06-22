@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar, Badge } from '@/components/ui';
 import { lamportsToSol } from '@/lib/solana/utils';
@@ -7,13 +7,22 @@ interface Props {
   creator: any;
 }
 
-export default function CreatorCard({ creator }: Props) {
+const CreatorCard = memo(function CreatorCard({ creator }: Props) {
   const a = creator.account ?? creator;
+
   return (
     <Link
       to={`/${a.owner ?? a.username}`}
-      className="block p-6 bg-[#f5f5f7] border border-black/[0.08] rounded-2xl no-underline text-inherit transition-all hover:border-solana-purple hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(153,69,255,0.15)]"
+      className="
+        block p-6 bg-white rounded-2xl
+        shadow-[0_2px_8px_rgba(0,0,0,0.04),0_0_1px_rgba(0,0,0,0.04)]
+        transition-all duration-200
+        hover:shadow-[0_8px_32px_rgba(0,0,0,0.12)]
+        hover:-translate-y-0.5
+        no-underline text-inherit
+      "
     >
+      {/* Header */}
       <div className="flex items-center gap-4 mb-4">
         <Avatar
           src={a.imageUrl || undefined}
@@ -22,30 +31,44 @@ export default function CreatorCard({ creator }: Props) {
           size="lg"
         />
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="font-bold truncate">{a.displayName}</span>
-            {a.isVerified && <Badge variant="success" className="text-xs">Verified</Badge>}
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className="font-semibold text-[17px] text-[#1d1d1f] truncate">
+              {a.displayName}
+            </span>
+            {a.isVerified && <Badge variant="verified" className="text-[10px]" />}
           </div>
-          <span className="text-xs text-[#86868b]">@{a.username}</span>
+          <span className="text-[14px] text-[#86868b]">@{a.username}</span>
         </div>
       </div>
 
+      {/* Description */}
       {a.description && (
-        <p className="text-sm text-[#86868b] leading-relaxed mb-4 line-clamp-2">
+        <p className="text-[15px] text-[#86868b] leading-relaxed mb-5 line-clamp-2">
           {a.description}
         </p>
       )}
 
-      <div className="flex gap-8 border-t border-black/[0.08] pt-4">
-        <div className="flex flex-col">
-          <span className="font-bold text-solana-green">{lamportsToSol(a.totalAmountReceivedLamports ?? 0n)} SOL</span>
-          <span className="text-xs text-[#86868b]">earned</span>
+      {/* Stats */}
+      <div className="flex gap-8 pt-4 border-t border-[rgba(0,0,0,0.06)]">
+        <div>
+          <div className="text-[17px] font-semibold text-[#14f195]">
+            {lamportsToSol(a.totalAmountReceivedLamports ?? 0n)} SOL
+          </div>
+          <div className="text-[12px] text-[#86868b] uppercase tracking-wide">
+            earned
+          </div>
         </div>
-        <div className="flex flex-col">
-          <span className="font-bold">{(a.totalTipsReceived ?? 0n).toString()}</span>
-          <span className="text-xs text-[#86868b]">tips</span>
+        <div>
+          <div className="text-[17px] font-semibold text-[#1d1d1f]">
+            {(a.totalTipsReceived ?? 0n).toString()}
+          </div>
+          <div className="text-[12px] text-[#86868b] uppercase tracking-wide">
+            tips
+          </div>
         </div>
       </div>
     </Link>
   );
-}
+});
+
+export default CreatorCard;
